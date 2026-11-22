@@ -10,11 +10,11 @@ const APPEARANCES = ["solid", "outlined", "ghost"] as const;
 const VARIATIONS = ["neutral", "primary", "success", "danger", "inverse"] as const;
 
 const compound = APPEARANCES.flatMap((appearance) =>
-  VARIATIONS.flatMap((variation) => {
-    const key = `${appearance}-${variation}` as ButtonToneKey;
+  VARIATIONS.flatMap((variant) => {
+    const key = `${appearance}-${variant}` as ButtonToneKey;
     return [
-      { appearance, variation, disabled: false, class: iconContainer[key] },
-      { appearance, variation, disabled: true, class: iconContainerDisabled[key] },
+      { appearance, variant, disabled: false, class: iconContainer[key] },
+      { appearance, variant, disabled: true, class: iconContainerDisabled[key] },
     ];
   }),
 );
@@ -27,16 +27,19 @@ export const buttonIconContainer = cva("relative flex-row items-center justify-c
       md: "size-x6 rounded-subtle",
       lg: "size-x8 rounded-corner-subtle",
     },
-    variation: { neutral: "", primary: "", success: "", danger: "", inverse: "" },
+    variant: { neutral: "", primary: "", success: "", danger: "", inverse: "" },
     appearance: { solid: "", outlined: "", ghost: "" },
     disabled: { true: "", false: "" },
   },
   compoundVariants: compound,
-  defaultVariants: { size: "md", variation: "primary", appearance: "solid", disabled: false },
+  defaultVariants: { size: "md", variant: "primary", appearance: "solid", disabled: false },
 });
 
-/** Loading: Overlay Surface/Neutral/Subtle (Figma). */
-export const buttonIconLoading = "bg-surface-neutral-subtle border-0";
+/** Loading: Overlay Surface/Neutral/Subtle (Strong for Variant=Inverse), as Figma. */
+export const buttonIconLoading = (variant: string) =>
+  variant === "inverse"
+    ? "bg-surface-neutral-strong border-0"
+    : "bg-surface-neutral-subtle border-0";
 
 export const BUTTON_ICON_PX = { xs: 12, sm: 16, md: 20, lg: 24 } as const;
 

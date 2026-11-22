@@ -14,7 +14,7 @@ export const ctaMatrix: Record<
     success:
       "bg-surface-success-medium text-surface-on-success-very-subtle hover:bg-surface-success-strong active:bg-surface-success-very-strong aria-pressed:bg-surface-success-very-subtle aria-pressed:text-surface-on-success-strong aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-success-strong disabled:bg-alpha-inverse-very-subtle disabled:text-surface-on-neutral-subtle",
     danger:
-      "bg-surface-danger-medium text-surface-on-danger-very-subtle hover:bg-surface-danger-strong active:bg-surface-danger-very-strong aria-pressed:bg-surface-danger-very-subtle aria-pressed:text-surface-on-danger-medium aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-secondary-medium disabled:bg-alpha-inverse-very-subtle disabled:text-surface-on-neutral-subtle",
+      "bg-surface-danger-medium text-surface-on-danger-very-subtle hover:bg-surface-danger-strong active:bg-surface-danger-very-strong aria-pressed:bg-surface-danger-very-subtle aria-pressed:text-surface-on-danger-medium aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-danger-medium disabled:bg-alpha-inverse-very-subtle disabled:text-surface-on-neutral-subtle",
     inverse:
       "bg-surface-neutral-very-subtle text-surface-on-neutral-very-strong hover:bg-surface-neutral-subtle active:bg-surface-neutral-medium aria-pressed:bg-surface-neutral-very-strong aria-pressed:text-surface-on-neutral-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-neutral-subtle disabled:bg-alpha-neutral-very-subtle disabled:text-alpha-neutral-medium",
   },
@@ -26,7 +26,7 @@ export const ctaMatrix: Record<
     success:
       "text-surface-on-success-strong outline outline-very-subtle -outline-offset-1 outline-alpha-success-subtle hover:outline-alpha-success-very-strong active:bg-alpha-success-very-subtle active:outline-alpha-success-very-strong aria-pressed:bg-surface-success-medium aria-pressed:text-surface-on-success-very-subtle aria-pressed:outline-transparent disabled:bg-transparent disabled:text-surface-on-neutral-subtle disabled:outline-stroke-neutral-subtle",
     danger:
-      "text-surface-on-danger-medium outline outline-very-subtle -outline-offset-1 outline-alpha-secondary-subtle hover:outline-alpha-danger-very-strong active:bg-alpha-danger-very-subtle active:outline-alpha-danger-very-strong aria-pressed:bg-surface-danger-medium aria-pressed:text-surface-on-danger-very-subtle aria-pressed:outline-transparent disabled:bg-transparent disabled:text-surface-on-neutral-subtle disabled:outline-stroke-neutral-subtle",
+      "text-surface-on-danger-medium outline outline-very-subtle -outline-offset-1 outline-alpha-danger-subtle hover:outline-alpha-danger-very-strong active:bg-alpha-danger-very-subtle active:outline-alpha-danger-very-strong aria-pressed:bg-surface-danger-medium aria-pressed:text-surface-on-danger-very-subtle aria-pressed:outline-transparent disabled:bg-transparent disabled:text-surface-on-neutral-subtle disabled:outline-stroke-neutral-subtle",
     inverse:
       "text-surface-on-neutral-very-subtle outline outline-very-subtle -outline-offset-1 outline-alpha-neutral-subtle hover:outline-alpha-neutral-very-strong active:bg-alpha-neutral-very-subtle active:outline-alpha-neutral-very-strong aria-pressed:bg-surface-neutral-very-subtle aria-pressed:text-surface-on-neutral-very-strong aria-pressed:outline-transparent disabled:bg-transparent disabled:text-alpha-neutral-medium disabled:outline-alpha-neutral-medium",
   },
@@ -38,7 +38,7 @@ export const ctaMatrix: Record<
     success:
       "text-surface-on-success-strong hover:bg-alpha-success-very-subtle active:bg-alpha-success-subtle aria-pressed:bg-alpha-success-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-success-strong disabled:bg-transparent disabled:text-surface-on-neutral-subtle",
     danger:
-      "text-surface-on-danger-medium hover:bg-alpha-danger-very-subtle active:bg-alpha-danger-subtle aria-pressed:bg-alpha-danger-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-secondary-medium disabled:bg-transparent disabled:text-surface-on-neutral-subtle",
+      "text-surface-on-danger-medium hover:bg-alpha-danger-very-subtle active:bg-alpha-danger-subtle aria-pressed:bg-alpha-danger-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-danger-medium disabled:bg-transparent disabled:text-surface-on-neutral-subtle",
     inverse:
       "text-surface-on-neutral-very-subtle hover:bg-alpha-neutral-very-subtle active:bg-alpha-neutral-subtle aria-pressed:bg-alpha-neutral-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-neutral-subtle disabled:bg-transparent disabled:text-alpha-neutral-medium",
   },
@@ -74,7 +74,7 @@ export const iconMatrix: Record<
   },
   ghost: {
     neutral:
-      "text-surface-on-neutral-very-strong hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle aria-pressed:bg-alpha-inverse-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-neutral-strong disabled:bg-surface-neutral-subtle disabled:text-surface-on-neutral-subtle",
+      "text-surface-on-neutral-very-strong hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle aria-pressed:bg-alpha-inverse-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-neutral-strong disabled:bg-transparent disabled:text-surface-on-neutral-subtle",
     primary:
       "text-surface-on-primary-medium hover:bg-alpha-primary-very-subtle active:bg-surface-primary-subtle aria-pressed:bg-alpha-primary-very-subtle aria-pressed:outline aria-pressed:outline-very-subtle aria-pressed:-outline-offset-1 aria-pressed:outline-stroke-primary-medium disabled:bg-transparent disabled:text-surface-on-neutral-subtle",
     success:

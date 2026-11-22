@@ -2,11 +2,12 @@ import { Icon, type IconName } from "@omn1/icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { forwardRef, type ButtonHTMLAttributes, type MouseEvent } from "react";
 import { cn } from "../../lib/cn";
-import { buttonLoadingClasses } from "../button-cta/button-cta";
+import { Spinner } from "../spinner";
+import { BUTTON_SPINNER_PX, buttonLoadingClasses } from "../button-cta/button-cta";
 import { iconMatrix } from "../button-cta/matrix";
 
 /**
- * Figma: ButtonIcon (component set 2058:749) — Size × Variation × Appearance × State (420 variants).
+ * Figma: ButtonIcon (component set 2058:749) — Size × Variant × Appearance × State (420 variants).
  *
  * ButtonIcon has its OWN colour matrix (not ButtonCTA's): Pressed / Focused fills, icon colours and the Disabled
  * fills differ. It is generated from Figma (scripts/gen-button-matrix.mjs). States are CSS, as in ButtonCTA.
@@ -31,27 +32,27 @@ export const buttonIconVariants = cva(
         md: "size-x6 rounded-subtle",
         lg: "size-x8 rounded-corner-subtle",
       },
-      variation: { neutral: "", primary: "", success: "", danger: "", inverse: "" },
+      variant: { neutral: "", primary: "", success: "", danger: "", inverse: "" },
       appearance: { solid: "", outlined: "", ghost: "" },
     },
     compoundVariants: [
-      { appearance: "solid", variation: "neutral", class: iconMatrix.solid.neutral },
-      { appearance: "solid", variation: "primary", class: iconMatrix.solid.primary },
-      { appearance: "solid", variation: "success", class: iconMatrix.solid.success },
-      { appearance: "solid", variation: "danger", class: iconMatrix.solid.danger },
-      { appearance: "solid", variation: "inverse", class: iconMatrix.solid.inverse },
-      { appearance: "outlined", variation: "neutral", class: iconMatrix.outlined.neutral },
-      { appearance: "outlined", variation: "primary", class: iconMatrix.outlined.primary },
-      { appearance: "outlined", variation: "success", class: iconMatrix.outlined.success },
-      { appearance: "outlined", variation: "danger", class: iconMatrix.outlined.danger },
-      { appearance: "outlined", variation: "inverse", class: iconMatrix.outlined.inverse },
-      { appearance: "ghost", variation: "neutral", class: iconMatrix.ghost.neutral },
-      { appearance: "ghost", variation: "primary", class: iconMatrix.ghost.primary },
-      { appearance: "ghost", variation: "success", class: iconMatrix.ghost.success },
-      { appearance: "ghost", variation: "danger", class: iconMatrix.ghost.danger },
-      { appearance: "ghost", variation: "inverse", class: iconMatrix.ghost.inverse },
+      { appearance: "solid", variant: "neutral", class: iconMatrix.solid.neutral },
+      { appearance: "solid", variant: "primary", class: iconMatrix.solid.primary },
+      { appearance: "solid", variant: "success", class: iconMatrix.solid.success },
+      { appearance: "solid", variant: "danger", class: iconMatrix.solid.danger },
+      { appearance: "solid", variant: "inverse", class: iconMatrix.solid.inverse },
+      { appearance: "outlined", variant: "neutral", class: iconMatrix.outlined.neutral },
+      { appearance: "outlined", variant: "primary", class: iconMatrix.outlined.primary },
+      { appearance: "outlined", variant: "success", class: iconMatrix.outlined.success },
+      { appearance: "outlined", variant: "danger", class: iconMatrix.outlined.danger },
+      { appearance: "outlined", variant: "inverse", class: iconMatrix.outlined.inverse },
+      { appearance: "ghost", variant: "neutral", class: iconMatrix.ghost.neutral },
+      { appearance: "ghost", variant: "primary", class: iconMatrix.ghost.primary },
+      { appearance: "ghost", variant: "success", class: iconMatrix.ghost.success },
+      { appearance: "ghost", variant: "danger", class: iconMatrix.ghost.danger },
+      { appearance: "ghost", variant: "inverse", class: iconMatrix.ghost.inverse },
     ],
-    defaultVariants: { size: "md", variation: "primary", appearance: "solid" },
+    defaultVariants: { size: "md", variant: "primary", appearance: "solid" },
   },
 );
 
@@ -86,7 +87,7 @@ export interface ButtonIconProps
 export const ButtonIcon = forwardRef<HTMLButtonElement, ButtonIconProps>(function ButtonIcon(
   {
     size = "md",
-    variation,
+    variant,
     appearance,
     icon,
     loading = false,
@@ -114,17 +115,17 @@ export const ButtonIcon = forwardRef<HTMLButtonElement, ButtonIconProps>(functio
       data-loading={loading || undefined}
       onClick={handleClick}
       className={cn(
-        buttonIconVariants({ size, variation, appearance }),
-        loading && buttonLoadingClasses,
+        buttonIconVariants({ size, variant, appearance }),
+        loading && buttonLoadingClasses(variant),
         className,
       )}
       {...rest}
     >
-      <Icon
-        name={loading ? "loader" : icon}
-        size={ICON_PX[s]}
-        className={cn(loading && "animate-spin text-surface-on-neutral-medium")}
-      />
+      {loading ? (
+        <Spinner variant="neutral" size={BUTTON_SPINNER_PX[s]} />
+      ) : (
+        <Icon name={icon} size={ICON_PX[s]} />
+      )}
       {showDot && !loading && <span aria-hidden="true" data-slot="dot" className={dot({ size })} />}
     </button>
   );

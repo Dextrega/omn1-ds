@@ -1,12 +1,13 @@
 import { Icon, type IconName } from "@omn1/icons/native";
 import { Pressable, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
-import { Spinner } from "../../lib/spinner";
+import { Spinner } from "../spinner";
 import {
+  BUTTON_SPINNER_PX,
   buttonToneColor,
   type ButtonAppearance,
   type ButtonSize,
-  type ButtonVariation,
+  type ButtonVariant,
 } from "../button-cta/styles";
 import { BUTTON_ICON_PX, buttonIconContainer, buttonIconDot, buttonIconLoading } from "./styles";
 
@@ -24,7 +25,7 @@ export interface ButtonIconProps extends Omit<
   /** Required: an icon-only control has no visible text. */
   accessibilityLabel: string;
   size?: ButtonSize;
-  variation?: ButtonVariation;
+  variant?: ButtonVariant;
   appearance?: ButtonAppearance;
   loading?: boolean;
   disabled?: boolean;
@@ -36,7 +37,7 @@ export interface ButtonIconProps extends Omit<
 export function ButtonIcon({
   icon,
   size = "md",
-  variation = "primary",
+  variant = "primary",
   appearance = "solid",
   loading = false,
   disabled = false,
@@ -45,7 +46,7 @@ export function ButtonIcon({
   onPress,
   ...rest
 }: ButtonIconProps) {
-  const color = buttonToneColor(variation, appearance, disabled, "icon");
+  const color = buttonToneColor(variant, appearance, disabled, "icon");
   return (
     <Pressable
       accessibilityRole="button"
@@ -53,14 +54,14 @@ export function ButtonIcon({
       disabled={disabled}
       onPress={loading ? undefined : onPress}
       className={cn(
-        buttonIconContainer({ size, variation, appearance, disabled }),
-        loading && buttonIconLoading,
+        buttonIconContainer({ size, variant, appearance, disabled }),
+        loading && buttonIconLoading(variant),
         className,
       )}
       {...rest}
     >
       {loading ? (
-        <Spinner size={BUTTON_ICON_PX[size]} className="text-surface-on-neutral-medium" />
+        <Spinner variant="neutral" size={BUTTON_SPINNER_PX[size]} />
       ) : (
         <Icon name={icon} size={BUTTON_ICON_PX[size]} className={color} />
       )}

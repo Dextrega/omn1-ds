@@ -27,8 +27,10 @@ export const chipContainer = ({ size, appearance, selected, disabled }: ChipStat
       ? "bg-alpha-inverse-very-subtle"
       : selected
         ? cn(
-            "bg-surface-primary-medium active:bg-surface-primary-very-strong",
-            appearance === "outlined" && "active:border-subtle active:border-alpha-primary-medium",
+            "bg-surface-primary-medium",
+            appearance === "filled"
+              ? "active:bg-surface-primary-very-strong"
+              : "active:bg-surface-primary-strong active:border-subtle active:border-alpha-primary-medium",
           )
         : appearance === "filled"
           ? "bg-alpha-inverse-very-subtle active:bg-alpha-inverse-medium"

@@ -26,7 +26,7 @@ const tones = {
   },
   secondary: {
     strong: "bg-surface-secondary-medium text-surface-on-secondary-very-subtle",
-    subtle: "bg-surface-danger-subtle text-surface-on-secondary-strong",
+    subtle: "bg-surface-secondary-subtle text-surface-on-secondary-strong",
     outlined: "ring-very-subtle ring-stroke-secondary-medium text-surface-on-secondary-medium",
   },
   success: {

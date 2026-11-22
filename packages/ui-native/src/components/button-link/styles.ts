@@ -5,41 +5,41 @@ import { cva } from "class-variance-authority";
  * Figma: ButtonLink (6:11853) — same tokens as @omn1/ui-web. Native has no hover; Pressed → `active:`.
  * Figma's centred 1px stroke is an inside `border` here.
  */
-export type ButtonLinkVariation = "neutral" | "primary";
+export type ButtonLinkVariant = "neutral" | "primary";
 export type ButtonLinkSize = "sm" | "md";
 
 export const buttonLinkContainer = cva(
   "relative flex-row items-center justify-center gap-extra-subtle rounded-none",
   {
     variants: {
-      variation: { neutral: "", primary: "" },
+      variant: { neutral: "", primary: "" },
       outline: { true: "", false: "" },
       disabled: { true: "", false: "" },
     },
     compoundVariants: [
       {
-        variation: "neutral",
+        variant: "neutral",
         outline: true,
         disabled: false,
         class:
           "border border-very-subtle border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
       },
       {
-        variation: "neutral",
+        variant: "neutral",
         outline: false,
         disabled: false,
         class:
           "active:border active:border-very-subtle active:border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
       },
       {
-        variation: "primary",
+        variant: "primary",
         outline: true,
         disabled: false,
         class:
           "border border-very-subtle border-stroke-primary-medium active:bg-alpha-primary-subtle",
       },
       {
-        variation: "primary",
+        variant: "primary",
         outline: false,
         disabled: false,
         class:
@@ -51,7 +51,7 @@ export const buttonLinkContainer = cva(
         class: "border border-very-subtle border-stroke-neutral-subtle",
       },
     ],
-    defaultVariants: { variation: "primary", outline: false, disabled: false },
+    defaultVariants: { variant: "primary", outline: false, disabled: false },
   },
 );
 
@@ -68,8 +68,8 @@ export const buttonLinkLabel = cva("font-sans font-medium", {
   defaultVariants: { size: "md", tone: "primary" },
 });
 
-export const buttonLinkTone = (variation: ButtonLinkVariation, disabled: boolean) =>
-  (disabled ? "disabled" : variation) as ButtonLinkVariation | "disabled";
+export const buttonLinkTone = (variant: ButtonLinkVariant, disabled: boolean) =>
+  (disabled ? "disabled" : variant) as ButtonLinkVariant | "disabled";
 
 /** Figma: System/x1,5 (SM) · x2 (MD). */
 export const BUTTON_LINK_ICON_PX = { sm: 12, md: 16 } as const;

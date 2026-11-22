@@ -49,7 +49,7 @@ function Sample({ title, brand }: { title: string; brand?: Brand }) {
         <div className="flex flex-wrap items-center gap-very-subtle">
           <ButtonCTA leadingIcon="check">Primary</ButtonCTA>
           <ButtonCTA appearance="outlined">Outlined</ButtonCTA>
-          <ButtonCTA appearance="ghost" variation="danger">
+          <ButtonCTA appearance="ghost" variant="danger">
             Ghost
           </ButtonCTA>
           <Badge variant="primary">New</Badge>
@@ -61,7 +61,7 @@ function Sample({ title, brand }: { title: string; brand?: Brand }) {
           label="Email"
           placeholder="you@client.com"
           leadingIcon="mail"
-          helper="Same component, client tokens"
+          hint="Same component, client tokens"
         />
         <Checkbox label="Remember me" defaultChecked />
         <div className="flex gap-very-subtle text-surface-primary-medium">
@@ -93,7 +93,7 @@ export const NestedDarkRegion: StoryObj = {
       >
         <TextInput label="Inside a dark scope" placeholder="Type…" />
         <div className="mt-subtle">
-          <ButtonCTA variation="inverse">Inverse</ButtonCTA>
+          <ButtonCTA variant="inverse">Inverse</ButtonCTA>
         </div>
       </ThemeProvider>
     </div>

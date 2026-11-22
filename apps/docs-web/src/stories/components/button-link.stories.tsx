@@ -32,15 +32,15 @@ export const Matrix: Story = {
       style={{ gridTemplateColumns: "repeat(4, max-content)" }}
     >
       {(["sm", "md"] as const).flatMap((size) =>
-        (["neutral", "primary"] as const).flatMap((variation) =>
+        (["neutral", "primary"] as const).flatMap((variant) =>
           [false, true].map((outline) => (
             <ButtonLink
-              key={`${size}${variation}${outline}`}
+              key={`${size}${variant}${outline}`}
               size={size}
-              variation={variation}
+              variant={variant}
               outline={outline}
             >
-              {size} · {variation}
+              {size} · {variant}
             </ButtonLink>
           )),
         ),

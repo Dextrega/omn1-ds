@@ -2,14 +2,14 @@
 /**
  * Generates the ButtonCTA / ButtonIcon colour matrices for web and native from the tables below.
  *
- * Why a generator: Figma has 420 variants per button (Size × Variation × Appearance × State). The colour part
+ * Why a generator: Figma has 420 variants per button (Size × Variant × Appearance × State). The colour part
  * is a 5 × 3 matrix of (fill, text, stroke) per state; writing it by hand as class strings is error-prone.
  * The OUTPUT is plain literal class strings (Tailwind must be able to read them — never build them at runtime).
  *
  *   node scripts/gen-button-matrix.mjs && pnpm format
  *
  * Source of truth: Figma ButtonCTA (6:9388) and ButtonIcon (2058:749). Values below were read with the Figma
- * MCP (variable bindings, not hex) from the Pro copy of the file. Tokens are written as the Tailwind colour key
+ * MCP (variable bindings, not hex) from the original file (O7TkV8JbHl3Svw4M7LbCcg). Tokens are written as the Tailwind colour key
  * ("surface-neutral-very-strong", "alpha-inverse-medium", "stroke-primary-medium"); "text" keys use the
  * on-* family ("surface-on-neutral-very-subtle") or an alpha key for Inverse/Disabled.
  *
@@ -74,10 +74,9 @@ const cta = {
       enabled: { bg: S("danger-medium"), text: ON("danger-very-subtle") },
       hover: { bg: S("danger-strong") },
       pressed: { bg: S("danger-very-strong") },
-      // Figma binds the Actived stroke of Danger to Stroke/Secondary/Medium (see docs/FINDINGS.md).
       actived: {
         bg: S("danger-very-subtle"),
-        stroke: ST("secondary-medium"),
+        stroke: ST("danger-medium"),
         text: ON("danger-medium"),
       },
       disabled: { bg: A("inverse-very-subtle"), text: ON("neutral-subtle") },
@@ -110,7 +109,7 @@ const cta = {
       enabled: { stroke: A("neutral-subtle"), text: ON("neutral-very-subtle") },
       hover: { stroke: A("neutral-very-strong") },
       pressed: { bg: A("neutral-very-subtle"), stroke: A("neutral-very-strong") },
-      // Figma fills this with Key/Global/White; the Semantic equivalent is Surface/Neutral/VerySubtle.
+      // Figma fills this with Key/Global/White; components use Semantic only, so Surface/Neutral/VerySubtle.
       actived: {
         bg: S("neutral-very-subtle"),
         stroke: "transparent",
@@ -126,8 +125,7 @@ const cta = {
       disabled: { stroke: ST("neutral-subtle"), text: ON("neutral-subtle") },
     },
     danger: {
-      // Figma uses Opacity/Secondary/Subtle for the resting stroke of Danger/Outlined (see docs/FINDINGS.md).
-      enabled: { stroke: A("secondary-subtle"), text: ON("danger-medium") },
+      enabled: { stroke: A("danger-subtle"), text: ON("danger-medium") },
       hover: { stroke: A("danger-very-strong") },
       pressed: { bg: A("danger-very-subtle"), stroke: A("danger-very-strong") },
       actived: { bg: S("danger-medium"), stroke: "transparent", text: ON("danger-very-subtle") },
@@ -167,7 +165,7 @@ const cta = {
       enabled: { text: ON("danger-medium") },
       hover: { bg: A("danger-very-subtle") },
       pressed: { bg: A("danger-subtle") },
-      actived: { bg: A("danger-very-subtle"), stroke: ST("secondary-medium") },
+      actived: { bg: A("danger-very-subtle"), stroke: ST("danger-medium") },
       disabled: { text: ON("neutral-subtle") },
     },
     success: {
@@ -183,7 +181,6 @@ const cta = {
 /**
  * ButtonIcon — its own palette (it is NOT the ButtonCTA palette: Pressed/Focused fills, icon colours and the
  * Disabled fills differ). `focus` = fill while Focused (the ring itself is shared).
- * Cells marked `prov` could not be confirmed one by one in Figma and are listed as provisional in FIGMA-SYNC.md.
  */
 const icon = {
   solid: {
@@ -310,7 +307,7 @@ const icon = {
       hover: { bg: A("inverse-very-subtle") },
       pressed: { bg: A("inverse-subtle") },
       actived: { bg: A("inverse-very-subtle"), stroke: ST("neutral-strong") },
-      disabled: { bg: S("neutral-subtle"), text: ON("neutral-subtle") },
+      disabled: { text: ON("neutral-subtle") },
     },
     inverse: {
       enabled: { text: ON("neutral-very-subtle") },

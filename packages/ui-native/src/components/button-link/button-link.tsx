@@ -8,7 +8,7 @@ import {
   buttonLinkLabel,
   buttonLinkTone,
   type ButtonLinkSize,
-  type ButtonLinkVariation,
+  type ButtonLinkVariant,
 } from "./styles";
 
 export * from "./styles";
@@ -22,7 +22,7 @@ export interface ButtonLinkProps extends Omit<
   "children" | "className" | "disabled"
 > {
   size?: ButtonLinkSize;
-  variation?: ButtonLinkVariation;
+  variant?: ButtonLinkVariant;
   /** Figma: Outline=On. */
   outline?: boolean;
   leadingIcon?: IconName;
@@ -34,7 +34,7 @@ export interface ButtonLinkProps extends Omit<
 
 export function ButtonLink({
   size = "md",
-  variation = "primary",
+  variant = "primary",
   outline = false,
   leadingIcon,
   trailingIcon,
@@ -43,7 +43,7 @@ export function ButtonLink({
   children,
   ...rest
 }: ButtonLinkProps) {
-  const tone = buttonLinkTone(variation, disabled);
+  const tone = buttonLinkTone(variant, disabled);
   const label = buttonLinkLabel({ size, tone });
   const iconColor = label.split(" ").find((c) => c.startsWith("text-surface")) ?? "";
   const px = BUTTON_LINK_ICON_PX[size];
@@ -52,7 +52,7 @@ export function ButtonLink({
       accessibilityRole="link"
       accessibilityState={{ disabled }}
       disabled={disabled}
-      className={cn(buttonLinkContainer({ variation, outline, disabled }), className)}
+      className={cn(buttonLinkContainer({ variant, outline, disabled }), className)}
       {...rest}
     >
       {leadingIcon && <Icon name={leadingIcon} size={px} className={iconColor} />}

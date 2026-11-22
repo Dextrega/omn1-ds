@@ -22,8 +22,9 @@ import { ButtonIcon } from "../button-icon/button-icon";
  * Figma strokes are OUTSIDE, so they are drawn as a `ring`.
  * State mapping:  Selection → `selected` (aria-pressed on the inner button)  ·  Hovered → hover  ·  Pressed → active
  *                 Actived → keyboard focus (`:focus-visible` inside the chip)  ·  Disabled → `disabled`
- * Provisional: the close ButtonIcon is always Ghost/Inverse (Figma swaps to Ghost/Primary in Actived, which cannot be
- * expressed from the sibling's focus). ChipsSelect (a separate Figma component, 2411:11516) is not implemented.
+ * Selected: Actived keeps the Primary/Medium fill with a 1px Stroke/Primary/Strong ring; Outlined Pressed is
+ * Primary/Strong with a 2px Opacity/Primary/Medium ring. The close ButtonIcon is Ghost/Inverse in every state.
+ * ChipsSelect (2411:11516) is a separate component built on this one.
  */
 export const chipVariants = cva(
   [
@@ -60,14 +61,14 @@ export const chipVariants = cva(
         selected: true,
         disabled: false,
         class:
-          "bg-surface-primary-medium text-surface-on-primary-very-subtle hover:bg-surface-primary-strong active:bg-surface-primary-very-strong has-[:focus-visible]:bg-surface-primary-subtle has-[:focus-visible]:text-surface-on-primary-strong has-[:focus-visible]:ring-very-subtle has-[:focus-visible]:ring-stroke-primary-medium",
+          "bg-surface-primary-medium text-surface-on-primary-very-subtle hover:bg-surface-primary-strong active:bg-surface-primary-very-strong has-[:focus-visible]:ring-very-subtle has-[:focus-visible]:ring-stroke-primary-strong",
       },
       {
         appearance: "outlined",
         selected: true,
         disabled: false,
         class:
-          "bg-surface-primary-medium text-surface-on-primary-very-subtle hover:bg-surface-primary-strong active:bg-surface-primary-very-strong active:ring-subtle active:ring-alpha-primary-medium has-[:focus-visible]:bg-surface-primary-subtle has-[:focus-visible]:text-surface-on-primary-strong has-[:focus-visible]:ring-very-subtle has-[:focus-visible]:ring-stroke-primary-medium",
+          "bg-surface-primary-medium text-surface-on-primary-very-subtle hover:bg-surface-primary-strong active:bg-surface-primary-strong active:ring-subtle active:ring-alpha-primary-medium has-[:focus-visible]:ring-very-subtle has-[:focus-visible]:ring-stroke-primary-strong",
       },
       {
         disabled: true,
@@ -194,7 +195,7 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
         <ButtonIcon
           size={s === "sm" ? "xs" : "sm"}
           appearance="ghost"
-          variation="inverse"
+          variant="inverse"
           icon="circle-x"
           aria-label={closeLabel}
           disabled={disabled}

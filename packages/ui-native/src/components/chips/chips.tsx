@@ -22,7 +22,7 @@ export * from "./styles";
  * Same props and the same Figma → token mapping as @omn1/ui-web (see its doc comment for what was verified).
  *
  * Native differences: no Hovered / Actived (touch); Pressed → `active:`; Selection → `accessibilityState.selected`.
- * Provisional: the close ButtonIcon is always Ghost/Inverse (as on web). ChipsSelect is not implemented.
+ * Provisional: the close ButtonIcon is always Ghost/Inverse (as on web). ChipsSelect is built on this chip.
  */
 export interface ChipProps extends Omit<
   PressableProps,
@@ -112,7 +112,7 @@ export function Chip({
         <ButtonIcon
           size={size === "sm" ? "xs" : "sm"}
           appearance="ghost"
-          variation="inverse"
+          variant="inverse"
           icon="circle-x"
           accessibilityLabel={closeLabel}
           disabled={disabled}

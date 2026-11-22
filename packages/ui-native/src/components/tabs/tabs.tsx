@@ -2,7 +2,7 @@ import { Icon, type IconName } from "@omn1/icons/native";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { Pressable, Text, View, type PressableProps, type ViewProps } from "react-native";
 import { cn } from "../../lib/cn";
-import { Spinner } from "../../lib/spinner";
+import { Spinner } from "../spinner";
 import { Badge } from "../badge/badge";
 import {
   TABS_ICON_PX,
@@ -120,7 +120,7 @@ export function TabsBase({
       className={cn(tabsBaseContainer({ appearance: list.appearance, disabled }), className)}
       {...rest}
     >
-      {loading && <Spinner size={TABS_ICON_PX} className="text-surface-on-neutral-very-strong" />}
+      {loading && <Spinner variant={disabled ? "neutral" : "black"} size={TABS_ICON_PX} />}
       {leadingIcon && <Icon name={leadingIcon} size={TABS_ICON_PX} className={iconColor} />}
       {typeof children === "string" || typeof children === "number" ? (
         <Text className={label}>{children}</Text>

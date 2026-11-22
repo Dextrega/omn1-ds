@@ -35,36 +35,36 @@ export const buttonLinkVariants = cva(
         sm: "text-caption",
         md: "text-body-sm",
       },
-      variation: { neutral: "", primary: "" },
+      variant: { neutral: "", primary: "" },
       outline: { true: "", false: "" },
     },
     compoundVariants: [
       {
-        variation: "neutral",
+        variant: "neutral",
         outline: true,
         class:
           "text-surface-on-neutral-very-strong ring-very-subtle ring-stroke-neutral-strong hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle",
       },
       {
-        variation: "neutral",
+        variant: "neutral",
         outline: false,
         class:
           "text-surface-on-neutral-very-strong hover:ring-very-subtle hover:ring-stroke-neutral-strong active:bg-alpha-inverse-subtle active:ring-very-subtle active:ring-stroke-neutral-strong",
       },
       {
-        variation: "primary",
+        variant: "primary",
         outline: true,
         class:
           "text-surface-on-primary-medium ring-very-subtle ring-stroke-primary-medium hover:bg-alpha-primary-very-subtle active:bg-alpha-primary-subtle",
       },
       {
-        variation: "primary",
+        variant: "primary",
         outline: false,
         class:
           "text-surface-on-primary-medium hover:ring-very-subtle hover:ring-stroke-primary-medium active:bg-alpha-primary-subtle active:ring-very-subtle active:ring-stroke-primary-medium",
       },
     ],
-    defaultVariants: { size: "md", variation: "primary", outline: false },
+    defaultVariants: { size: "md", variant: "primary", outline: false },
   },
 );
 
@@ -98,7 +98,7 @@ export const ButtonLink = forwardRef<HTMLButtonElement | HTMLAnchorElement, Butt
   function ButtonLink(props, ref) {
     const {
       size,
-      variation,
+      variant,
       outline: outlineProp,
       leadingIcon,
       trailingIcon,
@@ -108,7 +108,7 @@ export const ButtonLink = forwardRef<HTMLButtonElement | HTMLAnchorElement, Butt
     } = props;
     const iconPx = ICON_PX[size ?? "md"];
     const outline = outlineProp ?? false;
-    const classes = cn(buttonLinkVariants({ size, variation, outline }), className);
+    const classes = cn(buttonLinkVariants({ size, variant, outline }), className);
     const content = (
       <>
         {leadingIcon && <Icon name={leadingIcon} size={iconPx} />}

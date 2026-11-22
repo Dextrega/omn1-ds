@@ -2,15 +2,17 @@ import { Icon, type IconName } from "@omn1/icons/native";
 import type { ReactNode } from "react";
 import { Pressable, Text, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
-import { Spinner } from "../../lib/spinner";
+import { Spinner } from "../spinner";
 import {
   BUTTON_CTA_ICON_PX,
+  BUTTON_SPINNER_PX,
+  buttonCtaLoading,
   buttonCtaContainer,
   buttonCtaLabel,
   buttonToneColor,
   type ButtonAppearance,
   type ButtonSize,
-  type ButtonVariation,
+  type ButtonVariant,
 } from "./styles";
 
 export * from "./styles";
@@ -19,14 +21,14 @@ export * from "./styles";
  * Figma: ButtonCTA (6:9388). Same tokens and classes as @omn1/ui-web (colour matrix generated from Figma).
  * On native, Pressed → `active:`; there is no hover/focus ring and no Actived (aria-pressed) state yet.
  * React Native does not inherit text colour, so colour classes live in two maps: container and label.
- * Provisional: the label colour does not change on press (Figma changes it on Solid/Neutral); Loading spinner colour.
+ * Provisional: the label colour does not change on press (Figma changes it on Solid/Neutral); Loading overlay per Figma.
  */
 export interface ButtonCTAProps extends Omit<
   PressableProps,
   "children" | "className" | "disabled"
 > {
   size?: ButtonSize;
-  variation?: ButtonVariation;
+  variant?: ButtonVariant;
   appearance?: ButtonAppearance;
   leadingIcon?: IconName;
   trailingIcon?: IconName;
@@ -38,7 +40,7 @@ export interface ButtonCTAProps extends Omit<
 
 export function ButtonCTA({
   size = "md",
-  variation = "primary",
+  variant = "primary",
   appearance = "solid",
   leadingIcon,
   trailingIcon,
@@ -49,7 +51,7 @@ export function ButtonCTA({
   onPress,
   ...rest
 }: ButtonCTAProps) {
-  const color = buttonToneColor(variation, appearance, disabled);
+  const color = buttonToneColor(variant, appearance, disabled);
   const px = BUTTON_CTA_ICON_PX[size];
   return (
     <Pressable
@@ -58,8 +60,8 @@ export function ButtonCTA({
       disabled={disabled}
       onPress={loading ? undefined : onPress}
       className={cn(
-        buttonCtaContainer({ size, variation, appearance, disabled }),
-        loading && "bg-surface-neutral-subtle border-0",
+        buttonCtaContainer({ size, variant, appearance, disabled }),
+        loading && buttonCtaLoading(variant),
         className,
       )}
       {...rest}
@@ -80,7 +82,7 @@ export function ButtonCTA({
       </View>
       {loading && (
         <View className="absolute">
-          <Spinner size={px} className="text-surface-on-neutral-medium" />
+          <Spinner variant="neutral" size={BUTTON_SPINNER_PX[size]} />
         </View>
       )}
     </Pressable>

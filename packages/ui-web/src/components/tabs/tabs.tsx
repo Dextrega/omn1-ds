@@ -141,7 +141,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
         {scrollButtons && (
           <ButtonIcon
             size="sm"
-            variation="neutral"
+            variant="neutral"
             appearance="ghost"
             icon="chevron-left"
             aria-label="Previous"
@@ -170,7 +170,7 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
         {scrollButtons && (
           <ButtonIcon
             size="sm"
-            variation="neutral"
+            variant="neutral"
             appearance="ghost"
             icon="chevron-right"
             aria-label="Next"

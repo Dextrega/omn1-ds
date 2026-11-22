@@ -15,7 +15,7 @@ export const ctaContainer = {
   "outlined-success":
     "border border-very-subtle border-alpha-success-subtle active:bg-alpha-success-very-subtle active:border-alpha-success-very-strong",
   "outlined-danger":
-    "border border-very-subtle border-alpha-secondary-subtle active:bg-alpha-danger-very-subtle active:border-alpha-danger-very-strong",
+    "border border-very-subtle border-alpha-danger-subtle active:bg-alpha-danger-very-subtle active:border-alpha-danger-very-strong",
   "outlined-inverse":
     "border border-very-subtle border-alpha-neutral-subtle active:bg-alpha-neutral-very-subtle active:border-alpha-neutral-very-strong",
   "ghost-neutral": "active:bg-alpha-inverse-subtle",
@@ -117,7 +117,7 @@ export const iconContainerDisabled = {
   "outlined-danger":
     "bg-surface-neutral-subtle border border-very-subtle border-stroke-neutral-subtle",
   "outlined-inverse": "border border-very-subtle border-alpha-neutral-medium",
-  "ghost-neutral": "bg-surface-neutral-subtle",
+  "ghost-neutral": "",
   "ghost-primary": "",
   "ghost-success": "bg-surface-neutral-subtle",
   "ghost-danger": "bg-surface-neutral-subtle",

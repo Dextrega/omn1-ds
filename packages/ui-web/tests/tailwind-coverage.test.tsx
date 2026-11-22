@@ -26,7 +26,7 @@ import {
  * (typo / renamed Figma variable) and a class built by string concatenation that Tailwind can't see.
  */
 const sizes = ["xs", "sm", "md", "lg"] as const;
-const variations = ["neutral", "primary", "success", "danger", "inverse"] as const;
+const variants = ["neutral", "primary", "success", "danger", "inverse"] as const;
 const appearances = ["solid", "outlined", "ghost"] as const;
 const badgeVariants = [
   "neutral",
@@ -43,24 +43,24 @@ function renderEverything() {
   return render(
     <div>
       {sizes.flatMap((size) =>
-        variations.flatMap((variation) =>
+        variants.flatMap((variant) =>
           appearances.map((appearance) => (
-            <div key={`${size}${variation}${appearance}`}>
+            <div key={`${size}${variant}${appearance}`}>
               <ButtonCTA
                 size={size}
-                variation={variation}
+                variant={variant}
                 appearance={appearance}
                 leadingIcon="plus"
                 trailingIcon="arrow-right"
               >
                 Button
               </ButtonCTA>
-              <ButtonCTA size={size} variation={variation} appearance={appearance} loading disabled>
+              <ButtonCTA size={size} variant={variant} appearance={appearance} loading disabled>
                 Loading
               </ButtonCTA>
               <ButtonIcon
                 size={size}
-                variation={variation}
+                variant={variant}
                 appearance={appearance}
                 icon="heart"
                 aria-label="Like"
@@ -88,8 +88,8 @@ function renderEverything() {
       <Badge size="lg">Large</Badge>
       <TextInput
         label="Full"
-        hint="optional"
-        helper="Helper"
+        hint="Helper"
+        bankFlag={<span>VISA</span>}
         counter
         maxLength={20}
         prefix="R$"
@@ -109,12 +109,12 @@ function renderEverything() {
       <Checkbox label="Three" indeterminate invalid />
       <Checkbox label="Four" disabled defaultChecked />
       {(["sm", "md"] as const).flatMap((size) =>
-        (["neutral", "primary"] as const).flatMap((variation) =>
+        (["neutral", "primary"] as const).flatMap((variant) =>
           [true, false].map((outline) => (
             <ButtonLink
-              key={`${size}${variation}${outline}`}
+              key={`${size}${variant}${outline}`}
               size={size}
-              variation={variation}
+              variant={variant}
               outline={outline}
               leadingIcon="plus"
               trailingIcon="arrow-right"

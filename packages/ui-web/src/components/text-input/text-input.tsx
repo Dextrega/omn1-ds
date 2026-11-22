@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { cn } from "../../lib/cn";
+import { Spinner } from "../spinner";
 
 /**
  * Figma: TextInput (component set 6:9944) — Appearance Full (312×88) / Compact (312×48) × State
@@ -22,9 +23,11 @@ import { cn } from "../../lib/cn";
  *                 Required → `required` while empty  ·  Error → `error`  ·  Loading → `loading`
  *                 AutoCompleted → `autoCompleted` (browsers cannot report autofill to CSS)  ·  Disabled → `disabled`
  *
- * Provisional: Active's 4px CENTER stroke is drawn with an offset outline (Tailwind has no centre alignment; the
- * 1px CENTER strokes of Filled / Required / Error / AutoCompleted are drawn fully inside, 0.5px off);
- * the Loading spinner colour; BankFlag (Brand Payment) is not implemented.
+ * Active: Stroke/Primary/Medium 4px OUTSIDE → a `ring` (box-shadow), so it never changes spacing or anatomy.
+ * Loading: `Spinner` Neutral, 24px. Helper is the container of Hint, Counter and ButtonLink (`helper`, default on in Full).
+ * BankFlag is a 40×24 slot between the text and the Suffix; pass your own brand logo (no payment-brand artwork ships).
+ * Provisional: the 1px CENTER strokes of Filled / Required / Error / AutoCompleted are drawn fully inside, 0.5px off
+ * (Tailwind has no centre alignment).
  */
 export interface TextInputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -34,10 +37,13 @@ export interface TextInputProps extends Omit<
   appearance?: "full" | "compact";
   /** Figma: Label. In Compact it is used as the placeholder (as in Figma) and read by screen readers. */
   label?: string;
-  /** Figma: Hint — the text under the field. */
+  /**
+   * Figma: Helper (boolean, default true in Full) — the container under the field that holds Hint, Counter and
+   * ButtonLink. Set `false` to drop it (the Figma component then shrinks by the row).
+   */
+  helper?: boolean;
+  /** Figma: Hint — the text inside the Helper. */
   hint?: string;
-  /** @deprecated Use `hint` (same Figma node). */
-  helper?: string;
   /** Error message shown as the Hint. Presence switches the field to State=Error. */
   error?: string;
   /** Figma: Counter — shows `n/maxLength` (requires `maxLength`). */
@@ -52,8 +58,10 @@ export interface TextInputProps extends Omit<
   trailingIcon?: IconName;
   /** Figma: Button — a trailing ButtonIcon (SM, Neutral, Ghost), e.g. clear / toggle password. */
   button?: ReactNode;
-  /** Figma: ButtonLink — a link in the helper row (Full only). */
+  /** Figma: ButtonLink — a link inside the Helper (Full only). */
   link?: ReactNode;
+  /** Figma: BankFlag (Brand Payment, 40×24) — a card / bank brand mark between the text and the Suffix. */
+  bankFlag?: ReactNode;
   /** Figma: State=Loading. */
   loading?: boolean;
   /** Figma: State=AutoCompleted. */
@@ -67,11 +75,11 @@ const field = {
   base: "flex h-x6 items-center gap-very-subtle rounded-very-subtle px-subtle font-sans text-body-sm font-medium transition-colors duration-100 ease-out",
   // Enabled → Hovered / Pressed / Active (focus-within)
   enabled:
-    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-medium focus-within:bg-alpha-inverse-very-subtle focus-within:outline focus-within:outline-medium focus-within:-outline-offset-2 focus-within:outline-stroke-primary-medium",
+    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-medium focus-within:bg-alpha-inverse-very-subtle focus-within:ring-medium focus-within:ring-stroke-primary-medium",
   filled:
-    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong focus-within:outline-medium focus-within:-outline-offset-2 focus-within:outline-stroke-primary-medium",
+    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong focus-within:outline-transparent focus-within:ring-medium focus-within:ring-stroke-primary-medium",
   required:
-    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-danger-medium hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-medium focus-within:outline-medium focus-within:-outline-offset-2 focus-within:outline-stroke-primary-medium",
+    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-danger-medium hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-medium focus-within:outline-transparent focus-within:ring-medium focus-within:ring-stroke-primary-medium",
   error:
     "bg-surface-danger-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-danger-medium",
   autoCompleted:
@@ -84,8 +92,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
   {
     appearance = "full",
     label,
+    helper = true,
     hint,
-    helper,
     error,
     counter,
     prefix,
@@ -94,6 +102,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
     trailingIcon,
     button,
     link,
+    bankFlag,
     loading = false,
     autoCompleted = false,
     required,
@@ -117,7 +126,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
   const invalid = Boolean(error);
   const [length, setLength] = useState(String(value ?? defaultValue ?? "").length);
   const currentLength = value !== undefined ? String(value).length : length;
-  const message = error ?? hint ?? helper;
+  const message = error ?? hint;
   const showFull = appearance === "full";
   const empty = currentLength === 0;
 
@@ -178,22 +187,25 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
           )}
           {...rest}
         />
+        {bankFlag && (
+          <span
+            data-slot="bank-flag"
+            className="flex h-x3 w-x5 shrink-0 items-center justify-center overflow-hidden"
+          >
+            {bankFlag}
+          </span>
+        )}
         {suffix && <span className={cn("shrink-0 text-caption", mutedAlt)}>{suffix}</span>}
         {loading ? (
-          <Icon
-            name="loader"
-            size={24}
-            className="shrink-0 animate-spin text-surface-on-neutral-medium"
-            aria-label="Loading"
-          />
+          <Spinner variant="neutral" size={24} className="shrink-0" />
         ) : (
           trailingIcon && <Icon name={trailingIcon} size={16} className={cn("shrink-0", muted)} />
         )}
         {button}
       </div>
 
-      {showFull && (
-        <div className="flex min-h-x2 items-center gap-very-subtle text-caption">
+      {showFull && helper && (
+        <div data-slot="helper" className="flex min-h-x2 items-center gap-very-subtle text-caption">
           <p
             id={hintId}
             role={invalid ? "alert" : undefined}

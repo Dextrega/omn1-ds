@@ -135,12 +135,12 @@ describe("Badge", () => {
 
 describe("TextInput", () => {
   it("associates label, helper and input", () => {
-    render(<TextInput label="Email" helper="We never share it" />);
+    render(<TextInput label="Email" hint="We never share it" />);
     const input = screen.getByLabelText("Email");
     expect(input).toHaveAccessibleDescription("We never share it");
   });
   it("shows an error as an alert and marks the input invalid", () => {
-    render(<TextInput label="Email" error="Invalid email" helper="ignored" />);
+    render(<TextInput label="Email" error="Invalid email" hint="ignored" />);
     expect(screen.getByRole("alert")).toHaveTextContent("Invalid email");
     expect(screen.getByLabelText("Email")).toBeInvalid();
   });
@@ -151,7 +151,7 @@ describe("TextInput", () => {
     expect(screen.getByText("3/10")).toBeInTheDocument();
   });
   it("compact keeps the label for assistive tech only", () => {
-    render(<TextInput label="Search" appearance="compact" helper="hidden helper" />);
+    render(<TextInput label="Search" appearance="compact" hint="hidden helper" />);
     expect(screen.getByLabelText("Search")).toBeInTheDocument();
     expect(screen.queryByText("hidden helper")).not.toBeInTheDocument();
   });

@@ -13,6 +13,7 @@ export * from "./components/radiobutton";
 export * from "./components/toggle";
 export * from "./components/chips";
 export * from "./components/tabs";
+export * from "./components/spinner";
 
 // Re-exported so apps need only one import for the common brand / icon APIs.
 export { Icon, IconProvider, iconNames } from "@omn1/icons";

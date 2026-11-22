@@ -5,10 +5,10 @@ const meta = {
   title: "Components/ButtonCTA",
   component: ButtonCTA,
   tags: ["autodocs"],
-  args: { children: "Button", size: "md", variation: "primary", appearance: "solid" },
+  args: { children: "Button", size: "md", variant: "primary", appearance: "solid" },
   argTypes: {
     size: { control: "inline-radio", options: ["xs", "sm", "md", "lg"] },
-    variation: {
+    variant: {
       control: "select",
       options: ["neutral", "primary", "success", "danger", "inverse"],
     },
@@ -34,7 +34,7 @@ export const Loading: Story = { args: { loading: true } };
 export const Disabled: Story = { args: { disabled: true } };
 
 const sizes = ["xs", "sm", "md", "lg"] as const;
-const variations = ["neutral", "primary", "success", "danger", "inverse"] as const;
+const variants = ["neutral", "primary", "success", "danger", "inverse"] as const;
 const appearances = ["solid", "outlined", "ghost"] as const;
 
 export const Matrix: Story = {
@@ -49,17 +49,17 @@ export const Matrix: Story = {
             style={{ gridTemplateColumns: "repeat(5, max-content)" }}
           >
             {sizes.flatMap((size) =>
-              variations.map((variation) => (
+              variants.map((variant) => (
                 <div
-                  key={`${size}${variation}`}
+                  key={`${size}${variant}`}
                   className={
-                    variation === "inverse"
+                    variant === "inverse"
                       ? "rounded-subtle bg-surface-neutral-very-strong p-very-subtle"
                       : "p-very-subtle"
                   }
                 >
-                  <ButtonCTA {...args} size={size} variation={variation} appearance={appearance}>
-                    {variation}
+                  <ButtonCTA {...args} size={size} variant={variant} appearance={appearance}>
+                    {variant}
                   </ButtonCTA>
                 </div>
               )),

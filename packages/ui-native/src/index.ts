@@ -11,6 +11,7 @@ export * from "./components/radiobutton";
 export * from "./components/toggle";
 export * from "./components/chips";
 export * from "./components/tabs";
+export * from "./components/spinner";
 
 export { Icon, IconProvider, iconNames } from "@omn1/icons/native";
 export type { IconName, IconRegistry } from "@omn1/icons/native";
