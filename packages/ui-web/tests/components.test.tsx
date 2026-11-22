@@ -8,6 +8,10 @@ import {
   ButtonLink,
   Checkbox,
   Chip,
+  ChipsSelect,
+  ButtonList,
+  ItemSelect,
+  PasswordInput,
   RadioGroup,
   Radiobutton,
   Tabs,
@@ -334,5 +338,61 @@ describe("cn (tailwind-merge on Tailwind 3)", () => {
       "outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong",
     );
     expect(cn("outline", "outline-none")).toBe("outline-none");
+  });
+});
+
+describe("PasswordInput", () => {
+  it("toggles visibility and reports the met requirements", async () => {
+    const user = userEvent.setup();
+    render(<PasswordInput label="Password" requirements />);
+    const input = screen.getByLabelText("Password");
+    expect(input).toHaveAttribute("type", "password");
+    await user.click(screen.getByRole("button", { name: "Show password" }));
+    expect(input).toHaveAttribute("type", "text");
+    await user.type(input, "Abcdef1!");
+    const list = screen.getByRole("list", { name: "Password requirements" });
+    expect(list.querySelectorAll("[data-met]")).toHaveLength(4);
+  });
+});
+
+describe("ChipsSelect / ButtonList", () => {
+  it("opens a PopOver, closes on Escape and on outside click", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <ChipsSelect label="Sort">
+          <ItemSelect>Newest</ItemSelect>
+        </ChipsSelect>
+        <button>outside</button>
+      </>,
+    );
+    const trigger = screen.getByRole("button", { name: "Sort" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await user.click(trigger);
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu")).toBeNull();
+    await user.click(trigger);
+    await user.click(screen.getByRole("button", { name: "outside" }));
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("ButtonList toggles its menu", async () => {
+    const user = userEvent.setup();
+    render(
+      <ButtonList aria-label="More">
+        <ItemSelect>Rename</ItemSelect>
+      </ButtonList>,
+    );
+    await user.click(screen.getByRole("button", { name: "More" }));
+    expect(screen.getByRole("menuitemradio", { name: "Rename" })).toBeInTheDocument();
+  });
+});
+
+describe("TextInput Helper", () => {
+  it("drops the helper container when helper={false}", () => {
+    const { container } = render(<TextInput label="Email" hint="Hint" helper={false} />);
+    expect(container.querySelector('[data-slot="helper"]')).toBeNull();
   });
 });

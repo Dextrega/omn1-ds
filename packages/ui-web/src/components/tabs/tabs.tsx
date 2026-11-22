@@ -16,6 +16,9 @@ import {
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
 import { ButtonIcon } from "../button-icon/button-icon";
+import { ButtonList } from "../button-list";
+import type { PopOverAlign } from "../popover";
+import { Spinner } from "../spinner";
 
 /**
  * Figma: Tabs (235:1156) with its child `_TabsBase` (228:209) — exported as `Tabs` / `TabsList` / `TabsBase` / `TabsPanel`.
@@ -32,9 +35,12 @@ import { ButtonIcon } from "../button-icon/button-icon";
  *                              Selected → `aria-selected`  Disabled → `disabled`
  * Keyboard: roving tabindex, ←/→, Home/End; Disabled tabs are skipped.
  *
- * Not implemented (listed in docs/FIGMA-SYNC.md): the `ButtonList` and `ButtonIcon` slots of `_TabsBase` (a button
- * nested in a tab button is invalid HTML — needs a decision). Provisional: ButtonPrevious / ButtonNext (`scrollButtons`)
- * scroll the list by 120px; vertical orientation was removed (not in Figma).
+ * Slots: `loading` (Loader = Spinner Black, Neutral when Disabled), `buttonIcon` (ButtonIcon SM · Neutral · Ghost) and
+ * `buttonList` (`_ButtonList` SM with its PopOver). A button nested in the tab button would be invalid HTML, so the
+ * visual tab is a wrapper `<div>` that carries the states (hover / active / `data-selected` / focus of the inner
+ * `role="tab"` button) and the slots are siblings of that button.
+ * Provisional: ButtonPrevious / ButtonNext (`scrollButtons`) scroll the list by 120px; the list only scrolls (and
+ * therefore clips a PopOver) when `scrollButtons` is on.
  */
 interface TabsContext {
   baseId: string;
@@ -159,7 +165,8 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
           aria-orientation="horizontal"
           onKeyDown={handleKeyDown}
           className={cn(
-            "flex flex-row overflow-x-auto",
+            "flex flex-row",
+            scrollButtons && "overflow-x-auto",
             appearance === "flex" ? "min-w-0 flex-1" : "",
             className,
           )}
@@ -183,21 +190,21 @@ export const TabsList = forwardRef<HTMLDivElement, TabsListProps>(function TabsL
   );
 });
 
-/** Figma: _TabsBase. */
+/** Figma: _TabsBase — the visual tab (a wrapper; the focusable `role="tab"` button is inside it). */
 export const tabsBaseVariants = cva(
   [
     "relative inline-flex h-x6 shrink-0 select-none items-center justify-center gap-very-subtle whitespace-nowrap px-very-subtle",
     "font-sans text-body-md font-medium",
     "transition-colors duration-100 ease-out motion-reduce:transition-none",
-    "focus-visible:outline-none focus-visible:ring-medium focus-visible:ring-stroke-secondary-medium",
+    "has-[[role=tab]:focus-visible]:ring-medium has-[[role=tab]:focus-visible]:ring-stroke-secondary-medium",
     // Selection=Off — Enabled / Hovered / Pressed
     "text-alpha-inverse-strong hover:text-surface-on-neutral-very-strong active:bg-alpha-inverse-very-subtle active:text-surface-on-neutral-very-strong",
     // Selection=On
-    "aria-selected:text-surface-on-neutral-very-strong aria-selected:hover:bg-alpha-inverse-very-subtle aria-selected:active:bg-alpha-inverse-subtle aria-selected:focus-visible:text-surface-on-neutral-strong",
+    "data-[selected=true]:text-surface-on-neutral-very-strong data-[selected=true]:hover:bg-alpha-inverse-very-subtle data-[selected=true]:active:bg-alpha-inverse-subtle data-[selected=true]:has-[[role=tab]:focus-visible]:text-surface-on-neutral-strong",
     // indicator: the OUTSIDE stroke (Stroke/Subtle, Stroke/Neutral/Strong) on one edge only
-    "after:pointer-events-none after:absolute after:inset-x-0 after:h-x0-25 aria-selected:after:bg-stroke-neutral-strong",
+    "after:pointer-events-none after:absolute after:inset-x-0 after:h-x0-25 data-[selected=true]:after:bg-stroke-neutral-strong",
     // State=Disabled
-    "disabled:pointer-events-none disabled:bg-transparent disabled:text-alpha-inverse-medium disabled:aria-selected:text-alpha-inverse-medium disabled:aria-selected:after:bg-alpha-inverse-medium",
+    "data-[disabled=true]:pointer-events-none data-[disabled=true]:bg-transparent data-[disabled=true]:text-alpha-inverse-medium data-[disabled=true]:data-[selected=true]:text-alpha-inverse-medium data-[disabled=true]:data-[selected=true]:after:bg-alpha-inverse-medium",
   ],
   {
     variants: {
@@ -225,6 +232,17 @@ export interface TabsBaseProps extends Omit<
   badge?: ReactNode;
   /** Figma: Loader (boolean). */
   loading?: boolean;
+  /** Figma: ButtonIcon (boolean + swap) — a ButtonIcon (SM · Neutral · Ghost) after the tab, e.g. `x` to close it. */
+  buttonIcon?: IconName;
+  /** Accessible name of the ButtonIcon (required when `buttonIcon` is set). */
+  buttonIconLabel?: string;
+  onButtonIconClick?: () => void;
+  /** Figma: ButtonList (boolean) — a `_ButtonList` (SM) whose PopOver holds these `ItemSelect` items. */
+  buttonList?: ReactNode;
+  buttonListLabel?: string;
+  buttonListAlign?: PopOverAlign;
+  /** Class for the visual tab (the rest of the props go to the inner `role="tab"` button). */
+  className?: string;
   /** Figma: Text (string, "Tab"). */
   children?: ReactNode;
 }
@@ -239,6 +257,12 @@ export const TabsBase = forwardRef<HTMLButtonElement, TabsBaseProps>(function Ta
     trailingIcon,
     badge,
     loading = false,
+    buttonIcon,
+    buttonIconLabel = "Close",
+    onButtonIconClick,
+    buttonList,
+    buttonListLabel = "More actions",
+    buttonListAlign,
     disabled,
     className,
     children,
@@ -252,43 +276,64 @@ export const TabsBase = forwardRef<HTMLButtonElement, TabsBaseProps>(function Ta
   const list = useContext(ListCtx);
   const selected = ctx.value === value;
   return (
-    <button
-      ref={ref}
-      type={type}
-      role="tab"
-      disabled={disabled}
-      aria-busy={loading || undefined}
-      id={tabId(ctx.baseId, value)}
-      aria-selected={selected}
-      aria-controls={panelId(ctx.baseId, value)}
-      tabIndex={selected ? 0 : -1}
-      onClick={(e) => {
-        onClick?.(e);
-        if (!e.defaultPrevented) ctx.select(value);
-      }}
+    <div
+      data-slot="tab"
+      data-selected={selected}
+      data-disabled={disabled || undefined}
       className={cn(
         tabsBaseVariants({ align: list.align, appearance: list.appearance }),
         className,
       )}
-      {...rest}
     >
-      {loading && (
-        <Icon
-          name="loader"
-          size={TAB_ICON_PX}
-          className="animate-spin text-surface-on-neutral-very-strong"
-          aria-label="Loading"
+      <button
+        ref={ref}
+        type={type}
+        role="tab"
+        disabled={disabled}
+        aria-busy={loading || undefined}
+        id={tabId(ctx.baseId, value)}
+        aria-selected={selected}
+        aria-controls={panelId(ctx.baseId, value)}
+        tabIndex={selected ? 0 : -1}
+        onClick={(e) => {
+          onClick?.(e);
+          if (!e.defaultPrevented) ctx.select(value);
+        }}
+        className="inline-flex h-full min-w-0 flex-1 items-center justify-center gap-very-subtle whitespace-nowrap focus-visible:outline-none disabled:cursor-not-allowed"
+        {...rest}
+      >
+        {loading && <Spinner variant={disabled ? "neutral" : "black"} size={TAB_ICON_PX} />}
+        {leadingIcon && <Icon name={leadingIcon} size={TAB_ICON_PX} />}
+        {children}
+        {badge !== undefined && badge !== null && (
+          <Badge size="md" variant={disabled ? "disabled" : "primary"} appearance="subtle">
+            {badge}
+          </Badge>
+        )}
+        {trailingIcon && <Icon name={trailingIcon} size={TAB_ICON_PX} />}
+      </button>
+      {buttonIcon && (
+        <ButtonIcon
+          size="sm"
+          variant="neutral"
+          appearance="ghost"
+          icon={buttonIcon}
+          aria-label={buttonIconLabel}
+          disabled={disabled}
+          onClick={onButtonIconClick}
         />
       )}
-      {leadingIcon && <Icon name={leadingIcon} size={TAB_ICON_PX} />}
-      {children}
-      {badge !== undefined && badge !== null && (
-        <Badge size="md" variant={disabled ? "disabled" : "primary"} appearance="subtle">
-          {badge}
-        </Badge>
+      {buttonList && (
+        <ButtonList
+          size="sm"
+          aria-label={buttonListLabel}
+          disabled={disabled}
+          align={buttonListAlign ?? (list.align === "top" ? "top-left" : "bottom-left")}
+        >
+          {buttonList}
+        </ButtonList>
       )}
-      {trailingIcon && <Icon name={trailingIcon} size={TAB_ICON_PX} />}
-    </button>
+    </div>
   );
 });
 

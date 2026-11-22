@@ -5,6 +5,13 @@ import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import { badgeContainer, badgeTone } from "../src/components/badge/styles";
+import {
+  itemSelect,
+  itemSelectLabel,
+  popOverPanel,
+  popOverSection,
+  popOverSlot,
+} from "../src/components/popover/styles";
 import { spinnerColor } from "../src/components/spinner/styles";
 import {
   buttonCtaContainer,
@@ -28,6 +35,7 @@ import { radioCircle, radioDot } from "../src/components/radiobutton/styles";
 import {
   tabsBaseContainer,
   tabsBaseLabel,
+  tabsBasePressable,
   tabsIndicator,
   tabsList,
 } from "../src/components/tabs/styles";
@@ -76,6 +84,11 @@ function allClasses(): string[] {
     add(buttonCtaLoading(v));
   }
   for (const cls of Object.values(spinnerColor)) add(cls);
+  for (const cls of [popOverPanel, popOverSlot, popOverSection]) add(cls);
+  for (const selected of [true, false]) add(itemSelect(selected));
+  for (const disabled of [true, false]) add(itemSelectLabel(disabled));
+  add(tabsBasePressable(true));
+  add(tabsBasePressable(false));
   // colour matrices (generated): container / label for ButtonCTA and ButtonIcon
   for (const table of Object.values(ctaMatrix)) for (const cls of Object.values(table)) add(cls);
   for (const size of ["sm", "md", "lg"] as const) {

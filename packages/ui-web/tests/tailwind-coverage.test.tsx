@@ -10,6 +10,11 @@ import {
   ButtonLink,
   Checkbox,
   Chip,
+  ChipsSelect,
+  ButtonList,
+  ItemSelect,
+  PasswordInput,
+  Spinner,
   RadioGroup,
   Radiobutton,
   Tabs,
@@ -167,6 +172,28 @@ function renderEverything() {
           )),
         ),
       )}
+      {(["neutral", "primary", "black", "white"] as const).map((variant) => (
+        <Spinner key={variant} variant={variant} size={20} />
+      ))}
+      <ButtonCTA loading variant="inverse">
+        Loading
+      </ButtonCTA>
+      <ButtonIcon loading variant="inverse" icon="plus" aria-label="Loading" />
+      <PasswordInput label="Password" requirements defaultValue="Abcdef1!" required hint="Hint" />
+      <PasswordInput label="Password" requirements disabled />
+      <PasswordInput label="Password" loading bankFlag={<span>V</span>} />
+      {(["bottom-left", "bottom-right", "top-left", "top-right"] as const).map((align) => (
+        <div key={align}>
+          <ChipsSelect label="Select" size="sm" align={align} defaultOpen>
+            <ItemSelect selected>One</ItemSelect>
+            <ItemSelect disabled>Two</ItemSelect>
+          </ChipsSelect>
+          <ButtonList aria-label="More" size="md" align={align} defaultOpen>
+            <ItemSelect>One</ItemSelect>
+          </ButtonList>
+        </div>
+      ))}
+      <ChipsSelect label="Closed" />
       {(["wrap", "flex"] as const).flatMap((appearance) =>
         (["bottom", "top"] as const).map((align) => (
           <Tabs key={`${appearance}${align}`} defaultValue="a">
@@ -177,8 +204,23 @@ function renderEverything() {
               <TabsBase value="b" trailingIcon="chevron-down" loading>
                 B
               </TabsBase>
-              <TabsBase value="c" disabled badge="1">
+              <TabsBase
+                value="c"
+                disabled
+                badge="1"
+                loading
+                buttonIcon="x"
+                buttonList={<ItemSelect>One</ItemSelect>}
+              >
                 C
+              </TabsBase>
+              <TabsBase
+                value="d"
+                buttonIcon="x"
+                buttonIconLabel="Close D"
+                buttonList={<ItemSelect>One</ItemSelect>}
+              >
+                D
               </TabsBase>
             </TabsList>
             <TabsPanel value="a">Panel A</TabsPanel>

@@ -4,10 +4,13 @@ import { Pressable, Text, View, type PressableProps, type ViewProps } from "reac
 import { cn } from "../../lib/cn";
 import { Spinner } from "../spinner";
 import { Badge } from "../badge/badge";
+import { ButtonIcon } from "../button-icon/button-icon";
+import { ButtonList } from "../button-list";
 import {
   TABS_ICON_PX,
   tabsBaseContainer,
   tabsBaseLabel,
+  tabsBasePressable,
   tabsIndicator,
   tabsList,
   type TabsAlign,
@@ -88,6 +91,13 @@ export interface TabsBaseProps extends Omit<
   badge?: ReactNode;
   /** Figma: Loader (boolean). */
   loading?: boolean;
+  /** Figma: ButtonIcon (boolean + swap) — a ButtonIcon (SM · Neutral · Ghost) after the tab. */
+  buttonIcon?: IconName;
+  buttonIconLabel?: string;
+  onButtonIconPress?: () => void;
+  /** Figma: ButtonList (boolean) — a `_ButtonList` (SM) whose PopOver holds these `ItemSelect` items. */
+  buttonList?: ReactNode;
+  buttonListLabel?: string;
   disabled?: boolean;
   className?: string;
   children?: ReactNode;
@@ -100,6 +110,11 @@ export function TabsBase({
   trailingIcon,
   badge,
   loading = false,
+  buttonIcon,
+  buttonIconLabel = "Close",
+  onButtonIconPress,
+  buttonList,
+  buttonListLabel = "More actions",
   disabled = false,
   className,
   children,
@@ -112,31 +127,54 @@ export function TabsBase({
   const iconColor =
     label.split(" ").find((c) => c.startsWith("text-surface") || c.startsWith("text-alpha")) ?? "";
   return (
-    <Pressable
-      accessibilityRole="tab"
-      accessibilityState={{ selected, disabled, busy: loading }}
-      disabled={disabled}
-      onPress={() => ctx.select(value)}
-      className={cn(tabsBaseContainer({ appearance: list.appearance, disabled }), className)}
-      {...rest}
-    >
-      {loading && <Spinner variant={disabled ? "neutral" : "black"} size={TABS_ICON_PX} />}
-      {leadingIcon && <Icon name={leadingIcon} size={TABS_ICON_PX} className={iconColor} />}
-      {typeof children === "string" || typeof children === "number" ? (
-        <Text className={label}>{children}</Text>
-      ) : (
-        children
+    <View className={cn(tabsBaseContainer({ appearance: list.appearance, disabled }), className)}>
+      <Pressable
+        accessibilityRole="tab"
+        accessibilityState={{ selected, disabled, busy: loading }}
+        disabled={disabled}
+        onPress={() => ctx.select(value)}
+        className={tabsBasePressable(disabled)}
+        {...rest}
+      >
+        {loading && <Spinner variant={disabled ? "neutral" : "black"} size={TABS_ICON_PX} />}
+        {leadingIcon && <Icon name={leadingIcon} size={TABS_ICON_PX} className={iconColor} />}
+        {typeof children === "string" || typeof children === "number" ? (
+          <Text className={label}>{children}</Text>
+        ) : (
+          children
+        )}
+        {badge !== undefined && badge !== null && (
+          <Badge size="md" variant={disabled ? "disabled" : "primary"} appearance="subtle">
+            {badge}
+          </Badge>
+        )}
+        {trailingIcon && <Icon name={trailingIcon} size={TABS_ICON_PX} className={iconColor} />}
+      </Pressable>
+      {buttonIcon && (
+        <ButtonIcon
+          size="sm"
+          variant="neutral"
+          appearance="ghost"
+          icon={buttonIcon}
+          accessibilityLabel={buttonIconLabel}
+          disabled={disabled}
+          onPress={onButtonIconPress}
+        />
       )}
-      {badge !== undefined && badge !== null && (
-        <Badge size="md" variant={disabled ? "disabled" : "primary"} appearance="subtle">
-          {badge}
-        </Badge>
+      {buttonList && (
+        <ButtonList
+          size="sm"
+          accessibilityLabel={buttonListLabel}
+          disabled={disabled}
+          align={list.align === "top" ? "top-left" : "bottom-left"}
+        >
+          {buttonList}
+        </ButtonList>
       )}
-      {trailingIcon && <Icon name={trailingIcon} size={TABS_ICON_PX} className={iconColor} />}
       {selected && (
         <View pointerEvents="none" className={tabsIndicator({ align: list.align, disabled })} />
       )}
-    </Pressable>
+    </View>
   );
 }
 

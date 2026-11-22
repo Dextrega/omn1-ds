@@ -24,6 +24,12 @@ export const tabsBaseContainer = ({
   cn(
     "relative h-x6 flex-row items-center justify-center gap-very-subtle px-very-subtle",
     appearance === "flex" && "min-w-0 flex-1",
+  );
+
+/** The pressable part of a tab (the slots are its siblings). Native: Pressed → `active:`. */
+export const tabsBasePressable = (disabled: boolean) =>
+  cn(
+    "h-full flex-row items-center justify-center gap-very-subtle",
     !disabled && "active:bg-alpha-inverse-very-subtle",
   );
 

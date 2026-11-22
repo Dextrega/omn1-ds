@@ -19,6 +19,7 @@ export const iconNames = [
   "copy",
   "download",
   "ellipsis",
+  "ellipsis-vertical",
   "eye",
   "eye-off",
   "heart",
