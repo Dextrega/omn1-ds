@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **Chips** (6:12377), 40 variants (Size × Appearance × State × Selection). A chip is a toggle button (`aria-pressed`); when selected it shows a close ButtonIcon. Verified against Figma, except the close button always being Ghost/Inverse. ChipsSelect is a separate component and is not implemented.",
+          "Figma: **Chips** (6:12377), 40 variants (Size × Appearance × State × Selection). A chip is a toggle button (`aria-pressed`); when selected it shows a close ButtonIcon. Verified against Figma, except the close button always being Ghost/Inverse.",
       },
     },
   },

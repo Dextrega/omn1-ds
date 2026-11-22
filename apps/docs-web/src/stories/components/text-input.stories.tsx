@@ -22,7 +22,7 @@ const meta: Meta<typeof TextInput> = {
     docs: {
       description: {
         component:
-          "Figma: **TextInput** (6:9944), 312 wide, 22 variants (Appearance × State). Fills, strokes and text colours per state are verified against Figma; Active’s 4px centred stroke is approximated with an offset outline. BankFlag is not implemented.",
+          "Figma: **TextInput** (6:9944), 312 wide, 22 variants (Appearance × State). Fills, strokes and text colours per state are verified against Figma; Active’s 4px OUTSIDE stroke is a ring, so it never changes the layout. Helper is the container of Hint, Counter and ButtonLink. BankFlag is a 40×24 slot (bring your own logo).",
       },
     },
   },
@@ -47,3 +47,10 @@ export const Compact: Story = {
   args: { appearance: "compact", leadingIcon: "search", placeholder: "Search" },
 };
 export const AutoCompleted: Story = { args: { autoCompleted: true, defaultValue: "Saved value" } };
+export const WithBankFlag: Story = {
+  args: {
+    label: "Card number",
+    defaultValue: "4242 4242 4242 4242",
+    bankFlag: <span className="text-caption font-medium">VISA</span>,
+  },
+};

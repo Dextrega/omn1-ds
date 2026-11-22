@@ -19,22 +19,23 @@ Found while importing. None block the build; each is a decision for design. Code
 
 ## Component naming in Figma
 
-- `Variation` (buttons) vs `Variant` (badge, others).
 - `Actived` (should likely be _Active_), `DIsablede (Filled)`, `Appearabce` (ComboBox), `Sharped` / `Squared`, `Carroussel`.
 - Interactive states (Hovered, Pressed, Focused, Actived) are variants; code treats them as pseudo-classes / pressable state (see FIGMA-SYNC).
 
 ## Inconsistencies found while reviewing components against Figma
 
-Code follows Figma exactly; each item is a question for design (fix in Figma, or keep).
+Code follows Figma; each item is a question for design (fix in Figma, or keep). Resolved in Figma since the first review:
+Badge Secondary / Subtle fill, the Danger _Actived_ / Outlined strokes, `Variation` → `Variant`.
 
-1. **Badge Secondary / Subtle** uses `Surface/Danger/Subtle` as its fill.
-2. **Danger ButtonCTA / ButtonIcon**: the _Actived_ stroke, and the _Danger / Outlined_ resting stroke, use **Secondary** tokens.
-3. **ButtonIcon Inverse** binds `Key/Global/White` (a Key token). Components must use Semantic only, so code uses `Semantic/Neutral/VerySubtle`.
-4. **Solid / Primary ButtonCTA** text is `Surface/OnNeutral/VerySubtle`, not an `OnPrimary` token.
-5. **ButtonIcon Primary / Pressed** fill is `Surface/Primary/Subtle` (other variations darken on press).
-6. **ButtonIcon DotStatus (MD)** is offset 9px — off the Spacement scale.
-7. **Toggle handle**: a drop shadow exists but is hidden.
-8. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
+1. **ButtonCTA Inverse** still binds `Key/Global/White` (Outlined / Actived fill, Solid / Focused fill). Components must use Semantic only, so code uses `Semantic/Neutral/VerySubtle`.
+2. **ButtonIcon Danger / Outlined Hovered + Pressed** stroke is `Opacity/Secondary/VeryStrong`.
+3. **Solid / Primary ButtonCTA** text is `Surface/OnNeutral/VerySubtle`, not an `OnPrimary` token.
+4. **ButtonIcon Primary / Pressed** fill is `Surface/Primary/Subtle` (other variants darken on press).
+5. **ButtonIcon DotStatus (MD)** is offset 9px — off the Spacement scale.
+6. **Toggle handle**: a drop shadow exists but is hidden.
+7. **LoaderSpinner** fills are animated .gif images (no variable bound); Black / White colours were given by design (`Global/Black`, `Global/White` — Key tokens).
+8. **Effect styles** (`DropShadow/Level 3`) are not exported as tokens.
+9. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
 
 ## Tooling finding: tailwind-merge 3 vs Tailwind 3
 
