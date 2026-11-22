@@ -14,7 +14,7 @@ import {
 
 export * from "./styles";
 
-/** Figma: Badge (6:9302). Same tokens and provisional notes as @omn1/ui-web. */
+/** Figma: Badge (6:9302). Same tokens as @omn1/ui-web (all 63 variants verified). */
 export interface BadgeProps extends Omit<ViewProps, "children" | "className"> {
   size?: BadgeSize;
   variant?: BadgeVariant;
@@ -44,7 +44,7 @@ export function Badge({
       {...rest}
     >
       {leadingIcon && <Icon name={leadingIcon} size={BADGE_ICON_PX[size]} className={text} />}
-      <Text className={cn("font-sans", labelSize[size], text)}>{children}</Text>
+      <Text className={cn("font-sans font-medium", labelSize[size], text)}>{children}</Text>
     </View>
   );
 }

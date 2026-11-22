@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **Radiobutton** (6:11948), 14 variants (Selection × State), 20×20. Provisional — not yet verified against Figma (MCP access was unavailable). Variant matrix and sizes come from Figma; colours and motion are assumptions. See docs/FIGMA-SYNC.md.",
+          "Figma: **Radiobutton** (6:11948), 13 variants (Selection × State), 20×20. Every fill and stroke is verified against Figma. `label`, `description` and `RadioGroup` are convenience wrappers, not Figma components.",
       },
     },
   },

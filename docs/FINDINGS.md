@@ -22,3 +22,23 @@ Found while importing. None block the build; each is a decision for design. Code
 - `Variation` (buttons) vs `Variant` (badge, others).
 - `Actived` (should likely be _Active_), `DIsablede (Filled)`, `Appearabce` (ComboBox), `Sharped` / `Squared`, `Carroussel`.
 - Interactive states (Hovered, Pressed, Focused, Actived) are variants; code treats them as pseudo-classes / pressable state (see FIGMA-SYNC).
+
+## Inconsistencies found while reviewing components against Figma
+
+Code follows Figma exactly; each item is a question for design (fix in Figma, or keep).
+
+1. **Badge Secondary / Subtle** uses `Surface/Danger/Subtle` as its fill.
+2. **Danger ButtonCTA / ButtonIcon**: the _Actived_ stroke, and the _Danger / Outlined_ resting stroke, use **Secondary** tokens.
+3. **ButtonIcon Inverse** binds `Key/Global/White` (a Key token). Components must use Semantic only, so code uses `Semantic/Neutral/VerySubtle`.
+4. **Solid / Primary ButtonCTA** text is `Surface/OnNeutral/VerySubtle`, not an `OnPrimary` token.
+5. **ButtonIcon Primary / Pressed** fill is `Surface/Primary/Subtle` (other variations darken on press).
+6. **ButtonIcon DotStatus (MD)** is offset 9px — off the Spacement scale.
+7. **Toggle handle**: a drop shadow exists but is hidden.
+8. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
+
+## Tooling finding: tailwind-merge 3 vs Tailwind 3
+
+tailwind-merge 3 targets Tailwind 4, where a bare `outline` sets the width. On our Tailwind 3 preset, `cn("outline outline-very-subtle")`
+silently dropped the bare `outline` (the _style_), so INSIDE strokes rendered with `outline-style: none`. `packages/ui-web/src/lib/cn.ts`
+now overrides the `outline-w` / `outline-style` groups, with a regression test in `components.test.tsx`. Any new `cn` usage with
+`outline` is covered; a computed-style browser check caught it, the class-coverage test could not.

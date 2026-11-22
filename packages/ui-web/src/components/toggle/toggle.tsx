@@ -9,13 +9,14 @@ import {
 import { cn } from "../../lib/cn";
 
 /**
- * Figma: Toggle (6:11983) — Selection On/Off × State Enabled/Hovered/Pressed/Active/Required/Error/Disabled, 56×28.
+ * Figma: Toggle (6:11983) — Selection On/Off × State Enabled/Hovered/Pressed/Active/Required/Error/Disabled
+ * (14 variants), 56×28.
  *
- * Anatomy: track (56×28, fully rounded, 4px inset) + thumb (20×20) that travels 28px.
- * Motion: thumb slides and the track recolours in 200ms ease-out; disabled by `prefers-reduced-motion`.
- *
- * PROVISIONAL: the Figma file could not be read when this was written (MCP access). Size and the variant matrix are from
- * Figma; colours and the motion timing are assumptions. See docs/FIGMA-SYNC.md.
+ * Verified against Figma (variable bindings read via MCP): track 56×28 (radius Border Radius/VerySubtle, 4px inset),
+ * 20×20 handle (radius Border Radius/ExtraSubtle, Stroke/Neutral/Subtle 1px INSIDE, Surface/Neutral/VerySubtle in
+ * every state; the Figma drop shadow on the handle is hidden), every track fill and stroke per Selection × State
+ * (OUTSIDE strokes are drawn as a `ring`), selection animation 0.2s ease-out, hover/press 0.1s ease-out.
+ * `label` / `description` / `name` are NOT part of Figma (convenience).
  */
 export interface ToggleProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -91,19 +92,20 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
         disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "group relative inline-flex h-x3-5 w-x7 shrink-0 cursor-pointer items-center rounded-full p-x0-5",
-          "transition-colors duration-200 ease-out motion-reduce:transition-none",
+          "group relative inline-flex h-x3-5 w-x7 shrink-0 cursor-pointer items-center rounded-very-subtle p-x0-5",
+          "transition-colors duration-100 ease-out motion-reduce:transition-none",
           "focus-visible:outline-none focus-visible:ring-medium focus-visible:ring-stroke-secondary-medium",
-          // off
-          "bg-surface-neutral-subtle hover:bg-surface-neutral-medium active:bg-surface-neutral-strong",
-          // on
-          "aria-checked:bg-surface-primary-medium aria-checked:hover:bg-surface-primary-strong aria-checked:active:bg-surface-primary-very-strong",
-          // required (while off) and error
-          required && !on && "ring-very-subtle ring-inset ring-stroke-danger-medium",
-          "aria-[invalid=true]:ring-very-subtle aria-[invalid=true]:ring-inset aria-[invalid=true]:ring-stroke-danger-medium",
-          "aria-[invalid=true]:aria-checked:bg-surface-danger-medium aria-[invalid=true]:aria-checked:hover:bg-surface-danger-strong",
-          // disabled
-          "disabled:pointer-events-none disabled:bg-alpha-inverse-very-subtle disabled:aria-checked:bg-alpha-inverse-subtle",
+          // Selection=Off — Enabled / Hovered / Pressed
+          "bg-alpha-inverse-very-subtle hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-subtle active:ring-subtle active:ring-alpha-inverse-subtle",
+          // Selection=On
+          "aria-checked:bg-surface-primary-medium aria-checked:hover:bg-surface-primary-subtle aria-checked:active:bg-surface-primary-subtle aria-checked:active:ring-subtle aria-checked:active:ring-alpha-primary-strong",
+          // State=Required
+          required && "ring-very-subtle ring-stroke-danger-medium",
+          // State=Error
+          "aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:ring-very-subtle aria-[invalid=true]:ring-stroke-danger-medium aria-[invalid=true]:hover:bg-surface-danger-very-subtle",
+          "aria-[invalid=true]:aria-checked:bg-surface-danger-medium aria-[invalid=true]:aria-checked:hover:bg-surface-danger-medium",
+          // State=Disabled
+          "disabled:pointer-events-none disabled:bg-alpha-inverse-very-subtle disabled:ring-very-subtle disabled:ring-alpha-inverse-very-subtle disabled:aria-checked:bg-alpha-inverse-subtle",
           className,
         )}
         {...rest}
@@ -112,10 +114,9 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
           aria-hidden="true"
           data-slot="thumb"
           className={cn(
-            "pointer-events-none size-x2-5 rounded-full bg-surface-neutral-very-subtle shadow-none",
+            "pointer-events-none size-x2-5 rounded-extra-subtle bg-surface-neutral-very-subtle outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-subtle",
             "translate-x-0 transition-transform duration-200 ease-out motion-reduce:transition-none",
-            "group-aria-checked:translate-x-x3-5 group-aria-checked:bg-surface-on-primary-very-subtle",
-            "group-disabled:bg-surface-neutral-very-subtle",
+            "group-aria-checked:translate-x-x3-5",
           )}
         />
       </button>

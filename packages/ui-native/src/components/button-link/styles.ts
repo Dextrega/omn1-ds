@@ -1,44 +1,75 @@
 import { cva } from "class-variance-authority";
 
-/** Class definitions are kept free of react-native imports so they can be unit-tested in plain Node. */
+/**
+ * Class definitions are kept free of react-native imports so they can be unit-tested in plain Node.
+ * Figma: ButtonLink (6:11853) — same tokens as @omn1/ui-web. Native has no hover; Pressed → `active:`.
+ * Figma's centred 1px stroke is an inside `border` here.
+ */
+export type ButtonLinkVariation = "neutral" | "primary";
+export type ButtonLinkSize = "sm" | "md";
 
 export const buttonLinkContainer = cva(
-  "relative flex-row items-center justify-center gap-extra-subtle rounded-corner-very-subtle",
+  "relative flex-row items-center justify-center gap-extra-subtle rounded-none",
   {
-    variants: { disabled: { true: "", false: "" } },
-    defaultVariants: { disabled: false },
+    variants: {
+      variation: { neutral: "", primary: "" },
+      outline: { true: "", false: "" },
+      disabled: { true: "", false: "" },
+    },
+    compoundVariants: [
+      {
+        variation: "neutral",
+        outline: true,
+        disabled: false,
+        class:
+          "border border-very-subtle border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
+      },
+      {
+        variation: "neutral",
+        outline: false,
+        disabled: false,
+        class:
+          "active:border active:border-very-subtle active:border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
+      },
+      {
+        variation: "primary",
+        outline: true,
+        disabled: false,
+        class:
+          "border border-very-subtle border-stroke-primary-medium active:bg-alpha-primary-subtle",
+      },
+      {
+        variation: "primary",
+        outline: false,
+        disabled: false,
+        class:
+          "active:border active:border-very-subtle active:border-stroke-primary-medium active:bg-alpha-primary-subtle",
+      },
+      {
+        outline: true,
+        disabled: true,
+        class: "border border-very-subtle border-stroke-neutral-subtle",
+      },
+    ],
+    defaultVariants: { variation: "primary", outline: false, disabled: false },
   },
 );
 
 export const buttonLinkLabel = cva("font-sans font-medium", {
   variants: {
-    size: { sm: "text-body-sm", md: "text-body-md", lg: "text-body-lg" },
-    // React Native does not inherit text colour, and `active:` only reaches the Pressable itself,
-    // so the label colour is driven by an explicit `tone` (default / pressed / disabled per variation).
+    size: { sm: "text-caption", md: "text-body-sm" },
+    // React Native does not inherit text colour, so the label colour is an explicit `tone`.
     tone: {
       neutral: "text-surface-on-neutral-very-strong",
-      "neutral-pressed": "text-surface-on-neutral-medium",
-      primary: "text-surface-primary-medium",
-      "primary-pressed": "text-surface-primary-very-strong",
-      danger: "text-surface-danger-medium",
-      "danger-pressed": "text-surface-danger-very-strong",
-      success: "text-surface-success-medium",
-      "success-pressed": "text-surface-success-very-strong",
-      inverse: "text-surface-neutral-very-subtle",
-      "inverse-pressed": "text-surface-neutral-medium",
+      primary: "text-surface-on-primary-medium",
       disabled: "text-surface-on-neutral-subtle",
     },
   },
   defaultVariants: { size: "md", tone: "primary" },
 });
 
-export type ButtonLinkVariation = "neutral" | "primary" | "danger" | "success" | "inverse";
-export const buttonLinkTone = (
-  variation: ButtonLinkVariation,
-  pressed: boolean,
-  disabled: boolean,
-) =>
-  (disabled ? "disabled" : pressed ? `${variation}-pressed` : variation) as
-    ButtonLinkVariation | `${ButtonLinkVariation}-pressed` | "disabled";
+export const buttonLinkTone = (variation: ButtonLinkVariation, disabled: boolean) =>
+  (disabled ? "disabled" : variation) as ButtonLinkVariation | "disabled";
 
-export const BUTTON_LINK_ICON_PX = { sm: 16, md: 20, lg: 24 } as const;
+/** Figma: System/x1,5 (SM) · x2 (MD). */
+export const BUTTON_LINK_ICON_PX = { sm: 12, md: 16 } as const;

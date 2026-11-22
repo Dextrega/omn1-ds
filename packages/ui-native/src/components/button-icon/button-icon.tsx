@@ -2,19 +2,20 @@ import { Icon, type IconName } from "@omn1/icons/native";
 import { Pressable, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { Spinner } from "../../lib/spinner";
-import { buttonIconShape, BUTTON_ICON_PX } from "./styles";
 import {
-  buttonCtaContainer,
-  buttonCtaLabel,
-  buttonTone,
+  buttonToneColor,
   type ButtonAppearance,
   type ButtonSize,
   type ButtonVariation,
 } from "../button-cta/styles";
+import { BUTTON_ICON_PX, buttonIconContainer, buttonIconDot, buttonIconLoading } from "./styles";
 
 export * from "./styles";
 
-/** Figma: ButtonIcon (2058:749). Verified at MD (48×48, 20px icon); other sizes provisional. */
+/**
+ * Figma: ButtonIcon (2058:749). Own colour matrix (generated from Figma). Provisional on native: no Actived /
+ * Focused state, DotStatus offsets (see the web component for the 4/6/9/16 px offsets).
+ */
 export interface ButtonIconProps extends Omit<
   PressableProps,
   "children" | "className" | "disabled"
@@ -44,10 +45,7 @@ export function ButtonIcon({
   onPress,
   ...rest
 }: ButtonIconProps) {
-  const iconColor =
-    buttonCtaLabel({ size: "md", tone: buttonTone(variation, appearance, disabled) })
-      .split(" ")
-      .find((c) => c.startsWith("text-surface")) ?? "";
+  const color = buttonToneColor(variation, appearance, disabled, "icon");
   return (
     <Pressable
       accessibilityRole="button"
@@ -55,20 +53,18 @@ export function ButtonIcon({
       disabled={disabled}
       onPress={loading ? undefined : onPress}
       className={cn(
-        buttonCtaContainer({ size, variation, appearance, disabled }),
-        buttonIconShape({ size }),
+        buttonIconContainer({ size, variation, appearance, disabled }),
+        loading && buttonIconLoading,
         className,
       )}
       {...rest}
     >
       {loading ? (
-        <Spinner size={BUTTON_ICON_PX[size]} className={iconColor} />
+        <Spinner size={BUTTON_ICON_PX[size]} className="text-surface-on-neutral-medium" />
       ) : (
-        <Icon name={icon} size={BUTTON_ICON_PX[size]} className={iconColor} />
+        <Icon name={icon} size={BUTTON_ICON_PX[size]} className={color} />
       )}
-      {dot && !loading && (
-        <View className="absolute right-x1 bottom-x1 size-x1-5 rounded-full border border-surface-neutral-very-subtle bg-surface-danger-medium" />
-      )}
+      {dot && !loading && <View className={buttonIconDot({ size })} />}
     </Pressable>
   );
 }

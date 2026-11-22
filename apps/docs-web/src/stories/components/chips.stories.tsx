@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **Chips** (6:12377), 40 variants (Size × Appearance × State × Selection). A chip is a toggle button (`aria-pressed`). Provisional — not yet verified against Figma (MCP access was unavailable). Variant matrix and sizes come from Figma; colours and motion are assumptions. See docs/FIGMA-SYNC.md.",
+          "Figma: **Chips** (6:12377), 40 variants (Size × Appearance × State × Selection). A chip is a toggle button (`aria-pressed`); when selected it shows a close ButtonIcon. Verified against Figma, except the close button always being Ghost/Inverse. ChipsSelect is a separate component and is not implemented.",
       },
     },
   },
@@ -21,6 +21,8 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {};
 export const Selected: Story = { args: { defaultSelected: true } };
 export const WithIcon: Story = { args: { leadingIcon: "star" } };
+export const WithBadge: Story = { args: { badge: "3", defaultSelected: true } };
+export const WithAvatar: Story = { args: { avatar: "A" } };
 
 export const Matrix: Story = {
   parameters: { layout: "fullscreen" },

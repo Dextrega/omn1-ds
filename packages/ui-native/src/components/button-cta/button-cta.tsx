@@ -1,22 +1,33 @@
 import { Icon, type IconName } from "@omn1/icons/native";
-import type { VariantProps } from "class-variance-authority";
 import type { ReactNode } from "react";
 import { Pressable, Text, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { Spinner } from "../../lib/spinner";
-import { buttonCtaContainer, buttonCtaLabel, buttonTone } from "./styles";
+import {
+  BUTTON_CTA_ICON_PX,
+  buttonCtaContainer,
+  buttonCtaLabel,
+  buttonToneColor,
+  type ButtonAppearance,
+  type ButtonSize,
+  type ButtonVariation,
+} from "./styles";
 
 export * from "./styles";
 
 /**
- * Figma: ButtonCTA (6:9388). Same tokens and classes as @omn1/ui-web — see its notes on what is verified
- * vs provisional. On native, Pressed → `active:`; there is no hover/focus ring.
+ * Figma: ButtonCTA (6:9388). Same tokens and classes as @omn1/ui-web (colour matrix generated from Figma).
+ * On native, Pressed → `active:`; there is no hover/focus ring and no Actived (aria-pressed) state yet.
  * React Native does not inherit text colour, so colour classes live in two maps: container and label.
+ * Provisional: the label colour does not change on press (Figma changes it on Solid/Neutral); Loading spinner colour.
  */
-export interface ButtonCTAProps
-  extends
-    Omit<PressableProps, "children" | "className" | "disabled">,
-    Omit<NonNullable<VariantProps<typeof buttonCtaContainer>>, "disabled"> {
+export interface ButtonCTAProps extends Omit<
+  PressableProps,
+  "children" | "className" | "disabled"
+> {
+  size?: ButtonSize;
+  variation?: ButtonVariation;
+  appearance?: ButtonAppearance;
   leadingIcon?: IconName;
   trailingIcon?: IconName;
   loading?: boolean;
@@ -38,16 +49,19 @@ export function ButtonCTA({
   onPress,
   ...rest
 }: ButtonCTAProps) {
-  const tone = buttonTone(variation!, appearance!, disabled);
-  const label = buttonCtaLabel({ size, tone });
-  const iconColor = label.split(" ").find((c) => c.startsWith("text-surface")) ?? "";
+  const color = buttonToneColor(variation, appearance, disabled);
+  const px = BUTTON_CTA_ICON_PX[size];
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
       disabled={disabled}
       onPress={loading ? undefined : onPress}
-      className={cn(buttonCtaContainer({ size, variation, appearance, disabled }), className)}
+      className={cn(
+        buttonCtaContainer({ size, variation, appearance, disabled }),
+        loading && "bg-surface-neutral-subtle border-0",
+        className,
+      )}
       {...rest}
     >
       <View
@@ -56,17 +70,17 @@ export function ButtonCTA({
           loading && "opacity-0",
         )}
       >
-        {leadingIcon && <Icon name={leadingIcon} size={20} className={iconColor} />}
+        {leadingIcon && <Icon name={leadingIcon} size={px} className={color} />}
         {typeof children === "string" || typeof children === "number" ? (
-          <Text className={label}>{children}</Text>
+          <Text className={cn(buttonCtaLabel({ size }), color)}>{children}</Text>
         ) : (
           children
         )}
-        {trailingIcon && <Icon name={trailingIcon} size={20} className={iconColor} />}
+        {trailingIcon && <Icon name={trailingIcon} size={px} className={color} />}
       </View>
       {loading && (
         <View className="absolute">
-          <Spinner size={20} className={iconColor} />
+          <Spinner size={px} className="text-surface-on-neutral-medium" />
         </View>
       )}
     </Pressable>

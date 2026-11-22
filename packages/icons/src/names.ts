@@ -15,6 +15,7 @@ export const iconNames = [
   "chevron-up",
   "circle-alert",
   "circle-check",
+  "circle-x",
   "copy",
   "download",
   "ellipsis",

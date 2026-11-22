@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **Checkbox** (6:11899). All 21 variants (Selection × State) are verified against Figma.",
+          "Figma: **Checkbox** (6:11899). All 21 variants (Selection × State) are verified against Figma, including OUTSIDE strokes (drawn as a ring) and the 0.1s ease-out motion.",
       },
     },
   },

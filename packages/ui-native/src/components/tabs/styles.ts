@@ -1,38 +1,46 @@
 import { cn } from "../../lib/cn";
 
-export const TABS_MOTION_MS = 200;
-export const TABS_ICON_PX = 20;
+export type TabsAlign = "bottom" | "top";
+export type TabsAppearance = "wrap" | "flex";
 
-export const tabsList = (orientation: "horizontal" | "vertical") =>
-  orientation === "vertical"
-    ? "flex-col border-l border-stroke-neutral-subtle"
-    : "flex-row border-b border-stroke-neutral-subtle";
+/** Figma: System/x2 for every icon in `_TabsBase`. */
+export const TABS_ICON_PX = 16;
+
+/**
+ * Figma: Tabs (235:1156). Wrap hugs its tabs; Flex fills the width and shares it between the tabs.
+ * Same tokens as @omn1/ui-web. Native difference: Figma draws the indicator as an OUTSIDE stroke; here it sits on the
+ * inside edge of the tab (RN clips outside content on Android).
+ */
+export const tabsList = (appearance: TabsAppearance) =>
+  appearance === "flex" ? "w-full flex-row" : "self-start flex-row";
 
 export const tabsBaseContainer = ({
-  orientation,
+  appearance,
   disabled,
 }: {
-  orientation: "horizontal" | "vertical";
+  appearance: TabsAppearance;
   disabled: boolean;
 }) =>
   cn(
-    "relative flex-row items-center gap-extra-subtle px-subtle py-very-subtle",
-    orientation === "vertical" ? "justify-start" : "justify-center",
-    !disabled && "active:bg-alpha-neutral-subtle",
+    "relative h-x6 flex-row items-center justify-center gap-very-subtle px-very-subtle",
+    appearance === "flex" && "min-w-0 flex-1",
+    !disabled && "active:bg-alpha-inverse-very-subtle",
   );
 
 export const tabsBaseLabel = ({ selected, disabled }: { selected: boolean; disabled: boolean }) =>
   cn(
     "font-sans font-medium text-body-md",
     disabled
-      ? "text-surface-on-neutral-subtle"
+      ? "text-alpha-inverse-medium"
       : selected
-        ? "text-surface-primary-medium"
-        : "text-surface-on-neutral-medium",
+        ? "text-surface-on-neutral-very-strong"
+        : "text-alpha-inverse-strong",
   );
 
-export const tabsIndicator = (orientation: "horizontal" | "vertical") =>
+/** Figma: Stroke/Subtle (2px), Stroke/Neutral/Strong (Stroke/…/Medium opacity when disabled). */
+export const tabsIndicator = ({ align, disabled }: { align: TabsAlign; disabled: boolean }) =>
   cn(
-    "absolute bg-surface-primary-medium",
-    orientation === "vertical" ? "inset-y-0 left-0 w-x0-5" : "inset-x-0 bottom-0 h-x0-5",
+    "absolute inset-x-0 h-x0-25",
+    align === "bottom" ? "bottom-0" : "top-0",
+    disabled ? "bg-alpha-inverse-medium" : "bg-stroke-neutral-strong",
   );

@@ -12,11 +12,12 @@ import {
 import { cn } from "../../lib/cn";
 
 /**
- * Figma: Radiobutton (6:11948) — Selection On/Off × State Enabled/Hovered/Pressed/Active/Required/Error/Disabled, 20×20.
+ * Figma: Radiobutton (6:11948) — Selection On/Off × State Enabled/Hovered/Pressed/Active/Required/Error/Disabled
+ * (13 variants), 20×20.
  *
- * PROVISIONAL: the Figma file could not be read when this was written (MCP access). Structure, size and the variant
- * matrix are from Figma; colours/strokes mirror the verified Checkbox and the selected dot size is assumed.
- * See docs/FIGMA-SYNC.md.
+ * Verified against Figma (variable bindings read via MCP): 20×20 circle, 12px selected dot (System/x1,5), every fill
+ * and stroke per Selection × State, and the 0.1s ease-out hover/press motion. Figma strokes are OUTSIDE, so they are
+ * drawn as a `ring` (no layout shift). `label` / `description` / `RadioGroup` are NOT part of Figma (convenience).
  *
  * State mapping:  Hovered → hover  ·  Pressed → active  ·  Active → focus-visible  ·  Required → `required`
  *                 Error → `invalid`  ·  Disabled → `disabled`  ·  Selection → `checked`
@@ -98,21 +99,20 @@ export const Radiobutton = forwardRef<HTMLInputElement, RadiobuttonProps>(functi
           aria-invalid={isInvalid || undefined}
           aria-describedby={description ? descId : undefined}
           className={cn(
-            "peer m-0 size-full cursor-pointer appearance-none rounded-full border border-very-subtle transition-colors duration-150",
-            // unselected
-            "border-alpha-inverse-subtle bg-surface-neutral-very-subtle",
-            "hover:bg-alpha-inverse-very-subtle active:border-medium active:bg-alpha-inverse-very-subtle",
-            "focus-visible:outline-none focus-visible:border-stroke-neutral-strong",
-            // selected
-            "checked:border-stroke-neutral-subtle checked:bg-surface-primary-medium checked:hover:bg-surface-primary-medium checked:active:bg-surface-primary-strong",
-            // required
-            "required:border-stroke-danger-medium",
-            // error
-            "aria-[invalid=true]:border-stroke-danger-medium aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:hover:border-stroke-danger-strong",
-            "aria-[invalid=true]:checked:bg-surface-danger-medium",
-            // disabled
-            "disabled:cursor-not-allowed disabled:border-stroke-neutral-subtle disabled:bg-surface-neutral-very-subtle disabled:hover:bg-surface-neutral-very-subtle",
-            "disabled:checked:bg-surface-neutral-subtle",
+            "peer m-0 size-full cursor-pointer appearance-none rounded-full transition-colors duration-100 ease-out focus-visible:outline-none",
+            // Selection=Off — Enabled / Hovered / Pressed / Active
+            "bg-transparent ring-very-subtle ring-stroke-neutral-medium",
+            "hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-very-subtle active:ring-stroke-neutral-strong",
+            "focus-visible:ring-medium focus-visible:ring-stroke-secondary-subtle",
+            // Selection=On
+            "checked:bg-alpha-primary-subtle checked:ring-stroke-primary-subtle checked:hover:ring-stroke-primary-medium checked:active:bg-alpha-primary-medium checked:active:ring-stroke-primary-medium checked:focus-visible:ring-medium checked:focus-visible:ring-stroke-secondary-medium",
+            // State=Required
+            "required:ring-stroke-danger-medium checked:required:ring-stroke-danger-medium",
+            // State=Error
+            "aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:ring-stroke-danger-medium aria-[invalid=true]:hover:bg-surface-danger-very-subtle aria-[invalid=true]:checked:bg-surface-danger-very-subtle aria-[invalid=true]:checked:ring-stroke-danger-medium",
+            // State=Disabled
+            "disabled:cursor-not-allowed disabled:bg-surface-neutral-very-subtle disabled:ring-stroke-neutral-subtle disabled:hover:bg-surface-neutral-very-subtle",
+            "disabled:checked:bg-surface-neutral-subtle disabled:checked:ring-stroke-neutral-subtle",
             className,
           )}
           {...groupProps}
@@ -121,7 +121,7 @@ export const Radiobutton = forwardRef<HTMLInputElement, RadiobuttonProps>(functi
         <span
           aria-hidden="true"
           data-slot="dot"
-          className="pointer-events-none absolute inset-0 m-auto hidden size-x1 rounded-full bg-surface-on-primary-very-subtle peer-checked:block peer-disabled:bg-surface-on-neutral-subtle"
+          className="pointer-events-none absolute inset-0 m-auto hidden size-x1-5 rounded-full bg-surface-primary-medium peer-checked:block peer-aria-[invalid=true]:bg-surface-danger-medium peer-disabled:bg-surface-neutral-medium"
         />
       </span>
       {(label || description) && (

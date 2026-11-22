@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **Toggle** (6:11983), 14 variants (Selection × State), 56×28. Provisional — not yet verified against Figma (MCP access was unavailable). Variant matrix and sizes come from Figma; colours and motion are assumptions. See docs/FIGMA-SYNC.md.",
+          "Figma: **Toggle** (6:11983), 14 variants (Selection × State), 56×28. Every track fill and stroke, the handle and the 0.2s selection animation are verified against Figma. `label`, `description` and `name` are convenience wrappers.",
       },
     },
   },

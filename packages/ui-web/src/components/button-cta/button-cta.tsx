@@ -2,146 +2,68 @@ import { Icon, type IconName } from "@omn1/icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { forwardRef, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
+import { ctaMatrix } from "./matrix";
 
 /**
- * Figma: ButtonCTA (component set 6:9388) — Size × Variation × Appearance × State.
- * Interactive states are CSS, not props:  Hovered → hover:  Pressed → active:  Focused → focus-visible:
- *                                          Actived → aria-pressed="true"  Disabled → disabled  Loading → `loading`
+ * Figma: ButtonCTA (component set 6:9388) — Size × Variation × Appearance × State (420 variants).
  *
- * Verified against Figma: all Solid sizes, geometry and Enabled / Hovered fills, Disabled.
- * Provisional (not yet extracted — see docs/FIGMA-SYNC.md): Outlined + Ghost colours, Pressed fills.
+ * Interactive states are CSS, not props:
+ *   Hovered → hover:   Pressed → active:   Focused → focus-visible:   Actived → aria-pressed="true"
+ *   Disabled → disabled   Loading → `loading`
+ *
+ * Verified against Figma (variable bindings read via MCP): geometry per size, every Variation × Appearance ×
+ * State fill / text / stroke, INSIDE strokes (drawn as `outline` with a negative offset so nothing shifts),
+ * the OUTSIDE Focused ring (Stroke/Secondary/Medium, Stroke/Medium), icon sizes (XS 12 · SM 16 · MD 20 · LG 20)
+ * and the 0.1s ease-out hover/press motion. The colour matrix is generated (scripts/gen-button-matrix.mjs).
+ * Provisional: Loading spinner colour (the Figma Overlay uses a Neutral LoaderSpinner; its exact stroke is
+ * not bound to a variable) and non-MD sizes assume the MD colours (the sizes only change geometry).
  */
 export const buttonCtaVariants = cva(
   [
     "relative inline-flex shrink-0 select-none items-center justify-center gap-very-subtle",
     "font-sans font-medium whitespace-nowrap",
-    "transition-colors duration-150",
+    "transition-colors duration-100 ease-out",
     "focus-visible:outline-none focus-visible:ring-medium focus-visible:ring-stroke-secondary-medium",
-    "aria-pressed:ring-very-subtle aria-pressed:ring-stroke-neutral-strong",
     "disabled:cursor-not-allowed",
   ],
   {
     variants: {
       size: {
-        xs: "min-h-x3 min-w-x3 px-very-subtle rounded-corner-very-subtle text-caption",
-        sm: "min-h-x4 min-w-x4 px-very-subtle rounded-corner-very-subtle text-body-sm",
-        md: "min-h-x6 min-w-x6 px-subtle rounded-subtle text-body-md",
-        lg: "min-h-x8 min-w-x8 px-medium rounded-corner-subtle text-body-lg",
+        xs: "h-x3 min-w-x3 px-very-subtle rounded-corner-very-subtle text-caption",
+        sm: "h-x4 min-w-x4 px-very-subtle rounded-corner-very-subtle text-body-sm",
+        md: "h-x6 min-w-x6 px-subtle rounded-subtle text-body-md",
+        lg: "h-x8 min-w-x8 px-medium rounded-corner-subtle text-body-lg",
       },
       variation: { neutral: "", primary: "", success: "", danger: "", inverse: "" },
-      appearance: { solid: "", outlined: "border border-very-subtle", ghost: "" },
+      appearance: { solid: "", outlined: "", ghost: "" },
     },
     compoundVariants: [
-      // ---- solid (verified) --------------------------------------------------------------
-      {
-        appearance: "solid",
-        variation: "neutral",
-        class:
-          "bg-surface-neutral-very-strong text-surface-on-neutral-very-subtle hover:bg-surface-neutral-strong active:bg-surface-neutral-medium",
-      },
-      {
-        appearance: "solid",
-        variation: "inverse",
-        class:
-          "bg-surface-neutral-very-subtle text-surface-on-neutral-very-strong hover:bg-surface-neutral-subtle active:bg-surface-neutral-medium",
-      },
-      {
-        appearance: "solid",
-        variation: "primary",
-        class:
-          "bg-surface-primary-medium text-surface-on-primary-very-subtle hover:bg-surface-primary-strong active:bg-surface-primary-very-strong",
-      },
-      {
-        appearance: "solid",
-        variation: "danger",
-        class:
-          "bg-surface-danger-medium text-surface-on-danger-very-subtle hover:bg-surface-danger-strong active:bg-surface-danger-very-strong",
-      },
-      {
-        appearance: "solid",
-        variation: "success",
-        class:
-          "bg-surface-success-medium text-surface-on-success-very-subtle hover:bg-surface-success-strong active:bg-surface-success-very-strong",
-      },
-      {
-        appearance: "solid",
-        class: "disabled:bg-alpha-neutral-very-subtle disabled:text-surface-on-neutral-subtle",
-      },
-      // ---- outlined (provisional) ----------------------------------------------------------
-      {
-        appearance: "outlined",
-        variation: "neutral",
-        class:
-          "border-stroke-neutral-medium text-surface-on-neutral-very-strong hover:bg-alpha-neutral-very-subtle active:bg-alpha-neutral-subtle",
-      },
-      {
-        appearance: "outlined",
-        variation: "inverse",
-        class:
-          "border-stroke-neutral-subtle text-surface-neutral-very-subtle hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle",
-      },
-      {
-        appearance: "outlined",
-        variation: "primary",
-        class:
-          "border-stroke-primary-medium text-surface-primary-medium hover:bg-alpha-primary-very-subtle active:bg-alpha-primary-subtle",
-      },
-      {
-        appearance: "outlined",
-        variation: "danger",
-        class:
-          "border-stroke-danger-medium text-surface-danger-medium hover:bg-alpha-danger-very-subtle active:bg-alpha-danger-subtle",
-      },
-      {
-        appearance: "outlined",
-        variation: "success",
-        class:
-          "border-stroke-success-medium text-surface-success-medium hover:bg-alpha-success-very-subtle active:bg-alpha-success-subtle",
-      },
-      {
-        appearance: "outlined",
-        class:
-          "disabled:border-stroke-neutral-subtle disabled:text-surface-on-neutral-subtle disabled:bg-transparent",
-      },
-      // ---- ghost (provisional) ----------------------------------------------------------------
-      {
-        appearance: "ghost",
-        variation: "neutral",
-        class:
-          "text-surface-on-neutral-very-strong hover:bg-alpha-neutral-very-subtle active:bg-alpha-neutral-subtle",
-      },
-      {
-        appearance: "ghost",
-        variation: "inverse",
-        class:
-          "text-surface-neutral-very-subtle hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle",
-      },
-      {
-        appearance: "ghost",
-        variation: "primary",
-        class:
-          "text-surface-primary-medium hover:bg-alpha-primary-very-subtle active:bg-alpha-primary-subtle",
-      },
-      {
-        appearance: "ghost",
-        variation: "danger",
-        class:
-          "text-surface-danger-medium hover:bg-alpha-danger-very-subtle active:bg-alpha-danger-subtle",
-      },
-      {
-        appearance: "ghost",
-        variation: "success",
-        class:
-          "text-surface-success-medium hover:bg-alpha-success-very-subtle active:bg-alpha-success-subtle",
-      },
-      {
-        appearance: "ghost",
-        class: "disabled:text-surface-on-neutral-subtle disabled:bg-transparent",
-      },
+      { appearance: "solid", variation: "neutral", class: ctaMatrix.solid.neutral },
+      { appearance: "solid", variation: "primary", class: ctaMatrix.solid.primary },
+      { appearance: "solid", variation: "success", class: ctaMatrix.solid.success },
+      { appearance: "solid", variation: "danger", class: ctaMatrix.solid.danger },
+      { appearance: "solid", variation: "inverse", class: ctaMatrix.solid.inverse },
+      { appearance: "outlined", variation: "neutral", class: ctaMatrix.outlined.neutral },
+      { appearance: "outlined", variation: "primary", class: ctaMatrix.outlined.primary },
+      { appearance: "outlined", variation: "success", class: ctaMatrix.outlined.success },
+      { appearance: "outlined", variation: "danger", class: ctaMatrix.outlined.danger },
+      { appearance: "outlined", variation: "inverse", class: ctaMatrix.outlined.inverse },
+      { appearance: "ghost", variation: "neutral", class: ctaMatrix.ghost.neutral },
+      { appearance: "ghost", variation: "primary", class: ctaMatrix.ghost.primary },
+      { appearance: "ghost", variation: "success", class: ctaMatrix.ghost.success },
+      { appearance: "ghost", variation: "danger", class: ctaMatrix.ghost.danger },
+      { appearance: "ghost", variation: "inverse", class: ctaMatrix.ghost.inverse },
     ],
     defaultVariants: { size: "md", variation: "primary", appearance: "solid" },
   },
 );
+
+/** Figma: State=Loading — an Overlay (Surface/Neutral/Subtle) with a Neutral spinner covers the button. */
+export const buttonLoadingClasses =
+  "cursor-progress bg-surface-neutral-subtle hover:bg-surface-neutral-subtle active:bg-surface-neutral-subtle outline-transparent hover:outline-transparent active:outline-transparent";
+
+/** Icon px per size (Figma: System/x1,5 · x2 · x2,5 · x2,5). */
+export const BUTTON_CTA_ICON_PX = { xs: 12, sm: 16, md: 20, lg: 20 } as const;
 
 export type ButtonCTAVariantProps = VariantProps<typeof buttonCtaVariants>;
 
@@ -159,7 +81,7 @@ export interface ButtonCTAProps
 
 export const ButtonCTA = forwardRef<HTMLButtonElement, ButtonCTAProps>(function ButtonCTA(
   {
-    size,
+    size = "md",
     variation,
     appearance,
     leadingIcon,
@@ -178,6 +100,7 @@ export const ButtonCTA = forwardRef<HTMLButtonElement, ButtonCTAProps>(function 
     if (loading) return e.preventDefault();
     onClick?.(e);
   };
+  const px = BUTTON_CTA_ICON_PX[size ?? "md"];
   return (
     <button
       ref={ref}
@@ -189,7 +112,7 @@ export const ButtonCTA = forwardRef<HTMLButtonElement, ButtonCTAProps>(function 
       onClick={handleClick}
       className={cn(
         buttonCtaVariants({ size, variation, appearance }),
-        loading && "cursor-progress",
+        loading && buttonLoadingClasses,
         className,
       )}
       {...rest}
@@ -200,12 +123,17 @@ export const ButtonCTA = forwardRef<HTMLButtonElement, ButtonCTAProps>(function 
           loading && "invisible",
         )}
       >
-        {leadingIcon && <Icon name={leadingIcon} size={20} />}
+        {leadingIcon && <Icon name={leadingIcon} size={px} />}
         {children}
-        {trailingIcon && <Icon name={trailingIcon} size={20} />}
+        {trailingIcon && <Icon name={trailingIcon} size={px} />}
       </span>
       {loading && (
-        <Icon name="loader" size={20} className="absolute animate-spin" aria-label="Loading" />
+        <Icon
+          name="loader"
+          size={px}
+          className="absolute animate-spin text-surface-on-neutral-medium"
+          aria-label="Loading"
+        />
       )}
     </button>
   );

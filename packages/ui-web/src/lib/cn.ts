@@ -7,6 +7,14 @@ import { extendTailwindMerge } from "tailwind-merge";
  * `px-strong` would not replace `px-subtle`, and `text-body-md` (size) would clash with `text-surface-…` (colour).
  */
 const twMerge = extendTailwindMerge({
+  // tailwind-merge 3 targets Tailwind 4, where a bare `outline` is a *width*. This preset is Tailwind 3, where it is
+  // the outline *style*; without this override `outline outline-very-subtle` loses the `outline` (no stroke drawn).
+  override: {
+    classGroups: {
+      "outline-w": [{ outline: [...themeKeys.borderWidth] }],
+      "outline-style": [{ outline: ["", "none", "dashed", "dotted", "double"] }],
+    },
+  },
   extend: {
     theme: {
       spacing: [...themeKeys.spacing],
@@ -16,7 +24,6 @@ const twMerge = extendTailwindMerge({
       rounded: [{ rounded: [...themeKeys.borderRadius] }],
       "border-w": [{ border: [...themeKeys.borderWidth] }],
       "ring-w": [{ ring: [...themeKeys.borderWidth] }],
-      "outline-w": [{ outline: [...themeKeys.borderWidth] }],
       "font-weight": [{ font: [...themeKeys.fontWeight] }],
       tracking: [{ tracking: [...themeKeys.letterSpacing] }],
     },

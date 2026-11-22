@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **ButtonLink** (6:11853). Provisional — not yet verified against Figma (MCP access was unavailable). Variant matrix and sizes come from Figma; colours and motion are assumptions. See docs/FIGMA-SYNC.md.",
+          "Figma: **ButtonLink** (6:11853), 32 variants (Size SM/MD × Variant Neutral/Primary × State × Outline On/Off). Verified against Figma. Hover / Pressed are CSS states; Disabled is a prop.",
       },
     },
   },
@@ -21,7 +21,7 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {};
 export const AsAnchor: Story = { args: { href: "https://example.com" } };
 export const WithIcons: Story = { args: { leadingIcon: "plus", trailingIcon: "arrow-right" } };
-export const Loading: Story = { args: { loading: true } };
+export const Outline: Story = { args: { outline: true } };
 export const Disabled: Story = { args: { disabled: true } };
 
 export const Matrix: Story = {
@@ -29,21 +29,21 @@ export const Matrix: Story = {
   render: () => (
     <div
       className="grid gap-strong p-strong"
-      style={{ gridTemplateColumns: "repeat(5, max-content)" }}
+      style={{ gridTemplateColumns: "repeat(4, max-content)" }}
     >
-      {(["sm", "md", "lg"] as const).flatMap((size) =>
-        (["neutral", "primary", "success", "danger", "inverse"] as const).map((variation) => (
-          <div
-            key={`${size}${variation}`}
-            className={
-              variation === "inverse" ? "bg-surface-neutral-very-strong p-subtle" : "p-subtle"
-            }
-          >
-            <ButtonLink size={size} variation={variation}>
+      {(["sm", "md"] as const).flatMap((size) =>
+        (["neutral", "primary"] as const).flatMap((variation) =>
+          [false, true].map((outline) => (
+            <ButtonLink
+              key={`${size}${variation}${outline}`}
+              size={size}
+              variation={variation}
+              outline={outline}
+            >
               {size} · {variation}
             </ButtonLink>
-          </div>
-        )),
+          )),
+        ),
       )}
     </div>
   ),

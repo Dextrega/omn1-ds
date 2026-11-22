@@ -6,7 +6,12 @@ import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import { badgeContainer, badgeTone } from "../src/components/badge/styles";
 import { buttonCtaContainer, buttonCtaLabel } from "../src/components/button-cta/styles";
-import { buttonIconShape } from "../src/components/button-icon/styles";
+import {
+  buttonIconContainer,
+  buttonIconDot,
+  buttonIconLoading,
+} from "../src/components/button-icon/styles";
+import * as ctaMatrix from "../src/components/button-cta/matrix";
 import {
   buttonLinkContainer,
   buttonLinkLabel,
@@ -22,7 +27,7 @@ import {
   tabsList,
 } from "../src/components/tabs/styles";
 import { toggleThumb, toggleTrack } from "../src/components/toggle/styles";
-import { textInputField } from "../src/components/text-input/styles";
+import { textInputField, type TextInputFieldState } from "../src/components/text-input/styles";
 
 // Same switch NativeWind's Metro transformer flips: compile for a native platform, not the web.
 process.env.NATIVEWIND_OS = "ios";
@@ -47,17 +52,18 @@ function allClasses(): string[] {
   const variations = ["neutral", "primary", "success", "danger", "inverse"] as const;
   const appearances = ["solid", "outlined", "ghost"] as const;
   for (const size of sizes) {
-    add(buttonIconShape({ size }));
+    add(buttonIconDot({ size }));
+    add(buttonCtaLabel({ size }));
     for (const variation of variations)
       for (const appearance of appearances)
         for (const disabled of [true, false]) {
           add(buttonCtaContainer({ size, variation, appearance, disabled }));
-          const tone = disabled
-            ? "disabled"
-            : `${appearance === "solid" ? "solid" : "line"}-${variation}`;
-          add(buttonCtaLabel({ size, tone: tone as "disabled" }));
+          add(buttonIconContainer({ size, variation, appearance, disabled }));
         }
   }
+  add(buttonIconLoading);
+  // colour matrices (generated): container / label for ButtonCTA and ButtonIcon
+  for (const table of Object.values(ctaMatrix)) for (const cls of Object.values(table)) add(cls);
   for (const size of ["sm", "md", "lg"] as const) {
     for (const outlined of [true, false]) add(badgeContainer({ size, outlined }));
     for (const text of ["text-overline", "text-caption", "text-body-sm"]) add(text);
@@ -73,21 +79,31 @@ function allClasses(): string[] {
   ] as const)
     for (const appearance of ["subtle", "strong", "outlined"] as const)
       badgeTone(variant, appearance).forEach(add);
-  for (const focused of [true, false])
-    for (const invalid of [true, false])
-      for (const disabled of [true, false]) add(textInputField({ focused, invalid, disabled }));
+  for (const state of [
+    "enabled",
+    "active",
+    "filled",
+    "required",
+    "error",
+    "autoCompleted",
+    "loading",
+    "disabled",
+  ] as TextInputFieldState[])
+    add(textInputField(state));
   for (const selected of [true, false])
     for (const invalid of [true, false])
       for (const required of [true, false])
         for (const disabled of [true, false])
           add(checkboxBox({ selected, invalid, required, disabled }));
   // batch 2 (provisional)
-  for (const disabled of [true, false]) add(buttonLinkContainer({ disabled }));
-  for (const size of ["sm", "md", "lg"] as const)
-    for (const variation of ["neutral", "primary", "danger", "success", "inverse"] as const)
-      for (const pressed of [true, false])
-        for (const disabled of [true, false])
-          add(buttonLinkLabel({ size, tone: buttonLinkTone(variation, pressed, disabled) }));
+  for (const variation of ["neutral", "primary"] as const)
+    for (const outline of [true, false])
+      for (const disabled of [true, false])
+        add(buttonLinkContainer({ variation, outline, disabled }));
+  for (const size of ["sm", "md"] as const)
+    for (const variation of ["neutral", "primary"] as const)
+      for (const disabled of [true, false])
+        add(buttonLinkLabel({ size, tone: buttonLinkTone(variation, disabled) }));
   for (const selected of [true, false])
     for (const invalid of [true, false])
       for (const required of [true, false])
@@ -106,14 +122,15 @@ function allClasses(): string[] {
           add(chipContainer({ size, appearance, selected, disabled }));
           add(chipLabel({ size, appearance, selected, disabled }));
         }
-  for (const orientation of ["horizontal", "vertical"] as const) {
-    add(tabsList(orientation));
-    add(tabsIndicator(orientation));
+  for (const appearance of ["wrap", "flex"] as const) {
+    add(tabsList(appearance));
     for (const disabled of [true, false]) {
-      add(tabsBaseContainer({ orientation, disabled }));
+      add(tabsBaseContainer({ appearance, disabled }));
       for (const selected of [true, false]) add(tabsBaseLabel({ selected, disabled }));
     }
   }
+  for (const align of ["bottom", "top"] as const)
+    for (const disabled of [true, false]) add(tabsIndicator({ align, disabled }));
   add("gap-medium flex-col");
   // classes written inline in the components
   add(
@@ -123,7 +140,7 @@ function allClasses(): string[] {
     "placeholder:text-surface-on-neutral-subtle placeholder:text-surface-on-neutral-medium w-full gap-very-subtle min-w-0 flex-1 py-very-subtle shrink flex-row items-baseline items-start justify-between",
   );
   add(
-    "absolute right-x1 bottom-x1 size-x1-5 rounded-full border border-surface-neutral-very-subtle bg-surface-danger-medium opacity-0",
+    "text-surface-on-danger-medium text-surface-on-neutral-very-strong text-alpha-inverse-strong text-alpha-inverse-medium text-surface-on-neutral-very-strong opacity-0",
   );
   return [...out];
 }

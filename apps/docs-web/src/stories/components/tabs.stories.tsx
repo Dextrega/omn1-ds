@@ -9,7 +9,7 @@ const meta: Meta<typeof Tabs> = {
     docs: {
       description: {
         component:
-          "Figma: **Tabs** (235:1156) and its child **_TabsBase** (228:209), exported as `Tabs` / `TabsList` / `TabsBase` / `TabsPanel`. Arrow keys, Home and End move between tabs. Provisional — not yet verified against Figma (MCP access was unavailable). Variant matrix and sizes come from Figma; colours and motion are assumptions. See docs/FIGMA-SYNC.md.",
+          "Figma: **Tabs** (235:1156) and its child **_TabsBase** (228:209), exported as `Tabs` / `TabsList` / `TabsBase` / `TabsPanel`. Verified against Figma: states, label colours, indicator (an OUTSIDE stroke on the bottom or top edge), Wrap / Flex. Not implemented: the ButtonList / ButtonIcon slots of _TabsBase. Arrow keys, Home and End move between tabs.",
       },
     },
   },
@@ -17,13 +17,15 @@ const meta: Meta<typeof Tabs> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const demo = (orientation: "horizontal" | "vertical") => (
-  <Tabs defaultValue="overview" orientation={orientation}>
-    <TabsList aria-label="Sections">
+const demo = (appearance: "wrap" | "flex", align: "bottom" | "top" = "bottom") => (
+  <Tabs defaultValue="overview">
+    <TabsList aria-label="Sections" appearance={appearance} align={align}>
       <TabsBase value="overview" leadingIcon="house">
         Overview
       </TabsBase>
-      <TabsBase value="activity">Activity</TabsBase>
+      <TabsBase value="activity" badge="3">
+        Activity
+      </TabsBase>
       <TabsBase value="settings" leadingIcon="settings">
         Settings
       </TabsBase>
@@ -43,5 +45,6 @@ const demo = (orientation: "horizontal" | "vertical") => (
   </Tabs>
 );
 
-export const Horizontal: Story = { render: () => demo("horizontal") };
-export const Vertical: Story = { render: () => demo("vertical") };
+export const Wrap: Story = { render: () => demo("wrap") };
+export const Flex: Story = { render: () => <div style={{ width: 480 }}>{demo("flex")}</div> };
+export const AlignTop: Story = { render: () => demo("wrap", "top") };

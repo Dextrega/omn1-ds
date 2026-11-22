@@ -10,54 +10,72 @@ import {
 import { cn } from "../../lib/cn";
 
 /**
- * Figma: ButtonLink (6:11853) — a text-only, link-styled button.
- * Interactive states are CSS, not props:  Hovered → hover:  Pressed → active:  Focused → focus-visible:
- *                                          Disabled → `disabled` / `aria-disabled`  Loading → `loading`
- * Renders an `<a>` when `href` is given, otherwise a `<button>`.
+ * Figma: ButtonLink (component set 6:11853) — Size SM/MD × Variant Neutral/Primary × State
+ * (Enabled · Hovered · Pressed · Disabled) × Outline On/Off (32 variants).
  *
- * PROVISIONAL: the Figma file could not be read when this was written (MCP access). The prop surface mirrors ButtonCTA;
- * sizes, colours and the underline treatment are assumptions. See docs/FIGMA-SYNC.md.
+ * Verified against Figma (variable bindings read via MCP): hug-content box with no padding and no radius,
+ * gap Spacement/ExtraSubtle, SM = Caption 12/16 + 12px icons, MD = Body SM 14/20 + 16px icons, text colours
+ * (Neutral → OnNeutral/VeryStrong, Primary → OnPrimary/Medium, Disabled → OnNeutral/Subtle), every Hovered / Pressed
+ * fill and stroke for Outline On and Off, 0.1s ease-out motion. Figma centres the 1px stroke on the box edge; it is
+ * drawn here as an outside `ring` (Tailwind has no centre alignment).
+ * Interactive states are CSS: Hovered → hover:  Pressed → active:  Disabled → `disabled` / `aria-disabled`.
+ * Renders an `<a>` when `href` is given, otherwise a `<button>`. Not in Figma (a11y addition): a focus-visible ring.
  */
 export const buttonLinkVariants = cva(
   [
-    "relative inline-flex shrink-0 select-none items-center justify-center gap-extra-subtle rounded-corner-very-subtle",
-    "font-sans font-medium whitespace-nowrap underline-offset-4",
-    "transition-colors duration-150 motion-reduce:transition-none",
-    "hover:underline active:no-underline",
+    "relative inline-flex shrink-0 select-none items-center justify-center gap-extra-subtle rounded-none",
+    "font-sans font-medium whitespace-nowrap",
+    "transition-colors duration-100 ease-out motion-reduce:transition-none",
     "focus-visible:outline-none focus-visible:ring-medium focus-visible:ring-stroke-secondary-medium",
-    "aria-[disabled=true]:cursor-not-allowed aria-[disabled=true]:no-underline disabled:cursor-not-allowed disabled:no-underline",
+    "disabled:cursor-not-allowed",
   ],
   {
     variants: {
       size: {
-        sm: "text-body-sm",
-        md: "text-body-md",
-        lg: "text-body-lg",
+        sm: "text-caption",
+        md: "text-body-sm",
       },
-      variation: {
-        neutral:
-          "text-surface-on-neutral-very-strong hover:text-surface-on-neutral-strong active:text-surface-on-neutral-medium",
-        primary:
-          "text-surface-primary-medium hover:text-surface-primary-strong active:text-surface-primary-very-strong",
-        danger:
-          "text-surface-danger-medium hover:text-surface-danger-strong active:text-surface-danger-very-strong",
-        success:
-          "text-surface-success-medium hover:text-surface-success-strong active:text-surface-success-very-strong",
-        inverse:
-          "text-surface-neutral-very-subtle hover:text-surface-neutral-subtle active:text-surface-neutral-medium",
-      },
+      variation: { neutral: "", primary: "" },
+      outline: { true: "", false: "" },
     },
-    defaultVariants: { size: "md", variation: "primary" },
+    compoundVariants: [
+      {
+        variation: "neutral",
+        outline: true,
+        class:
+          "text-surface-on-neutral-very-strong ring-very-subtle ring-stroke-neutral-strong hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle",
+      },
+      {
+        variation: "neutral",
+        outline: false,
+        class:
+          "text-surface-on-neutral-very-strong hover:ring-very-subtle hover:ring-stroke-neutral-strong active:bg-alpha-inverse-subtle active:ring-very-subtle active:ring-stroke-neutral-strong",
+      },
+      {
+        variation: "primary",
+        outline: true,
+        class:
+          "text-surface-on-primary-medium ring-very-subtle ring-stroke-primary-medium hover:bg-alpha-primary-very-subtle active:bg-alpha-primary-subtle",
+      },
+      {
+        variation: "primary",
+        outline: false,
+        class:
+          "text-surface-on-primary-medium hover:ring-very-subtle hover:ring-stroke-primary-medium active:bg-alpha-primary-subtle active:ring-very-subtle active:ring-stroke-primary-medium",
+      },
+    ],
+    defaultVariants: { size: "md", variation: "primary", outline: false },
   },
 );
 
 export type ButtonLinkVariantProps = VariantProps<typeof buttonLinkVariants>;
 
 interface ButtonLinkOwnProps extends ButtonLinkVariantProps {
+  /** Figma: LeadingIcon (boolean + swap). */
   leadingIcon?: IconName;
+  /** Figma: TrailingIcon (boolean + swap). */
   trailingIcon?: IconName;
-  /** Figma: State=Loading. Keeps its size, shows a spinner and ignores clicks. */
-  loading?: boolean;
+  /** Figma: Text (string, "ButtonLink"). */
   children?: ReactNode;
 }
 
@@ -68,47 +86,34 @@ type AsAnchor = ButtonLinkOwnProps &
 
 export type ButtonLinkProps = AsButton | AsAnchor;
 
-const ICON_PX = { sm: 16, md: 20, lg: 24 } as const;
-const DISABLED = "text-surface-on-neutral-subtle hover:text-surface-on-neutral-subtle";
+/** Figma: System/x1,5 (SM) · x2 (MD). */
+const ICON_PX = { sm: 12, md: 16 } as const;
+const disabledClasses = (outline: boolean) =>
+  cn(
+    "pointer-events-none text-surface-on-neutral-subtle",
+    outline ? "ring-very-subtle ring-stroke-neutral-subtle" : "ring-0",
+  );
 
 export const ButtonLink = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonLinkProps>(
   function ButtonLink(props, ref) {
     const {
       size,
       variation,
+      outline: outlineProp,
       leadingIcon,
       trailingIcon,
-      loading = false,
       className,
       children,
       ...rest
     } = props;
     const iconPx = ICON_PX[size ?? "md"];
-    const classes = cn(
-      buttonLinkVariants({ size, variation }),
-      loading && "cursor-progress",
-      className,
-    );
+    const outline = outlineProp ?? false;
+    const classes = cn(buttonLinkVariants({ size, variation, outline }), className);
     const content = (
       <>
-        <span
-          className={cn(
-            "inline-flex items-center justify-center gap-extra-subtle",
-            loading && "invisible",
-          )}
-        >
-          {leadingIcon && <Icon name={leadingIcon} size={iconPx} />}
-          {children}
-          {trailingIcon && <Icon name={trailingIcon} size={iconPx} />}
-        </span>
-        {loading && (
-          <Icon
-            name="loader"
-            size={iconPx}
-            className="absolute animate-spin"
-            aria-label="Loading"
-          />
-        )}
+        {leadingIcon && <Icon name={leadingIcon} size={iconPx} />}
+        {children}
+        {trailingIcon && <Icon name={trailingIcon} size={iconPx} />}
       </>
     );
 
@@ -117,19 +122,17 @@ export const ButtonLink = forwardRef<HTMLButtonElement | HTMLAnchorElement, Butt
         AsAnchor,
         keyof ButtonLinkOwnProps
       >;
-      const inert = disabled || loading;
       return (
         <a
           ref={ref as React.Ref<HTMLAnchorElement>}
-          href={inert ? undefined : href}
-          role={inert ? "link" : undefined}
-          aria-disabled={inert || undefined}
-          aria-busy={loading || undefined}
+          href={disabled ? undefined : href}
+          role={disabled ? "link" : undefined}
+          aria-disabled={disabled || undefined}
           tabIndex={disabled ? -1 : undefined}
           onClick={(e: MouseEvent<HTMLAnchorElement>) =>
-            inert ? e.preventDefault() : onClick?.(e)
+            disabled ? e.preventDefault() : onClick?.(e)
           }
-          className={cn(classes, disabled && DISABLED)}
+          className={cn(classes, disabled && disabledClasses(outline))}
           {...anchor}
         >
           {content}
@@ -139,7 +142,6 @@ export const ButtonLink = forwardRef<HTMLButtonElement | HTMLAnchorElement, Butt
 
     const {
       disabled,
-      onClick,
       type = "button",
       ...button
     } = rest as Omit<AsButton, keyof ButtonLinkOwnProps>;
@@ -148,12 +150,7 @@ export const ButtonLink = forwardRef<HTMLButtonElement | HTMLAnchorElement, Butt
         ref={ref as React.Ref<HTMLButtonElement>}
         type={type}
         disabled={disabled}
-        aria-busy={loading || undefined}
-        aria-disabled={loading || undefined}
-        onClick={(e: MouseEvent<HTMLButtonElement>) =>
-          loading ? e.preventDefault() : onClick?.(e)
-        }
-        className={cn(classes, disabled && DISABLED)}
+        className={cn(classes, disabled && disabledClasses(outline))}
         {...button}
       >
         {content}

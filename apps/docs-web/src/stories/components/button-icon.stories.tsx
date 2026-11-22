@@ -25,7 +25,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **ButtonIcon** (2058:749). Same matrix as ButtonCTA, square and icon-only — `aria-label` is required. MD is verified; other sizes' icon metrics and the status dot are provisional.",
+          "Figma: **ButtonIcon** (2058:749), 420 variants. Own colour matrix (not ButtonCTA’s), square and icon-only — `aria-label` is required. Geometry, icon sizes, DotStatus size and every state colour are verified against Figma; DotStatus offsets on MD are provisional (9px in Figma is off the spacing scale).",
       },
     },
   },

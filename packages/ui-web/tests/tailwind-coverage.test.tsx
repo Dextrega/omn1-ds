@@ -99,32 +99,40 @@ function renderEverything() {
         required
       />
       <TextInput label="Compact" appearance="compact" loading />
+      <TextInput label="Auto" autoCompleted defaultValue="x" counter maxLength={10} hint="Hint" />
+      <TextInput label="Filled" defaultValue="Text" button={<span>b</span>} link={<span>l</span>} />
+      <TextInput label="Required" required />
       <TextInput label="Error" error="Something is wrong" />
       <TextInput label="Disabled" disabled />
       <Checkbox label="One" description="More" />
       <Checkbox label="Two" defaultChecked required />
       <Checkbox label="Three" indeterminate invalid />
       <Checkbox label="Four" disabled defaultChecked />
-      {(["sm", "md", "lg"] as const).flatMap((size) =>
-        variations.map((variation) => (
-          <ButtonLink
-            key={`${size}${variation}`}
-            size={size}
-            variation={variation}
-            leadingIcon="plus"
-            trailingIcon="arrow-right"
-          >
-            Link
-          </ButtonLink>
-        )),
+      {(["sm", "md"] as const).flatMap((size) =>
+        (["neutral", "primary"] as const).flatMap((variation) =>
+          [true, false].map((outline) => (
+            <ButtonLink
+              key={`${size}${variation}${outline}`}
+              size={size}
+              variation={variation}
+              outline={outline}
+              leadingIcon="plus"
+              trailingIcon="arrow-right"
+            >
+              Link
+            </ButtonLink>
+          )),
+        ),
       )}
-      <ButtonLink href="/x" loading>
-        Anchor
-      </ButtonLink>
-      <ButtonLink href="/x" disabled>
-        Anchor
-      </ButtonLink>
+      {[true, false].map((outline) => (
+        <ButtonLink key={`d${outline}`} href="/x" disabled outline={outline}>
+          Anchor
+        </ButtonLink>
+      ))}
       <ButtonLink disabled>Disabled</ButtonLink>
+      <ButtonLink disabled outline>
+        Disabled
+      </ButtonLink>
       <Radiobutton label="One" description="More" />
       <Radiobutton label="Two" defaultChecked required />
       <Radiobutton label="Three" invalid />
@@ -141,32 +149,42 @@ function renderEverything() {
         (["filled", "outlined"] as const).flatMap((appearance) =>
           [false, true].map((selected) => (
             <div key={`${size}${appearance}${selected}`}>
-              <Chip size={size} appearance={appearance} selected={selected} leadingIcon="star">
+              <Chip
+                size={size}
+                appearance={appearance}
+                selected={selected}
+                leadingIcon="star"
+                trailingIcon="chevron-down"
+                badge="2"
+                avatar="A"
+              >
                 Chip
               </Chip>
-              <Chip size={size} appearance={appearance} selected={selected} disabled>
+              <Chip size={size} appearance={appearance} selected={selected} disabled badge="2">
                 Chip
               </Chip>
             </div>
           )),
         ),
       )}
-      {(["horizontal", "vertical"] as const).map((orientation) => (
-        <Tabs key={orientation} defaultValue="a" orientation={orientation}>
-          <TabsList>
-            <TabsBase value="a" leadingIcon="house">
-              A
-            </TabsBase>
-            <TabsBase value="b" trailingIcon="chevron-down">
-              B
-            </TabsBase>
-            <TabsBase value="c" disabled>
-              C
-            </TabsBase>
-          </TabsList>
-          <TabsPanel value="a">Panel A</TabsPanel>
-        </Tabs>
-      ))}
+      {(["wrap", "flex"] as const).flatMap((appearance) =>
+        (["bottom", "top"] as const).map((align) => (
+          <Tabs key={`${appearance}${align}`} defaultValue="a">
+            <TabsList appearance={appearance} align={align} scrollButtons>
+              <TabsBase value="a" leadingIcon="house" badge="3">
+                A
+              </TabsBase>
+              <TabsBase value="b" trailingIcon="chevron-down" loading>
+                B
+              </TabsBase>
+              <TabsBase value="c" disabled badge="1">
+                C
+              </TabsBase>
+            </TabsList>
+            <TabsPanel value="a">Panel A</TabsPanel>
+          </Tabs>
+        )),
+      )}
     </div>,
   );
 }

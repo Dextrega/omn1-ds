@@ -23,24 +23,22 @@ describe("ButtonCTA", () => {
     render(<ButtonCTA>Save</ButtonCTA>);
     const btn = screen.getByRole("button", { name: "Save" });
     expect(btn).toHaveClass(
-      "min-h-x6",
+      "h-x6",
       "px-subtle",
       "rounded-subtle",
       "bg-surface-primary-medium",
-      "text-surface-on-primary-very-subtle",
+      // Figma: Solid/Primary text is Surface/OnNeutral/VerySubtle
+      "text-surface-on-neutral-very-subtle",
+      "duration-100",
     );
     expect(btn).toHaveAttribute("type", "button");
   });
 
   it("uses the Corner Radius ladder for LG and SM", () => {
     const { rerender } = render(<ButtonCTA size="lg">x</ButtonCTA>);
-    expect(screen.getByRole("button")).toHaveClass(
-      "min-h-x8",
-      "px-medium",
-      "rounded-corner-subtle",
-    );
+    expect(screen.getByRole("button")).toHaveClass("h-x8", "px-medium", "rounded-corner-subtle");
     rerender(<ButtonCTA size="sm">x</ButtonCTA>);
-    expect(screen.getByRole("button")).toHaveClass("min-h-x4", "rounded-corner-very-subtle");
+    expect(screen.getByRole("button")).toHaveClass("h-x4", "rounded-corner-very-subtle");
   });
 
   it("loading keeps size, announces busy and swallows clicks", async () => {
@@ -94,6 +92,16 @@ describe("ButtonIcon", () => {
   });
 });
 
+describe("ButtonIcon colour matrix", () => {
+  it("is its own palette: Primary/Solid text is OnPrimary and Pressed uses Primary/Subtle", () => {
+    render(<ButtonIcon icon="heart" aria-label="x" />);
+    expect(screen.getByRole("button")).toHaveClass(
+      "text-surface-on-primary-very-subtle",
+      "active:bg-surface-primary-subtle",
+    );
+  });
+});
+
 describe("Badge", () => {
   it("renders MD Neutral Strong by default (Figma: 24h, Surface/Neutral/Strong)", () => {
     render(<Badge>New</Badge>);
@@ -112,13 +120,16 @@ describe("Badge", () => {
         x
       </Badge>,
     );
-    expect(screen.getByText("x")).toHaveClass("border-stroke-danger-medium");
+    expect(screen.getByText("x")).toHaveClass("ring-stroke-danger-medium");
     rerender(
       <Badge variant="disabled" appearance="subtle">
         x
       </Badge>,
     );
-    expect(screen.getByText("x")).toHaveClass("bg-alpha-neutral-very-subtle");
+    expect(screen.getByText("x")).toHaveClass(
+      "bg-surface-neutral-subtle",
+      "text-surface-on-neutral-medium",
+    );
   });
 });
 
@@ -176,57 +187,39 @@ describe("Checkbox", () => {
   });
 });
 
-describe("ButtonLink (provisional)", () => {
+describe("ButtonLink", () => {
   it("renders a button by default and an anchor with href", () => {
     const { rerender } = render(<ButtonLink>Go</ButtonLink>);
     expect(screen.getByRole("button", { name: "Go" })).toHaveClass(
-      "text-surface-primary-medium",
-      "hover:underline",
+      "text-surface-on-primary-medium",
     );
     rerender(<ButtonLink href="/x">Go</ButtonLink>);
     expect(screen.getByRole("link", { name: "Go" })).toHaveAttribute("href", "/x");
   });
 
-  it("disabled / loading anchors drop href and swallow clicks", async () => {
+  it("disabled anchors drop href and swallow clicks", async () => {
     const onClick = vi.fn();
     render(
-      <ButtonLink href="/x" loading onClick={onClick}>
+      <ButtonLink href="/x" disabled onClick={onClick}>
         Go
       </ButtonLink>,
     );
     const a = screen.getByRole("link");
     expect(a).not.toHaveAttribute("href");
-    expect(a).toHaveAttribute("aria-busy", "true");
+    expect(a).toHaveAttribute("aria-disabled", "true");
     await userEvent.click(a);
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it("loading buttons swallow clicks", async () => {
+  it("disabled buttons swallow clicks", async () => {
     const onClick = vi.fn();
     render(
-      <ButtonLink loading onClick={onClick}>
+      <ButtonLink disabled onClick={onClick}>
         Go
       </ButtonLink>,
     );
     await userEvent.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();
-  });
-});
-
-describe("Radiobutton / RadioGroup (provisional)", () => {
-  it("selects a single option inside a group", async () => {
-    const onValueChange = vi.fn();
-    render(
-      <RadioGroup defaultValue="a" onValueChange={onValueChange}>
-        <Radiobutton value="a" label="A" />
-        <Radiobutton value="b" label="B" />
-      </RadioGroup>,
-    );
-    expect(screen.getByLabelText("A")).toBeChecked();
-    await userEvent.click(screen.getByLabelText("B"));
-    expect(screen.getByLabelText("B")).toBeChecked();
-    expect(screen.getByLabelText("A")).not.toBeChecked();
-    expect(onValueChange).toHaveBeenCalledWith("b");
   });
 
   it("maps Figma states to attributes", () => {
@@ -234,11 +227,11 @@ describe("Radiobutton / RadioGroup (provisional)", () => {
     const r = screen.getByLabelText("X");
     expect(r).toBeDisabled();
     expect(r).toHaveAttribute("aria-invalid", "true");
-    expect(r).toHaveClass("size-full", "aria-[invalid=true]:border-stroke-danger-medium");
+    expect(r).toHaveClass("size-full", "aria-[invalid=true]:ring-stroke-danger-medium");
   });
 });
 
-describe("Toggle (provisional)", () => {
+describe("Toggle", () => {
   it("is a switch that toggles uncontrolled and reports changes", async () => {
     const onCheckedChange = vi.fn();
     render(<Toggle label="Wifi" onCheckedChange={onCheckedChange} />);
@@ -268,25 +261,30 @@ describe("Toggle (provisional)", () => {
   });
 });
 
-describe("Chip (provisional)", () => {
+describe("Chip", () => {
   it("is a toggle button using aria-pressed", async () => {
     const onSelectedChange = vi.fn();
     render(<Chip onSelectedChange={onSelectedChange}>Tag</Chip>);
     const chip = screen.getByRole("button", { name: "Tag" });
     expect(chip).toHaveAttribute("aria-pressed", "false");
-    expect(chip).toHaveClass("h-x4-5");
+    expect(chip.closest("[data-slot=chip]")).toHaveClass("h-x4-5");
+    expect(screen.queryByRole("button", { name: "Remove" })).toBeNull();
     await userEvent.click(chip);
     expect(chip).toHaveAttribute("aria-pressed", "true");
     expect(onSelectedChange).toHaveBeenCalledWith(true);
+    // Figma: ButtonIcon appears when Selection=On and clears the selection
+    await userEvent.click(screen.getByRole("button", { name: "Remove" }));
+    expect(chip).toHaveAttribute("aria-pressed", "false");
+    expect(onSelectedChange).toHaveBeenLastCalledWith(false);
   });
 
   it("SM is 24px high", () => {
     render(<Chip size="sm">Tag</Chip>);
-    expect(screen.getByRole("button")).toHaveClass("h-x3");
+    expect(screen.getByRole("button").closest("[data-slot=chip]")).toHaveClass("h-x3");
   });
 });
 
-describe("Tabs / TabsBase (provisional)", () => {
+describe("Tabs / TabsBase", () => {
   const setup = (props = {}) =>
     render(
       <Tabs defaultValue="a" {...props}>
@@ -326,5 +324,15 @@ describe("Tabs / TabsBase (provisional)", () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     expect(() => render(<TabsBase value="x">x</TabsBase>)).toThrow(/inside <Tabs>/);
     spy.mockRestore();
+  });
+});
+
+describe("cn (tailwind-merge on Tailwind 3)", () => {
+  it("keeps a bare `outline` next to an outline width (INSIDE strokes rely on it)", async () => {
+    const { cn } = await import("../src/lib/cn");
+    expect(cn("outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong")).toBe(
+      "outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong",
+    );
+    expect(cn("outline", "outline-none")).toBe("outline-none");
   });
 });

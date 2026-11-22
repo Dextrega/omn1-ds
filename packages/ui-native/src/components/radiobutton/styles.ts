@@ -1,5 +1,9 @@
 import { cn } from "../../lib/cn";
 
+/**
+ * Figma: Radiobutton (6:11948). Same fills / strokes as @omn1/ui-web. Figma strokes are OUTSIDE; on native they are
+ * an inside `border`. Hover/Active have no native equivalent; Pressed → `active:`.
+ */
 export const radioCircle = ({
   selected,
   invalid,
@@ -12,31 +16,32 @@ export const radioCircle = ({
   disabled: boolean;
 }) =>
   cn(
-    "size-x2-5 items-center justify-center rounded-full border",
+    "size-x2-5 items-center justify-center rounded-full border border-very-subtle",
     disabled
       ? cn(
           "border-stroke-neutral-subtle",
           selected ? "bg-surface-neutral-subtle" : "bg-surface-neutral-very-subtle",
         )
       : invalid
-        ? cn(
-            "border-stroke-danger-medium",
-            selected ? "bg-surface-danger-medium" : "bg-surface-danger-very-subtle",
-          )
+        ? cn("border-stroke-danger-medium bg-surface-danger-very-subtle")
         : selected
-          ? "border-stroke-neutral-subtle bg-surface-primary-medium active:bg-surface-primary-strong"
+          ? cn(
+              required ? "border-stroke-danger-medium" : "border-stroke-primary-subtle",
+              "bg-alpha-primary-subtle active:border-stroke-primary-medium active:bg-alpha-primary-medium",
+            )
           : cn(
-              required ? "border-stroke-danger-medium" : "border-alpha-inverse-subtle",
-              "bg-surface-neutral-very-subtle active:bg-alpha-inverse-very-subtle active:border-medium",
+              required ? "border-stroke-danger-medium" : "border-stroke-neutral-medium",
+              "active:border-stroke-neutral-strong active:bg-alpha-inverse-very-subtle",
             ),
   );
 
+/** Figma: Circle 12×12 (System/x1,5). */
 export const radioDot = ({ invalid, disabled }: { invalid: boolean; disabled: boolean }) =>
   cn(
-    "size-x1 rounded-full",
+    "size-x1-5 rounded-full",
     disabled
-      ? "bg-surface-on-neutral-subtle"
+      ? "bg-surface-neutral-medium"
       : invalid
-        ? "bg-surface-on-danger-very-subtle"
-        : "bg-surface-on-primary-very-subtle",
+        ? "bg-surface-danger-medium"
+        : "bg-surface-primary-medium",
   );

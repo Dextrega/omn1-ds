@@ -5,7 +5,7 @@ const meta: Meta<typeof TextInput> = {
   title: "Components/TextInput",
   component: TextInput,
   tags: ["autodocs"],
-  args: { label: "Label", placeholder: "Placeholder", helper: "Helper text", appearance: "full" },
+  args: { label: "Label", placeholder: "Placeholder", hint: "Hint text", appearance: "full" },
   argTypes: {
     appearance: { control: "inline-radio", options: ["full", "compact"] },
     leadingIcon: { control: "select", options: [undefined, ...iconNames] },
@@ -22,7 +22,7 @@ const meta: Meta<typeof TextInput> = {
     docs: {
       description: {
         component:
-          "Figma: **TextInput** (6:9944), 312 wide. Enabled geometry and tokens are verified; per-state stroke colours and the Compact layout are provisional.",
+          "Figma: **TextInput** (6:9944), 312 wide, 22 variants (Appearance × State). Fills, strokes and text colours per state are verified against Figma; Active’s 4px centred stroke is approximated with an offset outline. BankFlag is not implemented.",
       },
     },
   },
@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {};
 export const Filled: Story = { args: { defaultValue: "hello@omn1.design", leadingIcon: "mail" } };
-export const Required: Story = { args: { required: true, hint: "required" } };
+export const Required: Story = { args: { required: true } };
 export const WithCounter: Story = {
   args: { counter: true, maxLength: 80, defaultValue: "Short bio" },
 };
@@ -46,3 +46,4 @@ export const Disabled: Story = { args: { disabled: true, defaultValue: "Locked" 
 export const Compact: Story = {
   args: { appearance: "compact", leadingIcon: "search", placeholder: "Search" },
 };
+export const AutoCompleted: Story = { args: { autoCompleted: true, defaultValue: "Saved value" } };

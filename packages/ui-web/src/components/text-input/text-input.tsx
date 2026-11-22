@@ -10,37 +10,75 @@ import {
 import { cn } from "../../lib/cn";
 
 /**
- * Figma: TextInput (component set 6:9944) — Appearance Full (88h) / Compact (48h) × State.
+ * Figma: TextInput (component set 6:9944) — Appearance Full (312×88) / Compact (312×48) × State
+ * (Enabled · Required · Hovered · Pressed · Active · Filled · Loading · AutoCompleted · Error · Disabled).
  *
- * State mapping:  Hovered → hover  ·  Active → focus-within  ·  Filled → has value
- *                 Required → `required`  ·  Error → `error`  ·  Loading → `loading`
- *                 AutoCompleted → :autofill  ·  Disabled → `disabled`
- * Verified: Enabled geometry + tokens (min-h 48, Spacement/Subtle, Border Radius/VerySubtle, fill Opacity/Inverse/VerySubtle,
- * 12px label, 14px placeholder, 16px icons). Provisional: stroke colours per state, Compact layout, Loading/AutoCompleted looks.
+ * Verified against Figma (variable bindings read via MCP): geometry (field 48h, padX Spacement/Subtle, gap
+ * Spacement/VerySubtle, radius Border Radius/VerySubtle, root gap Spacement/ExtraSubtle, 16px icons, helper row
+ * reserved in Full so the component is 88h), text styles (Label Caption · text Body SM · Hint Caption), the fill and
+ * stroke of every state and the colour of every text node.
+ *
+ * State mapping:  Hovered → hover  ·  Pressed → active  ·  Active → focus-within  ·  Filled → has a value
+ *                 Required → `required` while empty  ·  Error → `error`  ·  Loading → `loading`
+ *                 AutoCompleted → `autoCompleted` (browsers cannot report autofill to CSS)  ·  Disabled → `disabled`
+ *
+ * Provisional: Active's 4px CENTER stroke is drawn with an offset outline (Tailwind has no centre alignment; the
+ * 1px CENTER strokes of Filled / Required / Error / AutoCompleted are drawn fully inside, 0.5px off);
+ * the Loading spinner colour; BankFlag (Brand Payment) is not implemented.
  */
 export interface TextInputProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "size" | "prefix"
 > {
-  /** Full shows label, hint, helper and counter. Compact is the bare 48px field. */
+  /** Figma: Appearance. Full shows label, hint and counter; Compact is the bare 48px field. */
   appearance?: "full" | "compact";
+  /** Figma: Label. In Compact it is used as the placeholder (as in Figma) and read by screen readers. */
   label?: string;
-  /** Short hint beside the label, e.g. "optional". */
+  /** Figma: Hint — the text under the field. */
   hint?: string;
-  /** Helper text under the field. */
+  /** @deprecated Use `hint` (same Figma node). */
   helper?: string;
-  /** Error message. Presence switches the field to the Error state. */
+  /** Error message shown as the Hint. Presence switches the field to State=Error. */
   error?: string;
-  /** Shows `n/maxLength` (requires `maxLength`). */
+  /** Figma: Counter — shows `n/maxLength` (requires `maxLength`). */
   counter?: boolean;
+  /** Figma: Prefix. */
   prefix?: ReactNode;
+  /** Figma: Suffix. */
   suffix?: ReactNode;
+  /** Figma: LeadingIcon. */
   leadingIcon?: IconName;
+  /** Figma: TrailingIcon. */
   trailingIcon?: IconName;
+  /** Figma: Button — a trailing ButtonIcon (SM, Neutral, Ghost), e.g. clear / toggle password. */
+  button?: ReactNode;
+  /** Figma: ButtonLink — a link in the helper row (Full only). */
+  link?: ReactNode;
+  /** Figma: State=Loading. */
   loading?: boolean;
+  /** Figma: State=AutoCompleted. */
+  autoCompleted?: boolean;
   /** Class for the outer wrapper (the `className` prop goes to the `<input>`). */
   wrapperClassName?: string;
 }
+
+// Class names are spelled out in full on purpose: Tailwind only generates classes it can find as literal strings.
+const field = {
+  base: "flex h-x6 items-center gap-very-subtle rounded-very-subtle px-subtle font-sans text-body-sm font-medium transition-colors duration-100 ease-out",
+  // Enabled → Hovered / Pressed / Active (focus-within)
+  enabled:
+    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-medium focus-within:bg-alpha-inverse-very-subtle focus-within:outline focus-within:outline-medium focus-within:-outline-offset-2 focus-within:outline-stroke-primary-medium",
+  filled:
+    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong focus-within:outline-medium focus-within:-outline-offset-2 focus-within:outline-stroke-primary-medium",
+  required:
+    "bg-alpha-inverse-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-danger-medium hover:bg-alpha-inverse-subtle active:bg-alpha-inverse-medium focus-within:outline-medium focus-within:-outline-offset-2 focus-within:outline-stroke-primary-medium",
+  error:
+    "bg-surface-danger-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-danger-medium",
+  autoCompleted:
+    "bg-surface-warning-very-subtle text-surface-on-neutral-very-strong outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-strong",
+  loading: "bg-alpha-inverse-very-subtle text-surface-on-neutral-subtle",
+  disabled: "cursor-not-allowed bg-surface-neutral-subtle text-surface-on-neutral-subtle",
+} as const;
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function TextInput(
   {
@@ -54,7 +92,10 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
     suffix,
     leadingIcon,
     trailingIcon,
+    button,
+    link,
     loading = false,
+    autoCompleted = false,
     required,
     disabled,
     className,
@@ -64,6 +105,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
     onChange,
     value,
     defaultValue,
+    placeholder,
     "aria-label": ariaLabel,
     ...rest
   },
@@ -71,12 +113,30 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
 ) {
   const uid = useId();
   const inputId = id ?? `omn1-input-${uid}`;
-  const helperId = `${inputId}-helper`;
+  const hintId = `${inputId}-hint`;
   const invalid = Boolean(error);
   const [length, setLength] = useState(String(value ?? defaultValue ?? "").length);
   const currentLength = value !== undefined ? String(value).length : length;
-  const message = error ?? helper;
+  const message = error ?? hint ?? helper;
   const showFull = appearance === "full";
+  const empty = currentLength === 0;
+
+  const state = disabled
+    ? "disabled"
+    : loading
+      ? "loading"
+      : invalid
+        ? "error"
+        : autoCompleted
+          ? "autoCompleted"
+          : required && empty
+            ? "required"
+            : empty
+              ? "enabled"
+              : "filled";
+  const dangerHint = invalid || (required && empty && !disabled);
+  const muted = disabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong";
+  const mutedAlt = disabled ? "text-surface-on-neutral-medium" : "text-alpha-inverse-strong";
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLength(e.target.value.length);
@@ -84,45 +144,19 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
   };
 
   return (
-    <div className={cn("flex w-full flex-col gap-very-subtle font-sans", wrapperClassName)}>
-      {(label || hint) && (
-        <div
-          className={cn(
-            "flex items-baseline justify-between gap-very-subtle",
-            !showFull && "sr-only",
-          )}
+    <div className={cn("flex w-full flex-col gap-extra-subtle font-sans", wrapperClassName)}>
+      {label && (
+        <label
+          htmlFor={inputId}
+          className={cn("text-caption font-medium", muted, !showFull && "sr-only")}
         >
-          {label && (
-            <label htmlFor={inputId} className="text-caption font-medium text-alpha-inverse-strong">
-              {label}
-              {required && (
-                <span aria-hidden="true" className="ml-extra-subtle text-surface-danger-medium">
-                  *
-                </span>
-              )}
-            </label>
-          )}
-          {hint && <span className="text-caption text-surface-on-neutral-medium">{hint}</span>}
-        </div>
+          {label}
+        </label>
       )}
 
-      <div
-        data-slot="field"
-        data-invalid={invalid || undefined}
-        className={cn(
-          "group flex min-h-x6 items-center gap-very-subtle rounded-very-subtle border border-very-subtle px-subtle",
-          "bg-alpha-inverse-very-subtle text-body-md text-alpha-inverse-strong transition-colors duration-150",
-          "border-transparent hover:border-stroke-neutral-subtle focus-within:border-stroke-neutral-strong",
-          invalid &&
-            "border-stroke-danger-medium hover:border-stroke-danger-strong focus-within:border-stroke-danger-strong",
-          disabled &&
-            "cursor-not-allowed border-transparent bg-alpha-neutral-very-subtle text-surface-on-neutral-subtle hover:border-transparent",
-        )}
-      >
-        {leadingIcon && <Icon name={leadingIcon} size={16} className="shrink-0" />}
-        {prefix && (
-          <span className="shrink-0 text-caption text-surface-on-neutral-medium">{prefix}</span>
-        )}
+      <div data-slot="field" data-state={state} className={cn(field.base, field[state])}>
+        {leadingIcon && <Icon name={leadingIcon} size={16} className={cn("shrink-0", muted)} />}
+        {prefix && <span className={cn("shrink-0 text-caption", mutedAlt)}>{prefix}</span>}
         <input
           ref={ref}
           id={inputId}
@@ -131,37 +165,41 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
           maxLength={maxLength}
           value={value}
           defaultValue={defaultValue}
+          placeholder={placeholder ?? (showFull ? undefined : label)}
           onChange={handleChange}
           aria-label={ariaLabel}
           aria-invalid={invalid || undefined}
           aria-busy={loading || undefined}
-          aria-describedby={message ? helperId : undefined}
+          aria-describedby={message ? hintId : undefined}
           className={cn(
-            "min-w-0 flex-1 bg-transparent py-very-subtle text-body-md outline-none",
-            "placeholder:text-body-sm placeholder:text-surface-on-neutral-medium",
-            "disabled:cursor-not-allowed disabled:placeholder:text-surface-on-neutral-subtle",
-            "autofill:shadow-[inset_0_0_0_1000px_var(--omn1-semantic-surface-primary-very-subtle)]",
+            "min-w-0 flex-1 bg-transparent text-body-sm font-medium outline-none",
+            "placeholder:text-alpha-inverse-strong disabled:cursor-not-allowed disabled:placeholder:text-surface-on-neutral-subtle",
             className,
           )}
           {...rest}
         />
-        {suffix && (
-          <span className="shrink-0 text-caption text-surface-on-neutral-medium">{suffix}</span>
-        )}
+        {suffix && <span className={cn("shrink-0 text-caption", mutedAlt)}>{suffix}</span>}
         {loading ? (
-          <Icon name="loader" size={16} className="shrink-0 animate-spin" aria-label="Loading" />
+          <Icon
+            name="loader"
+            size={24}
+            className="shrink-0 animate-spin text-surface-on-neutral-medium"
+            aria-label="Loading"
+          />
         ) : (
-          trailingIcon && <Icon name={trailingIcon} size={16} className="shrink-0" />
+          trailingIcon && <Icon name={trailingIcon} size={16} className={cn("shrink-0", muted)} />
         )}
+        {button}
       </div>
 
-      {showFull && (message || (counter && maxLength)) && (
-        <div className="flex items-start justify-between gap-very-subtle text-caption">
+      {showFull && (
+        <div className="flex min-h-x2 items-center gap-very-subtle text-caption">
           <p
-            id={helperId}
+            id={hintId}
             role={invalid ? "alert" : undefined}
             className={cn(
-              invalid ? "text-surface-danger-medium" : "text-surface-on-neutral-medium",
+              "flex-1",
+              dangerHint ? "text-surface-on-danger-medium" : "text-surface-on-neutral-medium",
             )}
           >
             {message}
@@ -171,6 +209,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
               {currentLength}/{maxLength}
             </span>
           ) : null}
+          {link}
         </div>
       )}
     </div>
