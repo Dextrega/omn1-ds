@@ -3,7 +3,27 @@ import { render } from "@testing-library/react";
 import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
-import { Badge, ButtonCTA, ButtonIcon, Checkbox, TextInput } from "../src";
+import {
+  Badge,
+  ButtonCTA,
+  ButtonIcon,
+  ButtonLink,
+  Checkbox,
+  Chip,
+  ChipsSelect,
+  ButtonList,
+  ItemSelect,
+  PasswordInput,
+  Spinner,
+  RadioGroup,
+  Radiobutton,
+  Tabs,
+  TabsBase,
+  TabsList,
+  TabsPanel,
+  TextInput,
+  Toggle,
+} from "../src";
 
 /**
  * Every class a component can emit must exist as a real utility generated from the OMN1 preset.
@@ -11,7 +31,7 @@ import { Badge, ButtonCTA, ButtonIcon, Checkbox, TextInput } from "../src";
  * (typo / renamed Figma variable) and a class built by string concatenation that Tailwind can't see.
  */
 const sizes = ["xs", "sm", "md", "lg"] as const;
-const variations = ["neutral", "primary", "success", "danger", "inverse"] as const;
+const variants = ["neutral", "primary", "success", "danger", "inverse"] as const;
 const appearances = ["solid", "outlined", "ghost"] as const;
 const badgeVariants = [
   "neutral",
@@ -28,24 +48,24 @@ function renderEverything() {
   return render(
     <div>
       {sizes.flatMap((size) =>
-        variations.flatMap((variation) =>
+        variants.flatMap((variant) =>
           appearances.map((appearance) => (
-            <div key={`${size}${variation}${appearance}`}>
+            <div key={`${size}${variant}${appearance}`}>
               <ButtonCTA
                 size={size}
-                variation={variation}
+                variant={variant}
                 appearance={appearance}
                 leadingIcon="plus"
                 trailingIcon="arrow-right"
               >
                 Button
               </ButtonCTA>
-              <ButtonCTA size={size} variation={variation} appearance={appearance} loading disabled>
+              <ButtonCTA size={size} variant={variant} appearance={appearance} loading disabled>
                 Loading
               </ButtonCTA>
               <ButtonIcon
                 size={size}
-                variation={variation}
+                variant={variant}
                 appearance={appearance}
                 icon="heart"
                 aria-label="Like"
@@ -73,8 +93,8 @@ function renderEverything() {
       <Badge size="lg">Large</Badge>
       <TextInput
         label="Full"
-        hint="optional"
-        helper="Helper"
+        hint="Helper"
+        bankFlag={<span>VISA</span>}
         counter
         maxLength={20}
         prefix="R$"
@@ -84,12 +104,129 @@ function renderEverything() {
         required
       />
       <TextInput label="Compact" appearance="compact" loading />
+      <TextInput label="Auto" autoCompleted defaultValue="x" counter maxLength={10} hint="Hint" />
+      <TextInput label="Filled" defaultValue="Text" button={<span>b</span>} link={<span>l</span>} />
+      <TextInput label="Required" required />
       <TextInput label="Error" error="Something is wrong" />
       <TextInput label="Disabled" disabled />
       <Checkbox label="One" description="More" />
       <Checkbox label="Two" defaultChecked required />
       <Checkbox label="Three" indeterminate invalid />
       <Checkbox label="Four" disabled defaultChecked />
+      {(["sm", "md"] as const).flatMap((size) =>
+        (["neutral", "primary"] as const).flatMap((variant) =>
+          [true, false].map((outline) => (
+            <ButtonLink
+              key={`${size}${variant}${outline}`}
+              size={size}
+              variant={variant}
+              outline={outline}
+              leadingIcon="plus"
+              trailingIcon="arrow-right"
+            >
+              Link
+            </ButtonLink>
+          )),
+        ),
+      )}
+      {[true, false].map((outline) => (
+        <ButtonLink key={`d${outline}`} href="/x" disabled outline={outline}>
+          Anchor
+        </ButtonLink>
+      ))}
+      <ButtonLink disabled>Disabled</ButtonLink>
+      <ButtonLink disabled outline>
+        Disabled
+      </ButtonLink>
+      <Radiobutton label="One" description="More" />
+      <Radiobutton label="Two" defaultChecked required />
+      <Radiobutton label="Three" invalid />
+      <Radiobutton label="Four" disabled defaultChecked />
+      <RadioGroup defaultValue="a" invalid required orientation="horizontal">
+        <Radiobutton value="a" label="A" />
+        <Radiobutton value="b" label="B" />
+      </RadioGroup>
+      <Toggle label="One" description="More" />
+      <Toggle label="Two" defaultChecked required />
+      <Toggle label="Three" invalid defaultChecked name="t" />
+      <Toggle label="Four" disabled defaultChecked />
+      {(["sm", "md"] as const).flatMap((size) =>
+        (["filled", "outlined"] as const).flatMap((appearance) =>
+          [false, true].map((selected) => (
+            <div key={`${size}${appearance}${selected}`}>
+              <Chip
+                size={size}
+                appearance={appearance}
+                selected={selected}
+                leadingIcon="star"
+                trailingIcon="chevron-down"
+                badge="2"
+                avatar="A"
+              >
+                Chip
+              </Chip>
+              <Chip size={size} appearance={appearance} selected={selected} disabled badge="2">
+                Chip
+              </Chip>
+            </div>
+          )),
+        ),
+      )}
+      {(["neutral", "primary", "black", "white"] as const).map((variant) => (
+        <Spinner key={variant} variant={variant} size={20} />
+      ))}
+      <ButtonCTA loading variant="inverse">
+        Loading
+      </ButtonCTA>
+      <ButtonIcon loading variant="inverse" icon="plus" aria-label="Loading" />
+      <PasswordInput label="Password" requirements defaultValue="Abcdef1!" required hint="Hint" />
+      <PasswordInput label="Password" requirements disabled />
+      <PasswordInput label="Password" loading bankFlag={<span>V</span>} />
+      {(["bottom-left", "bottom-right", "top-left", "top-right"] as const).map((align) => (
+        <div key={align}>
+          <ChipsSelect label="Select" size="sm" align={align} defaultOpen>
+            <ItemSelect selected>One</ItemSelect>
+            <ItemSelect disabled>Two</ItemSelect>
+          </ChipsSelect>
+          <ButtonList aria-label="More" size="md" align={align} defaultOpen>
+            <ItemSelect>One</ItemSelect>
+          </ButtonList>
+        </div>
+      ))}
+      <ChipsSelect label="Closed" />
+      {(["wrap", "flex"] as const).flatMap((appearance) =>
+        (["bottom", "top"] as const).map((align) => (
+          <Tabs key={`${appearance}${align}`} defaultValue="a">
+            <TabsList appearance={appearance} align={align} scrollButtons>
+              <TabsBase value="a" leadingIcon="house" badge="3">
+                A
+              </TabsBase>
+              <TabsBase value="b" trailingIcon="chevron-down" loading>
+                B
+              </TabsBase>
+              <TabsBase
+                value="c"
+                disabled
+                badge="1"
+                loading
+                buttonIcon="x"
+                buttonList={<ItemSelect>One</ItemSelect>}
+              >
+                C
+              </TabsBase>
+              <TabsBase
+                value="d"
+                buttonIcon="x"
+                buttonIconLabel="Close D"
+                buttonList={<ItemSelect>One</ItemSelect>}
+              >
+                D
+              </TabsBase>
+            </TabsList>
+            <TabsPanel value="a">Panel A</TabsPanel>
+          </Tabs>
+        )),
+      )}
     </div>,
   );
 }

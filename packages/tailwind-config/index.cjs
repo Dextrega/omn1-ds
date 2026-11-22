@@ -47,6 +47,12 @@ module.exports = {
     // Focus rings / outlines use the same Stroke ladder as borders.
     ringWidth: { 0: "0px", ...theme.borderWidth },
     outlineWidth: { 0: "0px", ...theme.borderWidth },
+    // Figma effect style "DropShadow/Level 3" (PopOver). PROVISIONAL: the pipeline exports no effect tokens, so the
+    // geometry and alpha are copied from Figma and the shadow colour is raw black alpha — see docs/FIGMA-SYNC.md.
+    boxShadow: {
+      none: "none",
+      "level-3": "0 8px 16px -4px rgb(0 0 0 / 0.2), 0 4px 12px 0 rgb(0 0 0 / 0.06)",
+    },
     fontSize: theme.fontSize,
     fontWeight: theme.fontWeight,
     letterSpacing: theme.letterSpacing,

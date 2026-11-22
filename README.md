@@ -8,14 +8,14 @@ Figma Variables ─► Tokens Studio export ─► W3C DTCG ─► Style Diction
                                                                          └─► TypeScript + figma-variable-map.json (design-to-code contract)
 ```
 
-| Package                                             |                                                                              |
-| --------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [`@omn1/tokens`](packages/tokens)                   | Tokens, CSS variables, runtime theme resolver and brand API                  |
-| [`@omn1/tailwind-config`](packages/tailwind-config) | Tailwind 3 preset — every utility is an `--omn1-*` variable                  |
-| [`@omn1/ui-web`](packages/ui-web)                   | `ButtonCTA`, `ButtonIcon`, `Badge`, `TextInput`, `Checkbox`, `ThemeProvider` |
-| [`@omn1/ui-native`](packages/ui-native)             | The same components for React Native                                         |
-| [`@omn1/icons`](packages/icons)                     | Lucide behind an overridable registry                                        |
-| [`apps/docs-web`](apps/docs-web)                    | Storybook, deployed to Vercel                                                |
+| Package                                             |                                                                                                                                                    |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@omn1/tokens`](packages/tokens)                   | Tokens, CSS variables, runtime theme resolver and brand API                                                                                        |
+| [`@omn1/tailwind-config`](packages/tailwind-config) | Tailwind 3 preset — every utility is an `--omn1-*` variable                                                                                        |
+| [`@omn1/ui-web`](packages/ui-web)                   | `ButtonCTA`, `ButtonIcon`, `Badge`, `TextInput`, `Checkbox`, `ButtonLink`, `Radiobutton` / `RadioGroup`, `Toggle`, `Chip`, `Tabs`, `ThemeProvider` |
+| [`@omn1/ui-native`](packages/ui-native)             | The same components for React Native                                                                                                               |
+| [`@omn1/icons`](packages/icons)                     | Lucide behind an overridable registry                                                                                                              |
+| [`apps/docs-web`](apps/docs-web)                    | Storybook, deployed to Vercel                                                                                                                      |
 
 ## Quick start
 

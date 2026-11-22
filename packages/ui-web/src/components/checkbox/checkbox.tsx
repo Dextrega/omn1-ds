@@ -11,8 +11,12 @@ import {
 import { cn } from "../../lib/cn";
 
 /**
- * Figma: Checkbox (component set 6:11899) — Selection Unselected/Indeterminate/Selected × State.
- * All 21 variants verified: 20×20 box, Border Radius/ExtraSubtle, Stroke/VerySubtle, 16px check / minus.
+ * Figma: Checkbox (component set 6:11899) — Selection Unselected/Indeterminate/Selected × State (21 variants).
+ *
+ * Verified against Figma (variable bindings read via MCP): 20×20 box (System/x2,5), radius Border Radius/ExtraSubtle,
+ * 16px check / minus in Surface/OnPrimary/VerySubtle, every fill and stroke per Selection × State, and the
+ * hover/press 0.1s ease-out motion. Figma strokes are OUTSIDE, so they are drawn as a `ring` (no layout shift).
+ * `label` / `description` are NOT part of the Figma component (convenience wrapper, provisional).
  *
  * State mapping:  Hovered → hover  ·  Pressed → active  ·  Active → focus-visible  ·  Required → `required`
  *                 Error → `invalid`  ·  Disabled → `disabled`  ·  Selection → `checked` / `indeterminate`
@@ -74,22 +78,22 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           aria-describedby={description ? descId : undefined}
           aria-checked={indeterminate ? "mixed" : undefined}
           className={cn(
-            "peer m-0 size-full cursor-pointer appearance-none rounded-extra-subtle border border-very-subtle transition-colors duration-150",
-            // unselected
-            "border-alpha-inverse-subtle bg-surface-neutral-very-subtle",
-            "hover:bg-alpha-inverse-very-subtle active:border-medium active:bg-alpha-inverse-very-subtle",
-            "focus-visible:outline-none focus-visible:border-stroke-neutral-strong",
-            // selected / indeterminate
-            "checked:border-stroke-neutral-subtle checked:bg-surface-primary-medium checked:hover:border-alpha-primary-subtle checked:hover:bg-surface-primary-medium checked:active:bg-surface-primary-strong",
-            "indeterminate:border-stroke-neutral-subtle indeterminate:bg-surface-primary-medium indeterminate:hover:bg-surface-primary-medium indeterminate:active:bg-surface-primary-strong",
-            // required
-            "required:border-stroke-danger-medium",
-            // error
-            "aria-[invalid=true]:border-stroke-danger-medium aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:hover:border-stroke-danger-strong",
-            "aria-[invalid=true]:checked:bg-surface-danger-medium aria-[invalid=true]:indeterminate:bg-surface-danger-medium",
-            // disabled
-            "disabled:cursor-not-allowed disabled:border-stroke-neutral-subtle disabled:bg-surface-neutral-very-subtle disabled:hover:bg-surface-neutral-very-subtle",
-            "disabled:checked:bg-surface-neutral-subtle disabled:indeterminate:bg-surface-neutral-subtle",
+            "peer m-0 size-full cursor-pointer appearance-none rounded-extra-subtle transition-colors duration-100 ease-out focus-visible:outline-none",
+            // Selection=Unselected — Enabled / Hovered / Pressed / Active
+            "bg-surface-neutral-very-subtle ring-very-subtle ring-alpha-inverse-subtle",
+            "hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-very-subtle active:ring-medium",
+            "focus-visible:bg-transparent focus-visible:ring-stroke-neutral-strong",
+            // Selection=Selected / Indeterminate
+            "checked:bg-surface-primary-medium checked:ring-stroke-neutral-subtle checked:hover:bg-surface-primary-medium checked:hover:ring-medium checked:hover:ring-alpha-primary-subtle checked:active:bg-surface-primary-strong checked:active:ring-medium checked:active:ring-alpha-primary-subtle checked:focus-visible:bg-surface-primary-medium checked:focus-visible:ring-stroke-neutral-strong",
+            "indeterminate:bg-surface-primary-medium indeterminate:ring-stroke-neutral-subtle indeterminate:hover:bg-surface-primary-medium indeterminate:hover:ring-medium indeterminate:hover:ring-alpha-primary-subtle indeterminate:active:bg-surface-primary-strong indeterminate:active:ring-medium indeterminate:active:ring-alpha-primary-subtle indeterminate:focus-visible:bg-surface-primary-medium indeterminate:focus-visible:ring-stroke-neutral-strong",
+            // State=Required
+            "required:ring-stroke-danger-medium",
+            // State=Error
+            "aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:ring-stroke-danger-medium aria-[invalid=true]:hover:bg-surface-danger-very-subtle",
+            "aria-[invalid=true]:checked:bg-surface-danger-medium aria-[invalid=true]:checked:ring-stroke-danger-strong aria-[invalid=true]:indeterminate:bg-surface-danger-medium aria-[invalid=true]:indeterminate:ring-stroke-danger-strong",
+            // State=Disabled
+            "disabled:cursor-not-allowed disabled:bg-surface-neutral-very-subtle disabled:ring-very-subtle disabled:ring-stroke-neutral-subtle disabled:hover:bg-surface-neutral-very-subtle",
+            "disabled:checked:bg-surface-neutral-subtle disabled:checked:ring-stroke-neutral-subtle disabled:indeterminate:bg-surface-neutral-subtle disabled:indeterminate:ring-stroke-neutral-subtle",
             className,
           )}
           {...rest}

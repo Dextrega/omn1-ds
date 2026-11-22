@@ -19,6 +19,27 @@ Found while importing. None block the build; each is a decision for design. Code
 
 ## Component naming in Figma
 
-- `Variation` (buttons) vs `Variant` (badge, others).
 - `Actived` (should likely be _Active_), `DIsablede (Filled)`, `Appearabce` (ComboBox), `Sharped` / `Squared`, `Carroussel`.
 - Interactive states (Hovered, Pressed, Focused, Actived) are variants; code treats them as pseudo-classes / pressable state (see FIGMA-SYNC).
+
+## Inconsistencies found while reviewing components against Figma
+
+Code follows Figma; each item is a question for design (fix in Figma, or keep). Resolved in Figma since the first review:
+Badge Secondary / Subtle fill, the Danger _Actived_ / Outlined strokes, `Variation` → `Variant`.
+
+1. **ButtonCTA Inverse** still binds `Key/Global/White` (Outlined / Actived fill, Solid / Focused fill). Components must use Semantic only, so code uses `Semantic/Neutral/VerySubtle`.
+2. **ButtonIcon Danger / Outlined Hovered + Pressed** stroke is `Opacity/Secondary/VeryStrong`.
+3. **Solid / Primary ButtonCTA** text is `Surface/OnNeutral/VerySubtle`, not an `OnPrimary` token.
+4. **ButtonIcon Primary / Pressed** fill is `Surface/Primary/Subtle` (other variants darken on press).
+5. **ButtonIcon DotStatus (MD)** is offset 9px — off the Spacement scale.
+6. **Toggle handle**: a drop shadow exists but is hidden.
+7. **LoaderSpinner** fills are animated .gif images (no variable bound); Black / White colours were given by design (`Global/Black`, `Global/White` — Key tokens).
+8. **Effect styles** (`DropShadow/Level 3`) are not exported as tokens.
+9. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
+
+## Tooling finding: tailwind-merge 3 vs Tailwind 3
+
+tailwind-merge 3 targets Tailwind 4, where a bare `outline` sets the width. On our Tailwind 3 preset, `cn("outline outline-very-subtle")`
+silently dropped the bare `outline` (the _style_), so INSIDE strokes rendered with `outline-style: none`. `packages/ui-web/src/lib/cn.ts`
+now overrides the `outline-w` / `outline-style` groups, with a regression test in `components.test.tsx`. Any new `cn` usage with
+`outline` is covered; a computed-style browser check caught it, the class-coverage test could not.

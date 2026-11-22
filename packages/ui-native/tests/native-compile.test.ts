@@ -5,10 +5,47 @@ import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import { badgeContainer, badgeTone } from "../src/components/badge/styles";
-import { buttonCtaContainer, buttonCtaLabel } from "../src/components/button-cta/styles";
-import { buttonIconShape } from "../src/components/button-icon/styles";
+import {
+  itemSelect,
+  itemSelectLabel,
+  popOverPanel,
+  popOverSection,
+  popOverSlot,
+} from "../src/components/popover/styles";
+import { spinnerColor } from "../src/components/spinner/styles";
+import {
+  buttonCtaContainer,
+  buttonCtaLabel,
+  buttonCtaLoading,
+} from "../src/components/button-cta/styles";
+import {
+  buttonIconContainer,
+  buttonIconDot,
+  buttonIconLoading,
+} from "../src/components/button-icon/styles";
+import * as ctaMatrix from "../src/components/button-cta/matrix";
+import {
+  buttonLinkContainer,
+  buttonLinkLabel,
+  buttonLinkTone,
+} from "../src/components/button-link/styles";
 import { checkboxBox } from "../src/components/checkbox/styles";
-import { textInputField } from "../src/components/text-input/styles";
+import { chipContainer, chipLabel } from "../src/components/chips/styles";
+import { radioCircle, radioDot } from "../src/components/radiobutton/styles";
+import {
+  tabsBaseContainer,
+  tabsBaseLabel,
+  tabsBasePressable,
+  tabsIndicator,
+  tabsList,
+} from "../src/components/tabs/styles";
+import { toggleThumb, toggleTrack } from "../src/components/toggle/styles";
+import {
+  textInputActiveRing,
+  textInputBankFlag,
+  textInputField,
+  type TextInputFieldState,
+} from "../src/components/text-input/styles";
 
 // Same switch NativeWind's Metro transformer flips: compile for a native platform, not the web.
 process.env.NATIVEWIND_OS = "ios";
@@ -30,20 +67,30 @@ function allClasses(): string[] {
       .filter(Boolean)
       .forEach((c) => out.add(c));
   const sizes = ["xs", "sm", "md", "lg"] as const;
-  const variations = ["neutral", "primary", "success", "danger", "inverse"] as const;
+  const variants = ["neutral", "primary", "success", "danger", "inverse"] as const;
   const appearances = ["solid", "outlined", "ghost"] as const;
   for (const size of sizes) {
-    add(buttonIconShape({ size }));
-    for (const variation of variations)
+    add(buttonIconDot({ size }));
+    add(buttonCtaLabel({ size }));
+    for (const variant of variants)
       for (const appearance of appearances)
         for (const disabled of [true, false]) {
-          add(buttonCtaContainer({ size, variation, appearance, disabled }));
-          const tone = disabled
-            ? "disabled"
-            : `${appearance === "solid" ? "solid" : "line"}-${variation}`;
-          add(buttonCtaLabel({ size, tone: tone as "disabled" }));
+          add(buttonCtaContainer({ size, variant, appearance, disabled }));
+          add(buttonIconContainer({ size, variant, appearance, disabled }));
         }
   }
+  for (const v of ["neutral", "inverse"]) {
+    add(buttonIconLoading(v));
+    add(buttonCtaLoading(v));
+  }
+  for (const cls of Object.values(spinnerColor)) add(cls);
+  for (const cls of [popOverPanel, popOverSlot, popOverSection]) add(cls);
+  for (const selected of [true, false]) add(itemSelect(selected));
+  for (const disabled of [true, false]) add(itemSelectLabel(disabled));
+  add(tabsBasePressable(true));
+  add(tabsBasePressable(false));
+  // colour matrices (generated): container / label for ButtonCTA and ButtonIcon
+  for (const table of Object.values(ctaMatrix)) for (const cls of Object.values(table)) add(cls);
   for (const size of ["sm", "md", "lg"] as const) {
     for (const outlined of [true, false]) add(badgeContainer({ size, outlined }));
     for (const text of ["text-overline", "text-caption", "text-body-sm"]) add(text);
@@ -59,14 +106,61 @@ function allClasses(): string[] {
   ] as const)
     for (const appearance of ["subtle", "strong", "outlined"] as const)
       badgeTone(variant, appearance).forEach(add);
-  for (const focused of [true, false])
-    for (const invalid of [true, false])
-      for (const disabled of [true, false]) add(textInputField({ focused, invalid, disabled }));
+  for (const state of [
+    "enabled",
+    "active",
+    "filled",
+    "required",
+    "error",
+    "autoCompleted",
+    "loading",
+    "disabled",
+  ] as TextInputFieldState[])
+    add(textInputField(state));
+  add(textInputActiveRing);
+  add(textInputBankFlag);
   for (const selected of [true, false])
     for (const invalid of [true, false])
       for (const required of [true, false])
         for (const disabled of [true, false])
           add(checkboxBox({ selected, invalid, required, disabled }));
+  // batch 2 (provisional)
+  for (const variant of ["neutral", "primary"] as const)
+    for (const outline of [true, false])
+      for (const disabled of [true, false])
+        add(buttonLinkContainer({ variant, outline, disabled }));
+  for (const size of ["sm", "md"] as const)
+    for (const variant of ["neutral", "primary"] as const)
+      for (const disabled of [true, false])
+        add(buttonLinkLabel({ size, tone: buttonLinkTone(variant, disabled) }));
+  for (const selected of [true, false])
+    for (const invalid of [true, false])
+      for (const required of [true, false])
+        for (const disabled of [true, false]) {
+          add(radioCircle({ selected, invalid, required, disabled }));
+          add(toggleTrack({ on: selected, invalid, required, disabled }));
+        }
+  for (const invalid of [true, false])
+    for (const disabled of [true, false]) add(radioDot({ invalid, disabled }));
+  for (const on of [true, false])
+    for (const disabled of [true, false]) add(toggleThumb({ on, disabled }));
+  for (const size of ["sm", "md"] as const)
+    for (const appearance of ["filled", "outlined"] as const)
+      for (const selected of [true, false])
+        for (const disabled of [true, false]) {
+          add(chipContainer({ size, appearance, selected, disabled }));
+          add(chipLabel({ size, appearance, selected, disabled }));
+        }
+  for (const appearance of ["wrap", "flex"] as const) {
+    add(tabsList(appearance));
+    for (const disabled of [true, false]) {
+      add(tabsBaseContainer({ appearance, disabled }));
+      for (const selected of [true, false]) add(tabsBaseLabel({ selected, disabled }));
+    }
+  }
+  for (const align of ["bottom", "top"] as const)
+    for (const disabled of [true, false]) add(tabsIndicator({ align, disabled }));
+  add("gap-medium flex-col");
   // classes written inline in the components
   add(
     "font-sans text-body-md text-caption text-alpha-inverse-strong text-surface-on-neutral-medium text-surface-on-neutral-subtle text-surface-danger-medium text-surface-on-danger-very-subtle text-surface-on-primary-very-subtle",
@@ -75,7 +169,7 @@ function allClasses(): string[] {
     "placeholder:text-surface-on-neutral-subtle placeholder:text-surface-on-neutral-medium w-full gap-very-subtle min-w-0 flex-1 py-very-subtle shrink flex-row items-baseline items-start justify-between",
   );
   add(
-    "absolute right-x1 bottom-x1 size-x1-5 rounded-full border border-surface-neutral-very-subtle bg-surface-danger-medium opacity-0",
+    "text-surface-on-danger-medium text-surface-on-neutral-very-strong text-alpha-inverse-strong text-alpha-inverse-medium text-surface-on-neutral-very-strong opacity-0",
   );
   return [...out];
 }

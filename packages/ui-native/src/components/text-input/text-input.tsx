@@ -7,30 +7,49 @@ import {
   type TextInputProps as RNTextInputProps,
 } from "react-native";
 import { cn } from "../../lib/cn";
-import { Spinner } from "../../lib/spinner";
-import { textInputField } from "./styles";
+import { Spinner } from "../spinner";
+import {
+  textInputActiveRing,
+  textInputBankFlag,
+  textInputField,
+  type TextInputFieldState,
+} from "./styles";
 
 export * from "./styles";
 
 /**
- * Figma: TextInput (6:9944) — Full (88h) / Compact (48h). Same tokens as @omn1/ui-web; Active → focused (state),
- * Hovered does not exist on touch. Provisional: stroke colours per state, Compact layout.
+ * Figma: TextInput (6:9944) — Full (88h) / Compact (48h). Same tokens as @omn1/ui-web (see its notes);
+ * Active → focused (state), Hovered does not exist on touch. Active's 4px OUTSIDE stroke is an overlay ring (no layout
+ * shift). Helper is the container of Hint, Counter and ButtonLink. BankFlag is a 40×24 slot (bring your own logo).
+ * Provisional: the ring's outer radius (very-subtle, Figma grows it by the stroke).
  */
 export interface TextInputProps extends Omit<
   RNTextInputProps,
   "className" | "editable" | "placeholderTextColor"
 > {
   appearance?: "full" | "compact";
+  /** Figma: Label. In Compact it is used as the placeholder (as in Figma). */
   label?: string;
+  /** Figma: Helper (boolean, default true in Full) — the container of Hint, Counter and ButtonLink. */
+  helper?: boolean;
+  /** Figma: Hint — the text inside the Helper. */
   hint?: string;
-  helper?: string;
+  /** Error message shown as the Hint. Presence switches the field to State=Error. */
   error?: string;
   counter?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
   leadingIcon?: IconName;
   trailingIcon?: IconName;
+  /** Figma: Button — a trailing ButtonIcon (SM, Neutral, Ghost). */
+  button?: ReactNode;
+  /** Figma: ButtonLink — a link inside the Helper (Full only). */
+  link?: ReactNode;
+  /** Figma: BankFlag (Brand Payment, 40×24). */
+  bankFlag?: ReactNode;
   loading?: boolean;
+  /** Figma: State=AutoCompleted. */
+  autoCompleted?: boolean;
   required?: boolean;
   disabled?: boolean;
   /** Class for the outer wrapper. */
@@ -40,15 +59,19 @@ export interface TextInputProps extends Omit<
 export function TextInput({
   appearance = "full",
   label,
+  helper = true,
   hint,
-  helper,
   error,
   counter,
   prefix,
   suffix,
   leadingIcon,
   trailingIcon,
+  button,
+  link,
+  bankFlag,
   loading = false,
+  autoCompleted = false,
   required = false,
   disabled = false,
   className,
@@ -59,36 +82,44 @@ export function TextInput({
   onFocus,
   onBlur,
   accessibilityLabel,
+  placeholder,
   ...rest
 }: TextInputProps) {
   const [focused, setFocused] = useState(false);
   const [length, setLength] = useState(String(value ?? defaultValue ?? "").length);
   const invalid = Boolean(error);
-  const message = error ?? helper;
+  const message = error ?? hint;
   const full = appearance === "full";
   const currentLength = value !== undefined ? value.length : length;
+  const empty = currentLength === 0;
+  const state: TextInputFieldState = disabled
+    ? "disabled"
+    : loading
+      ? "loading"
+      : invalid
+        ? "error"
+        : autoCompleted
+          ? "autoCompleted"
+          : focused
+            ? "active"
+            : required && empty
+              ? "required"
+              : empty
+                ? "enabled"
+                : "filled";
+  const dangerHint = invalid || (required && empty && !disabled);
   const iconTone = disabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong";
+  const mutedAlt = disabled ? "text-surface-on-neutral-medium" : "text-alpha-inverse-strong";
 
   return (
-    <View className={cn("w-full gap-very-subtle", className)}>
-      {full && (label || hint) && (
-        <View className="flex-row items-baseline justify-between gap-very-subtle">
-          {label && (
-            <Text className="font-sans text-caption text-alpha-inverse-strong">
-              {label}
-              {required ? <Text className="text-surface-danger-medium"> *</Text> : null}
-            </Text>
-          )}
-          {hint && (
-            <Text className="font-sans text-caption text-surface-on-neutral-medium">{hint}</Text>
-          )}
-        </View>
+    <View className={cn("w-full gap-extra-subtle", className)}>
+      {full && label && (
+        <Text className={cn("font-sans text-caption font-medium", iconTone)}>{label}</Text>
       )}
-      <View className={textInputField({ focused, invalid, disabled })}>
+      <View className={textInputField(state)}>
+        {state === "active" && <View className={textInputActiveRing} />}
         {leadingIcon && <Icon name={leadingIcon} size={16} className={iconTone} />}
-        {prefix && (
-          <Text className="font-sans text-caption text-surface-on-neutral-medium">{prefix}</Text>
-        )}
+        {prefix && <Text className={cn("font-sans text-caption", mutedAlt)}>{prefix}</Text>}
         <RNTextInput
           editable={!disabled}
           maxLength={maxLength}
@@ -108,31 +139,32 @@ export function TextInput({
           }}
           accessibilityLabel={accessibilityLabel ?? label}
           accessibilityState={{ disabled, busy: loading }}
+          placeholder={placeholder ?? (full ? undefined : label)}
           className={cn(
-            "min-w-0 flex-1 py-very-subtle font-sans text-body-md",
+            "min-w-0 flex-1 font-sans text-body-sm font-medium",
             // NativeWind's `placeholder:` variant moves the colour to `placeholderTextColor`.
             disabled
               ? "text-surface-on-neutral-subtle placeholder:text-surface-on-neutral-subtle"
-              : "text-alpha-inverse-strong placeholder:text-surface-on-neutral-medium",
+              : "text-surface-on-neutral-very-strong placeholder:text-alpha-inverse-strong",
           )}
           {...rest}
         />
-        {suffix && (
-          <Text className="font-sans text-caption text-surface-on-neutral-medium">{suffix}</Text>
-        )}
+        {bankFlag && <View className={textInputBankFlag}>{bankFlag}</View>}
+        {suffix && <Text className={cn("font-sans text-caption", mutedAlt)}>{suffix}</Text>}
         {loading ? (
-          <Spinner size={16} className={iconTone} />
+          <Spinner variant="neutral" size={24} />
         ) : trailingIcon ? (
           <Icon name={trailingIcon} size={16} className={iconTone} />
         ) : null}
+        {button}
       </View>
-      {full && (message || (counter && maxLength)) && (
-        <View className="flex-row items-start justify-between gap-very-subtle">
+      {full && helper && (
+        <View className="min-h-x2 flex-row items-center gap-very-subtle">
           <Text
             accessibilityRole={invalid ? "alert" : undefined}
             className={cn(
-              "shrink font-sans text-caption",
-              invalid ? "text-surface-danger-medium" : "text-surface-on-neutral-medium",
+              "flex-1 font-sans text-caption",
+              dangerHint ? "text-surface-on-danger-medium" : "text-surface-on-neutral-medium",
             )}
           >
             {message}
@@ -142,6 +174,7 @@ export function TextInput({
               {currentLength}/{maxLength}
             </Text>
           ) : null}
+          {link}
         </View>
       )}
     </View>
