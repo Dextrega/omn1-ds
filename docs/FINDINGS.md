@@ -14,7 +14,7 @@ Found while importing. None block the build; each is a decision for design. Code
 8. **Alias layer.** 192 tokens that reference Primitives directly, parallel to Key / Semantic and unused by every component. Emitted to `alias.css` only.
 9. **Unused primitive families:** Blizzard, Cappuccino, Cream, Sand, Tangerine.
 10. **Mixed languages in primitive names:** Ardosia, Coral, Verde, Roxo, Creme, Amarelo, Vermelho (PT) next to Slate, Mint, Lavender … (EN).
-11. **No font-family variable for UI text.** Components use **Barlow Medium** (OFL, bundled via Fontsource / expo-google-fonts). Declared in code. The only family in the export is **Forma DJR Display**, a commercial typeface — **confirm the licence** before distributing it with a client app; the repo does not bundle it.
+11. **No font-family variable for UI text.** Components use **Barlow Medium** (OFL, bundled via Fontsource / expo-google-fonts). Declared in code. The Figma export still carries `fontFamilies/forma-djr-display` and the Display text styles point at it; that typeface was removed from the code on 2026-11-23 (no component uses it) and the build ignores the family of Display styles. Remove the variable in Figma when convenient.
 12. **Semantic `Opacity`** is really "Key colour at N% alpha" (not an opacity). Renamed `alpha-*` in Tailwind to avoid clashing with `opacity-*`.
 
 ## Component naming in Figma

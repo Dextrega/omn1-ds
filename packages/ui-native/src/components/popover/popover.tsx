@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useEffect, useState, type ReactNode, type RefObject } from "react";
 import { Modal, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { Icon, type IconName } from "@omn1/icons/native";
 import { ButtonIcon } from "../button-icon/button-icon";
@@ -74,15 +74,12 @@ export function PopOver({
   const hasFooter = footer || footerHint || secondaryAction || primaryAction;
   const { width: winW, height: winH } = useWindowDimensions();
   const [rect, setRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
-  const measured = useRef(false);
   useEffect(() => {
     if (!open) {
-      measured.current = false;
       setRect(null);
       return;
     }
     anchorRef.current?.measureInWindow((x, y, w, h) => {
-      measured.current = true;
       setRect({ x, y, w, h });
     });
   }, [open, anchorRef]);
@@ -98,7 +95,8 @@ export function PopOver({
   return (
     <Modal transparent visible animationType="none" onRequestClose={onClose} statusBarTranslucent>
       <Pressable accessibilityLabel="Close" onPress={onClose} style={{ width: winW, height: winH }}>
-        <View
+        {/* Pressable (not View) so a tap on the panel's padding / text is absorbed instead of reaching the backdrop. */}
+        <Pressable
           accessibilityRole="menu"
           className={popOverPanel(width)}
           style={[{ position: "absolute" }, position, popOverShadow]}
@@ -158,7 +156,7 @@ export function PopOver({
               </View>
             )
           ) : null}
-        </View>
+        </Pressable>
       </Pressable>
     </Modal>
   );

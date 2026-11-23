@@ -15,7 +15,7 @@ export interface Brand extends BrandTokens {
 }
 
 /** Default native font families. Load them with `@expo-google-fonts/barlow` (useFonts) before rendering. */
-export const DEFAULT_FONTS = { sans: "Barlow_500Medium", display: "Barlow_500Medium" } as const;
+export const DEFAULT_FONTS = { sans: "Barlow_500Medium" } as const;
 
 interface ThemeContextValue {
   mode: ThemeModeSetting;
@@ -50,7 +50,6 @@ export function ThemeProvider({ mode = "system", brand, style, children }: Theme
           overrides: brandToOverrides(brand, resolvedMode),
           extra: {
             "font-family-sans": brand?.fonts?.sans ?? DEFAULT_FONTS.sans,
-            "font-family-display": brand?.fonts?.display ?? DEFAULT_FONTS.display,
           },
         }),
       ),

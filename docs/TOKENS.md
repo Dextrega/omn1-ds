@@ -45,9 +45,9 @@ Tokens Studio exports no effect styles, so `packages/tokens/effects/effects.json
 
 ## Code-only tokens
 
-`packages/tokens/src/authored/font-family.json` declares `font-family-sans` (Barlow) and `font-family-display` (Forma DJR Display)
-because the Figma export has no family variable for UI text. Move them into Figma when it has them; the build rejects a name
-collision so the two can never silently diverge.
+`packages/tokens/src/authored/font-family.json` declares `font-family-sans` (Barlow)
+because the Figma export has no family variable for UI text. Move it into Figma when it has one; the build rejects a name
+collision so the two can never silently diverge. The Display text styles carry no font family: they use the UI font.
 
 ## Refreshing from Figma
 
