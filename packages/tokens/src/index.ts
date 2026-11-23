@@ -1,2 +1,2 @@
 export * from "./runtime";
-export { tokens, displayStyles, colorGraph, themeKeys } from "./generated/data";
+export { tokens, displayStyles, colorGraph, themeKeys, effects } from "./generated/data";

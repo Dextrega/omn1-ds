@@ -1,4 +1,4 @@
-import { forwardRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
+import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
 
 /** Figma: Align (Bottom Left · Bottom Right · Top Left · Top Right) — where the panel opens relative to its trigger. */
@@ -16,8 +16,8 @@ export const popOverAlignClasses: Record<PopOverAlign, string> = {
  * Figma: PopOver (nested, used by ChipsSelect and `_ButtonList`) — 200w panel, fill Surface/Neutral/VerySubtle,
  * 1px OUTSIDE stroke Stroke/Neutral/Subtle (a `ring`), radius Border Radius/VerySubtle, effect DropShadow/Level 3,
  * a `Slot` (vertical, gap 4, padding 8) for ItemSelect, plus optional Header and Footer.
- * Provisional: the shadow is the preset `shadow-level-3` (raw black alpha — Figma effect styles are not exported as
- * tokens) and Header / Footer spacing is assumed to match the Slot.
+ * The shadow is the token `shadow-level-3` (Figma effect style DropShadow/Level 3). Provisional: Header / Footer
+ * spacing is assumed to match the Slot.
  */
 export interface PopOverProps extends HTMLAttributes<HTMLDivElement> {
   align?: PopOverAlign;
@@ -49,39 +49,5 @@ export const PopOver = forwardRef<HTMLDivElement, PopOverProps>(function PopOver
       </div>
       {footer && <div className="p-very-subtle">{footer}</div>}
     </div>
-  );
-});
-
-/**
- * Figma: ItemSelect (6:11215) — Size SM (40h) · Appearance Rounded · Neutral.
- * Provisional: only the geometry (184×40 in the PopOver) was read; fills use the neutral Alpha ladder like the
- * Chips / TextInput hover states.
- */
-export interface ItemSelectProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
-  selected?: boolean;
-  children?: ReactNode;
-}
-
-export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(function ItemSelect(
-  { selected = false, className, children, type = "button", ...rest },
-  ref,
-) {
-  return (
-    <button
-      ref={ref}
-      type={type}
-      role="menuitemradio"
-      aria-checked={selected}
-      className={cn(
-        "flex h-x5 w-full items-center rounded-very-subtle px-subtle text-left text-body-sm font-medium text-surface-on-neutral-very-strong transition-colors duration-100 ease-out motion-reduce:transition-none",
-        "hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle focus-visible:ring-medium focus-visible:ring-stroke-secondary-medium focus-visible:outline-none",
-        "disabled:cursor-not-allowed disabled:text-surface-on-neutral-subtle",
-        selected && "bg-alpha-inverse-very-subtle",
-        className,
-      )}
-      {...rest}
-    >
-      {children}
-    </button>
   );
 });

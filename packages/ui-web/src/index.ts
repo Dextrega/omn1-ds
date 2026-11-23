@@ -24,3 +24,4 @@ export type { BrandKeys, BrandTokens } from "@omn1/tokens";
 export * from "./components/popover";
 export * from "./components/chips-select";
 export * from "./components/button-list";
+export * from "./components/item-select";

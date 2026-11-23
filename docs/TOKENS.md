@@ -39,6 +39,10 @@ Figma name → token name: kebab-case, `,` → `-`, camel-case split.
 
 `Key.Global.White/Black` flip in Dark, so Tailwind exposes them as `global-white` / `global-black`, not `white` / `black`.
 
+## Effects (drop shadows)
+
+Tokens Studio exports no effect styles, so `packages/tokens/effects/effects.json` holds _DropShadow/Level 1–4_ (each a list of black-alpha layers). The build turns them into `--omn1-shadow-level-N` (CSS), `theme.boxShadow` → `shadow-level-N` (Tailwind), `effects` (TS), an `effects` map in `figma-variable-map.json` (key `dropshadow/level-3`), and `nativeShadow("level-3")` for React Native (strongest layer only). Never hard-code a shadow in a component.
+
 ## Code-only tokens
 
 `packages/tokens/src/authored/font-family.json` declares `font-family-sans` (Barlow) and `font-family-display` (Forma DJR Display)

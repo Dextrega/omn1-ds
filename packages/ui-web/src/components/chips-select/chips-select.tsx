@@ -7,7 +7,7 @@ import { PopOver, type PopOverAlign } from "../popover";
  * Figma: ChipsSelect (2411:11516) — Size SM / MD × Active Off / On × Align. A Chip (Outlined) with a trailing
  * chevron (`chevron-down` Off, `chevron-up` On); when On it opens a PopOver whose Slot holds ItemSelect items.
  * Active=On → the chip's Actived look (Selection On, without the close button).
- * Closes on Escape and on an outside click. Provisional: PopOver / ItemSelect details (see popover.tsx).
+ * Closes on Escape and on an outside click.
  */
 export interface ChipsSelectProps extends Omit<
   ChipProps,

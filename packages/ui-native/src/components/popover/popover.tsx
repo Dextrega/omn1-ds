@@ -1,16 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { Modal, Pressable, useWindowDimensions, View } from "react-native";
 import {
-  Modal,
-  Pressable,
-  Text,
-  useWindowDimensions,
-  View,
-  type PressableProps,
-} from "react-native";
-import { cn } from "../../lib/cn";
-import {
-  itemSelect,
-  itemSelectLabel,
   POPOVER_GAP,
   POPOVER_WIDTH,
   popOverPanel,
@@ -41,7 +31,7 @@ export interface PopOverProps {
 /**
  * Figma: PopOver (nested, used by ChipsSelect and `_ButtonList`). Rendered in a transparent `Modal` and positioned from
  * the trigger's window rectangle, because React Native clips children outside their parent on Android.
- * Provisional: single-layer shadow (see `popOverShadow`).
+ * Native shadow is single-layer (platform limit, see `nativeShadow`).
  */
 export function PopOver({
   open,
@@ -89,36 +79,5 @@ export function PopOver({
         </View>
       </Pressable>
     </Modal>
-  );
-}
-
-export interface ItemSelectProps extends Omit<PressableProps, "children" | "className"> {
-  selected?: boolean;
-  className?: string;
-  children?: ReactNode;
-}
-
-/** Figma: ItemSelect (6:11215). Provisional: fills (only the geometry was read). */
-export function ItemSelect({
-  selected = false,
-  disabled,
-  className,
-  children,
-  ...rest
-}: ItemSelectProps) {
-  return (
-    <Pressable
-      accessibilityRole="menuitem"
-      accessibilityState={{ selected, disabled: Boolean(disabled) }}
-      disabled={disabled}
-      className={cn(itemSelect(selected), className)}
-      {...rest}
-    >
-      {typeof children === "string" || typeof children === "number" ? (
-        <Text className={itemSelectLabel(Boolean(disabled))}>{children}</Text>
-      ) : (
-        children
-      )}
-    </Pressable>
   );
 }

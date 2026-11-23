@@ -193,6 +193,38 @@ function renderEverything() {
           </ButtonList>
         </div>
       ))}
+      {(["sm", "md", "lg"] as const).flatMap((size) =>
+        (["squared", "rounded"] as const).flatMap((appearance) =>
+          (["neutral", "primary", "success", "warning", "danger"] as const).flatMap((variant) =>
+            [false, true].map((selected) => (
+              <ItemSelect
+                key={`${size}${appearance}${variant}${selected}`}
+                size={size}
+                appearance={appearance}
+                variant={variant}
+                selected={selected}
+                checkbox
+                radiobutton
+                toggle
+                avatar="AB"
+                leadingIcon="plus"
+                topLabel="Top"
+                suffix="Suffix"
+                bottomLabel="Bottom"
+                trailingIcon="check"
+                badge="3"
+                dotStatus
+                loading
+              >
+                Item
+              </ItemSelect>
+            )),
+          ),
+        ),
+      )}
+      <ItemSelect disabled topLabel="Top" bottomLabel="Bottom" badge="1" radiobutton toggle>
+        Disabled
+      </ItemSelect>
       <ChipsSelect label="Closed" />
       {(["wrap", "flex"] as const).flatMap((appearance) =>
         (["bottom", "top"] as const).map((align) => (

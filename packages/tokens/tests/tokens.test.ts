@@ -5,6 +5,7 @@ import {
   brandToOverrides,
   cssVarName,
   nativeVars,
+  nativeShadow,
   resolveColors,
   tokens,
   withAlpha,
@@ -56,6 +57,31 @@ describe("build output", () => {
     ]) {
       expect(variables[key], key).toBeTruthy();
     }
+  });
+});
+
+describe("effect tokens (DropShadow)", () => {
+  it("exports every Figma DropShadow level as a CSS var, Tailwind boxShadow and map entry", () => {
+    const css = read("css/tokens.css");
+    const theme = JSON.parse(read("theme.json"));
+    const { effects } = JSON.parse(read("figma-variable-map.json"));
+    for (const n of [1, 2, 3, 4]) {
+      expect(css).toContain(`--omn1-shadow-level-${n}:`);
+      expect(theme.boxShadow[`level-${n}`]).toBe(`var(--omn1-shadow-level-${n})`);
+      expect(effects[`dropshadow/level-${n}`].tailwind).toEqual({
+        theme: "boxShadow",
+        key: `level-${n}`,
+      });
+    }
+    expect(css).toContain("--omn1-shadow-level-3: 0 8px 16px -4px");
+  });
+
+  it("reduces a two-layer effect to its strongest layer for React Native", () => {
+    expect(nativeShadow("level-3")).toMatchObject({
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+    });
   });
 });
 

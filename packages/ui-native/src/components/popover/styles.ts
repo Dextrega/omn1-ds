@@ -1,4 +1,4 @@
-import { cn } from "../../lib/cn";
+import { nativeShadow } from "@omn1/tokens";
 
 /** Figma: Align (Bottom Left · Bottom Right · Top Left · Top Right). */
 export type PopOverAlign = "bottom-left" | "bottom-right" | "top-left" | "top-right";
@@ -16,26 +16,5 @@ export const popOverPanel =
 export const popOverSlot = "gap-extra-subtle p-very-subtle";
 export const popOverSection = "p-very-subtle";
 
-/** Figma: ItemSelect (6:11215) — 184×40. Provisional: only the geometry was read from Figma. */
-export const itemSelect = (selected: boolean) =>
-  cn(
-    "h-x5 w-full flex-row items-center rounded-very-subtle px-subtle active:bg-alpha-inverse-subtle",
-    selected && "bg-alpha-inverse-very-subtle",
-  );
-export const itemSelectLabel = (disabled: boolean) =>
-  cn(
-    "font-sans text-body-sm font-medium",
-    disabled ? "text-surface-on-neutral-subtle" : "text-surface-on-neutral-very-strong",
-  );
-
-/**
- * Figma effect style "DropShadow/Level 3" (0 8 16 -4 α.2 + 0 4 12 0 α.06). React Native takes a single shadow, so the
- * stronger layer is used. PROVISIONAL: effect styles are not exported as tokens (raw black alpha).
- */
-export const popOverShadow = {
-  shadowColor: "#000000",
-  shadowOffset: { width: 0, height: 8 },
-  shadowOpacity: 0.2,
-  shadowRadius: 8,
-  elevation: 8,
-} as const;
+/** Figma effect style DropShadow/Level 3 as a token (native keeps its strongest layer — see `nativeShadow`). */
+export const popOverShadow = nativeShadow("level-3");

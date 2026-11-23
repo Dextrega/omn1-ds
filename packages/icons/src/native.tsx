@@ -37,6 +37,7 @@ import {
   X,
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
+import Svg, { Path } from "react-native-svg";
 import {
   createContext,
   createElement,
@@ -45,6 +46,13 @@ import {
   type ComponentType,
   type ReactNode,
 } from "react";
+import {
+  BANK_FLAG_HEIGHT,
+  BANK_FLAG_WIDTH,
+  bankFlagLabels,
+  bankFlagPaths,
+  type BankFlagBrand,
+} from "./bank-flags";
 import type { IconName } from "./names";
 
 export { iconNames, type IconName } from "./names";
@@ -139,4 +147,30 @@ export function Icon({ name, size = 20, strokeWidth, ...rest }: IconProps) {
   const Glyph = ctx.icons[name];
   if (!Glyph) return null;
   return createElement(Glyph, { size, strokeWidth: strokeWidth ?? ctx.strokeWidth, ...rest });
+}
+
+export { bankFlagLabels, type BankFlagBrand } from "./bank-flags";
+
+export interface BankFlagProps {
+  brand: BankFlagBrand;
+  /** Accessible name (default: the brand name). */
+  label?: string;
+}
+
+/** Figma: Brand Payment (278:6988) — BankFlag marks, 40×24, in the brand's own colours. */
+export function BankFlag({ brand, label }: BankFlagProps) {
+  return (
+    <Svg
+      width={BANK_FLAG_WIDTH}
+      height={BANK_FLAG_HEIGHT}
+      viewBox={`0 0 ${BANK_FLAG_WIDTH} ${BANK_FLAG_HEIGHT}`}
+      fill="none"
+      accessibilityRole="image"
+      accessibilityLabel={label ?? bankFlagLabels[brand]}
+    >
+      {bankFlagPaths[brand].map((p, i) => (
+        <Path key={i} d={p.d} fill={p.fill} />
+      ))}
+    </Svg>
+  );
 }

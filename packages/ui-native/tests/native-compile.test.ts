@@ -6,12 +6,11 @@ import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import { badgeContainer, badgeTone } from "../src/components/badge/styles";
 import {
-  itemSelect,
   itemSelectLabel,
-  popOverPanel,
-  popOverSection,
-  popOverSlot,
-} from "../src/components/popover/styles";
+  itemSelectRow,
+  itemSelectText,
+} from "../src/components/item-select/styles";
+import { popOverPanel, popOverSection, popOverSlot } from "../src/components/popover/styles";
 import { spinnerColor } from "../src/components/spinner/styles";
 import {
   buttonCtaContainer,
@@ -85,8 +84,17 @@ function allClasses(): string[] {
   }
   for (const cls of Object.values(spinnerColor)) add(cls);
   for (const cls of [popOverPanel, popOverSlot, popOverSection]) add(cls);
-  for (const selected of [true, false]) add(itemSelect(selected));
-  for (const disabled of [true, false]) add(itemSelectLabel(disabled));
+  add("border-subtle border-global-white");
+  for (const size of ["sm", "md", "lg"] as const)
+    for (const appearance of ["squared", "rounded"] as const)
+      for (const variant of ["neutral", "primary", "success", "warning", "danger"] as const)
+        for (const selected of [true, false])
+          for (const disabled of [true, false]) {
+            add(itemSelectRow({ size, appearance, variant, selected, disabled }));
+            add(itemSelectText({ size, variant, selected, disabled }));
+            for (const slot of ["top", "bottom", "suffix"] as const)
+              add(itemSelectLabel({ size, disabled, slot }));
+          }
   add(tabsBasePressable(true));
   add(tabsBasePressable(false));
   // colour matrices (generated): container / label for ButtonCTA and ButtonIcon
