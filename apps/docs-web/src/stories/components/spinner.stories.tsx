@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Figma: **LoaderSpinner** (235:942), Variant Neutral / Primary / Black / White. Figma fills it with an animated .gif, so no variable is bound; colours come from the design owner. In code it is an animated vector (`loader` spinning, off under `prefers-reduced-motion`). Black / White use Key/Global tokens on purpose (they do not follow the theme).",
+          "Figma: **LoaderSpinner** (235:942), Variant Neutral / Primary / Black / White. Figma fills it with an animated .gif, so no variable is bound; colours come from the design owner. In code it is an animated vector (`loader` spinning, off under `prefers-reduced-motion`). Colours are Semantic tokens: Neutral `Surface/OnNeutral/Subtle`, Primary `Surface/OnPrimary/Strong`, Black `Surface/OnNeutral/VeryStrong`, White `Surface/OnNeutral/VerySubtle`.",
       },
     },
   },
@@ -28,7 +28,7 @@ export const Variants: Story = {
           key={variant}
           className={
             variant === "white"
-              ? "rounded-very-subtle bg-global-black p-very-subtle"
+              ? "rounded-very-subtle bg-surface-neutral-very-strong p-very-subtle"
               : "p-very-subtle"
           }
         >

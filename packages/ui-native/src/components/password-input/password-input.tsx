@@ -10,7 +10,9 @@ export * from "./requirements";
 /**
  * Figma: PasswordInput (2067:9769) — same props and tokens as @omn1/ui-web: a TextInput whose Button is a ButtonIcon
  * (SM · Neutral · Ghost) toggling `eye-off` ↔ `eye`, plus the optional Requirements badges (Outlined · MD · Neutral;
- * Disabled variant when disabled). Provisional: a met rule is Outlined/Success with a check icon (not in Figma).
+ * Disabled variant when disabled). Validation (same as web): a rule's Badge turns Success · Subtle as it is met, unmet
+ * ones stay Outlined · Neutral; with a rule missing and `submitted` set, the field shows the Error state and explains
+ * it in the hint. Provisional: the default rule texts (the special-character examples are "(…)" in Figma).
  */
 export interface PasswordInputProps extends Omit<
   TextInputProps,
@@ -24,12 +26,19 @@ export interface PasswordInputProps extends Omit<
   | "secureTextEntry"
 > {
   requirements?: boolean | PasswordRequirement[];
+  /** Error hint when a rule is missing on submit. Default: "Missing: <unmet rules>". */
+  requirementsError?: string | ((missing: PasswordRequirement[]) => string);
+  /** Set when the user tries to submit: shows the Error state if a rule is missing. */
+  submitted?: boolean;
   showLabel?: string;
   hideLabel?: string;
 }
 
 export function PasswordInput({
   requirements = false,
+  requirementsError,
+  submitted = false,
+  error,
   showLabel = "Show password",
   hideLabel = "Hide password",
   loading,
@@ -44,10 +53,16 @@ export function PasswordInput({
   const [inner, setInner] = useState(String(defaultValue ?? ""));
   const current = value !== undefined ? value : inner;
   const rules = requirements === true ? DEFAULT_PASSWORD_REQUIREMENTS : requirements || [];
+  const missing = disabled ? [] : rules.filter((rule) => !rule.test(current));
+  const message =
+    typeof requirementsError === "function"
+      ? requirementsError(missing)
+      : (requirementsError ?? `Missing: ${missing.map((r) => r.label).join(", ")}`);
   return (
     <View className={className ? `w-full ${className}` : "w-full"}>
       <TextInput
         {...rest}
+        error={error ?? (submitted && missing.length > 0 ? message : undefined)}
         secureTextEntry={!visible}
         autoCapitalize="none"
         loading={loading}
@@ -73,14 +88,13 @@ export function PasswordInput({
       {rules.length > 0 && (
         <View className="flex-row flex-wrap gap-very-subtle py-very-subtle">
           {rules.map((rule) => {
-            const met = !disabled && current.length > 0 && rule.test(current);
+            const met = !disabled && rule.test(current);
             return (
               <Badge
                 key={rule.label}
                 size="md"
-                appearance="outlined"
+                appearance={met ? "subtle" : "outlined"}
                 variant={disabled ? "disabled" : met ? "success" : "neutral"}
-                leadingIcon={met ? "check" : undefined}
               >
                 {rule.label}
               </Badge>

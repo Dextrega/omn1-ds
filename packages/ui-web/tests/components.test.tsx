@@ -352,6 +352,35 @@ describe("PasswordInput", () => {
     await user.type(input, "Abcdef1!");
     const list = screen.getByRole("list", { name: "Password requirements" });
     expect(list.querySelectorAll("[data-met]")).toHaveLength(4);
+    expect(list.textContent).not.toContain("✓");
+  });
+
+  it("flags missing requirements as an error in the hint once submitted", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
+    render(
+      <form onSubmit={onSubmit}>
+        <PasswordInput label="Password" requirements />
+        <button type="submit">Go</button>
+      </form>,
+    );
+    const input = screen.getByLabelText("Password");
+    await user.type(input, "abc");
+    expect(input).not.toHaveAttribute("aria-invalid", "true");
+    await user.click(screen.getByRole("button", { name: "Go" }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByText(/Missing:/)).toBeInTheDocument();
+    await user.clear(input);
+    await user.type(input, "Abcdef1!");
+    expect(input).not.toHaveAttribute("aria-invalid", "true");
+    await user.click(screen.getByRole("button", { name: "Go" }));
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the error state without a form when `submitted` is set", () => {
+    render(<PasswordInput label="Password" requirements submitted defaultValue="abc" />);
+    expect(screen.getByLabelText("Password")).toHaveAttribute("aria-invalid", "true");
   });
 });
 

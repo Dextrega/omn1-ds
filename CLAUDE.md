@@ -20,6 +20,7 @@ All repo content — code, comments, docs, commit messages — is in **English**
 2. Translate Figma variables to utilities with `packages/tokens/dist/figma-variable-map.json`
    (key = lower-cased Figma path, e.g. `semantic/surface/neutral/verystrong` → `bg-surface-neutral-very-strong`).
    If a variable is not in the map, **stop and fix the token pipeline** — do not hard-code a value.
+   Figma effect styles (drop shadows) are tokens too: `packages/tokens/effects/effects.json` → `shadow-level-N` / `nativeShadow()`.
 3. Components use **Semantic** tokens only. Never use Primitive or Key tokens in a component; Key is the brand layer.
 4. No arbitrary Tailwind values (`p-[13px]`, `bg-[#fff]`) in components. The only allowed arbitrary values are in docs/stories.
 5. Interactive Figma states are CSS/Pressable states, not props: Hovered → `hover:`, Pressed → `active:`,

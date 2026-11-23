@@ -33,9 +33,10 @@ Badge Secondary / Subtle fill, the Danger _Actived_ / Outlined strokes, `Variati
 4. **ButtonIcon Primary / Pressed** fill is `Surface/Primary/Subtle` (other variants darken on press).
 5. **ButtonIcon DotStatus (MD)** is offset 9px — off the Spacement scale.
 6. **Toggle handle**: a drop shadow exists but is hidden.
-7. **LoaderSpinner** fills are animated .gif images (no variable bound); Black / White colours were given by design (`Global/Black`, `Global/White` — Key tokens).
-8. **Effect styles** (`DropShadow/Level 3`) are not exported as tokens.
-9. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
+7. **LoaderSpinner** fills are animated .gif images (no variable bound); colours were given by design and are now all Semantic.
+8. **Effect styles** (`DropShadow/Level 1–4`) are not exported by Tokens Studio; mirrored in `packages/tokens/effects/effects.json`.
+9. **ItemSelect**: Primary / Pressed is `Opacity/Primary/Medium` on MD but `Primary/Subtle` on SM and LG, with a 2px OUTSIDE stroke that has no visible paint; Disabled Suffix is not dimmed while TopLabel (`OnNeutral/Subtle`) and BottomLabel (`OnNeutral/Medium`) differ; DotStatus stroke is `Key/Global/White`.
+10. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
 
 ## Tooling finding: tailwind-merge 3 vs Tailwind 3
 

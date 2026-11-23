@@ -17,7 +17,7 @@ const meta: Meta<typeof PasswordInput> = {
     docs: {
       description: {
         component:
-          "Figma: **PasswordInput** (2067:9769) — a TextInput with an eye / eye-off ButtonIcon and optional Requirements badges. Provisional: how a met requirement looks (Figma draws only unmet ones) and the rule texts.",
+          "Figma: **PasswordInput** (2067:9769) — a TextInput with an eye / eye-off ButtonIcon and optional Requirements badges. Each requirement badge turns Success / Subtle as the typed password satisfies its rule. Submitting (form submit or `submitted`) with a rule missing returns the field to the Error state and says which rules are missing in the hint. Provisional: the rule texts.",
       },
     },
   },
@@ -31,3 +31,9 @@ export const Required: Story = { args: { required: true, requirements: true } };
 export const Error: Story = { args: { error: "Password is too weak", requirements: true } };
 export const Loading: Story = { args: { loading: true } };
 export const Disabled: Story = { args: { disabled: true, requirements: true } };
+export const SubmittedWithMissingRules: Story = {
+  args: { requirements: true, submitted: true, defaultValue: "abc" },
+};
+export const AllRequirementsMet: Story = {
+  args: { requirements: true, defaultValue: "Abcdef1!" },
+};

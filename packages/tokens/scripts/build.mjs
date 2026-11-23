@@ -126,6 +126,23 @@ function themeCss(layers, recsFor) {
   ].join("\n");
 }
 
+// ---- 2b. effects (Figma effect styles, authored in effects/effects.json) ----------------------------
+const effectsSrc = JSON.parse(fs.readFileSync(path.join(ROOT, "effects", "effects.json"), "utf8"));
+const effectRecs = Object.entries(effectsSrc["drop-shadow"]).map(([step, tok]) => ({
+  name: `shadow-${step}`,
+  step,
+  figma: tok.$extensions["com.omn1"].figma,
+  layers: tok.$value,
+}));
+const px = (n) => (n === 0 ? "0" : `${n}px`);
+const shadowCss = (layers) =>
+  layers
+    .map(
+      (l) =>
+        `${px(l.offsetX)} ${px(l.offsetY)} ${px(l.blur)} ${px(l.spread)} color-mix(in srgb, ${l.color} ${+(l.alpha * 100).toFixed(2)}%, transparent)`,
+    )
+    .join(", ");
+
 // ---- 3. CSS ----------------------------------------------------------------------------------------------
 // Only clear what this script owns — tsup also writes into dist/ (index.js, index.cjs, *.d.ts).
 for (const f of ["css", "json", "theme.json", "figma-variable-map.json"]) {
@@ -144,10 +161,10 @@ fs.writeFileSync(
   path.join(DIST, "css", "tokens.css"),
   [
     header("OMN1 design tokens"),
-    block(
-      ":root",
-      sharedRecs.map((r) => decl(r)),
-    ),
+    block(":root", [
+      ...sharedRecs.map((r) => decl(r)),
+      ...effectRecs.map((e) => `  ${cssVar(e.name)}: ${shadowCss(e.layers)};`),
+    ]),
     themeCss(THEME_LAYERS, byMode),
   ].join("\n"),
 );
@@ -213,6 +230,11 @@ fs.writeFileSync(
       },
       "Resolved token values (light / dark colours, shared dimensions).",
     ),
+    ts(
+      "effects",
+      Object.fromEntries(effectRecs.map((e) => [e.step, { figma: e.figma, layers: e.layers }])),
+      "Figma effect styles (DropShadow levels) as structured layers; React Native uses the strongest layer.",
+    ),
     ts("displayStyles", displayStyles, "Composite Display text styles from Figma."),
     ts("dimensionGroups", [...PX_GROUPS], "Shared token groups whose numeric values are pixels."),
   ].join("\n"),
@@ -229,6 +251,7 @@ const T = {
   fontWeight: {},
   letterSpacing: {},
   fontFamily: {},
+  boxShadow: {},
 };
 const put = (obj, segs, value) => {
   let cur = obj;
@@ -260,6 +283,7 @@ for (const r of lightRecs) {
 for (const [k, { size, lh }] of Object.entries(sizes)) {
   T.fontSize[k] = lh ? [size, { lineHeight: lh }] : size;
 }
+for (const e of effectRecs) T.boxShadow[e.step] = v(e.name);
 fs.writeFileSync(path.join(DIST, "theme.json"), JSON.stringify(T, null, 2));
 // Scale names for tooling that must know the custom scales (tailwind-merge in @omn1/ui-web).
 fs.appendFileSync(
@@ -322,7 +346,27 @@ for (const r of lightRecs) {
 }
 fs.writeFileSync(
   path.join(DIST, "figma-variable-map.json"),
-  JSON.stringify({ generatedFrom: "figma-export", prefix: PREFIX, variables: map }, null, 2),
+  JSON.stringify(
+    {
+      generatedFrom: "figma-export",
+      prefix: PREFIX,
+      variables: map,
+      // Figma effect styles (not variables): key = lower-cased style name, e.g. "dropshadow/level-3" → shadow-level-3.
+      effects: Object.fromEntries(
+        effectRecs.map((e) => [
+          figmaKey(e.figma),
+          {
+            figma: e.figma,
+            token: e.name,
+            cssVar: cssVar(e.name),
+            tailwind: { theme: "boxShadow", key: e.step },
+          },
+        ]),
+      ),
+    },
+    null,
+    2,
+  ),
 );
 
 const count = (recs, l) => recs.filter((r) => layerOf(r) === l).length;

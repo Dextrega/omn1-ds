@@ -1,4 +1,5 @@
 import { colorGraph, dimensionGroups, tokens } from "./generated/data";
+import { effects } from "./generated/data";
 
 export type ThemeMode = "light" | "dark";
 export type ColorNode = { v: string } | { r: string; a?: number };
@@ -178,4 +179,22 @@ export function brandToOverrides(brand: BrandTokens | undefined, mode: ThemeMode
     ...brandKeyOverrides(pick(brand.colors, mode) ?? {}),
     ...(pick(brand.overrides, mode) ?? {}),
   };
+}
+
+export type ShadowStep = keyof typeof effects;
+
+/**
+ * React Native takes a single shadow, so a Figma effect style (two layers) is reduced to its strongest layer
+ * (highest alpha). `elevation` is derived from the blur for Android. Spread is not supported on native.
+ */
+export function nativeShadow(step: ShadowStep) {
+  const layers = effects[step].layers;
+  const top = layers.reduce((a, b) => (b.alpha > a.alpha ? b : a));
+  return {
+    shadowColor: top.color,
+    shadowOffset: { width: top.offsetX, height: top.offsetY },
+    shadowOpacity: top.alpha,
+    shadowRadius: top.blur / 2,
+    elevation: Math.round(top.blur / 2),
+  } as const;
 }

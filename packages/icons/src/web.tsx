@@ -45,6 +45,13 @@ import {
   type ReactNode,
   type SVGProps,
 } from "react";
+import {
+  BANK_FLAG_HEIGHT,
+  BANK_FLAG_WIDTH,
+  bankFlagLabels,
+  bankFlagPaths,
+  type BankFlagBrand,
+} from "./bank-flags";
 import type { IconName } from "./names";
 
 export { iconNames, type IconName } from "./names";
@@ -136,4 +143,33 @@ export function Icon({ name, size = 20, strokeWidth, "aria-label": label, ...res
     focusable: false,
     ...rest,
   });
+}
+
+export { bankFlagLabels, type BankFlagBrand } from "./bank-flags";
+
+export interface BankFlagProps extends Omit<SVGProps<SVGSVGElement>, "ref" | "children"> {
+  brand: BankFlagBrand;
+  /** Accessible name (default: the brand name). Pass `""` to hide it from assistive tech. */
+  label?: string;
+}
+
+/** Figma: Brand Payment (278:6988) — BankFlag marks, 40×24, in the brand's own colours. */
+export function BankFlag({ brand, label, ...rest }: BankFlagProps) {
+  const name = label ?? bankFlagLabels[brand];
+  return (
+    <svg
+      width={BANK_FLAG_WIDTH}
+      height={BANK_FLAG_HEIGHT}
+      viewBox={`0 0 ${BANK_FLAG_WIDTH} ${BANK_FLAG_HEIGHT}`}
+      fill="none"
+      role={name ? "img" : undefined}
+      aria-label={name || undefined}
+      aria-hidden={name ? undefined : true}
+      {...rest}
+    >
+      {bankFlagPaths[brand].map((p, i) => (
+        <path key={i} d={p.d} fill={p.fill} />
+      ))}
+    </svg>
+  );
 }
