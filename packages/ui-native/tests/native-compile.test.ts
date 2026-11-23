@@ -84,6 +84,7 @@ function allClasses(): string[] {
   }
   for (const cls of Object.values(spinnerColor)) add(cls);
   for (const cls of [popOverPanel, popOverSlot, popOverSection]) add(cls);
+  add("border-subtle border-global-white");
   for (const size of ["sm", "md", "lg"] as const)
     for (const appearance of ["squared", "rounded"] as const)
       for (const variant of ["neutral", "primary", "success", "warning", "danger"] as const)

@@ -15,33 +15,13 @@ const RADIUS: Record<ItemSelectAppearance, Record<ItemSelectSize, string>> = {
   rounded: { sm: "rounded-very-subtle", md: "rounded-medium", lg: "rounded-medium" },
 };
 
-/** Pressed fill per Variant. Figma: Primary / Pressed is `Opacity/Primary/Medium` on MD only. */
-const PRESSED: Record<ItemSelectVariant, Record<ItemSelectSize, string>> = {
-  neutral: {
-    sm: "active:bg-alpha-inverse-subtle",
-    md: "active:bg-alpha-inverse-subtle",
-    lg: "active:bg-alpha-inverse-subtle",
-  },
-  primary: {
-    sm: "active:bg-alpha-primary-subtle",
-    md: "active:bg-alpha-primary-medium",
-    lg: "active:bg-alpha-primary-subtle",
-  },
-  success: {
-    sm: "active:bg-alpha-success-subtle",
-    md: "active:bg-alpha-success-subtle",
-    lg: "active:bg-alpha-success-subtle",
-  },
-  warning: {
-    sm: "active:bg-alpha-warning-subtle",
-    md: "active:bg-alpha-warning-subtle",
-    lg: "active:bg-alpha-warning-subtle",
-  },
-  danger: {
-    sm: "active:bg-alpha-danger-subtle",
-    md: "active:bg-alpha-danger-subtle",
-    lg: "active:bg-alpha-danger-subtle",
-  },
+/** Pressed fill per Variant (Opacity/<variant>/Subtle; Neutral uses Inverse). */
+const PRESSED: Record<ItemSelectVariant, string> = {
+  neutral: "active:bg-alpha-inverse-subtle",
+  primary: "active:bg-alpha-primary-subtle",
+  success: "active:bg-alpha-success-subtle",
+  warning: "active:bg-alpha-warning-subtle",
+  danger: "active:bg-alpha-danger-subtle",
 };
 
 /** Actived fill (Opacity/<variant>/VerySubtle). */
@@ -73,7 +53,7 @@ export const itemSelectRow = (o: {
     "w-full flex-row items-center gap-very-subtle px-very-subtle",
     SIZE[o.size],
     RADIUS[o.appearance][o.size],
-    !o.disabled && PRESSED[o.variant][o.size],
+    !o.disabled && PRESSED[o.variant],
     !o.disabled && o.selected && ACTIVED[o.variant],
   );
 
@@ -106,7 +86,8 @@ export const itemSelectLabel = (o: {
         : "text-caption",
     o.disabled && o.slot === "top" && "text-surface-on-neutral-subtle",
     o.disabled && o.slot === "bottom" && "text-surface-on-neutral-medium",
-    !(o.disabled && o.slot !== "suffix") && "text-alpha-inverse-strong",
+    o.disabled && o.slot === "suffix" && "text-surface-on-neutral-medium",
+    !o.disabled && "text-alpha-inverse-strong",
   );
 
 export const ITEM_SELECT_ICON_PX = 16;

@@ -18,8 +18,8 @@ export * from "./styles";
 
 /**
  * Figma: ItemSelect (6:11215). Same prop names and tokens as @omn1/ui-web; no Hovered / Focused (touch-only).
- * Provisional: Primary / Warning / Danger Enabled text colour, indicator glyphs, DotStatus and Loader colours.
- * Figma Primary / Pressed is `Opacity/Primary/Medium` on MD but `…/Subtle` on SM and LG (kept as is).
+ * Provisional: Primary / Warning / Danger Enabled text colour, indicator glyphs, DotStatus fill and Loader colour.
+ * Provisional: the DotStatus 2px OUTSIDE stroke is `Key/Global/White` (a Key token on purpose, see ui-web).
  */
 export interface ItemSelectProps extends Omit<PressableProps, "children" | "className"> {
   size?: ItemSelectSize;
@@ -174,7 +174,9 @@ export function ItemSelect({
           {badge}
         </Badge>
       )}
-      {dotStatus && <View className="size-x1 rounded-corner-full bg-surface-primary-medium" />}
+      {dotStatus && (
+        <View className="size-x1 rounded-corner-full border-subtle border-global-white bg-surface-primary-medium" />
+      )}
       {loading && <Spinner variant="neutral" size={ITEM_SELECT_ICON_PX} />}
     </Pressable>
   );

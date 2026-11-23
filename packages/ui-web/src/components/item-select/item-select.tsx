@@ -18,8 +18,9 @@ import { Spinner } from "../spinner";
  * Radiobutton / Toggle indicator colours on Actived.
  * State mapping: Hovered → `hover:` · Pressed → `active:` · Actived → `selected` (`aria-checked`) · Disabled → `disabled`.
  * Provisional: Text colours of Primary / Warning / Danger when Enabled (only Neutral and Success were read: `…/Strong`);
- * Primary Pressed is `Opacity/Primary/Medium` on MD but `…/Subtle` on SM and LG in Figma (kept as is); the checked
- * glyphs of the indicators, DotStatus colour, the Loader colour and the focus ring (Figma has no Focused state here).
+ * the checked glyphs of the indicators, the DotStatus fill, the Loader colour and the focus ring (Figma has no Focused state here).
+ * Provisional: the DotStatus 2px OUTSIDE stroke is `Key/Global/White` (`ring-global-white`) — a Key token, not Semantic, kept on
+ * purpose until design finds a surface-relative colour (the ring is a safety margin that must follow the host surface).
  */
 export const itemSelectVariants = cva(
   [
@@ -70,8 +71,6 @@ export const itemSelectVariants = cva(
         selected: true,
         class: "bg-alpha-danger-very-subtle text-surface-on-danger-medium",
       },
-      // Figma: Primary / Pressed is Opacity/Primary/Medium on MD only.
-      { variant: "primary", size: "md", class: "active:bg-alpha-primary-medium" },
     ],
     defaultVariants: { size: "sm", appearance: "squared", variant: "neutral", selected: false },
   },
@@ -217,7 +216,14 @@ export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(functio
         <span className="flex items-center gap-very-subtle">
           <span className="min-w-0 flex-1 truncate">{children}</span>
           {suffix && (
-            <span className="shrink-0 truncate text-right text-alpha-inverse-strong">{suffix}</span>
+            <span
+              className={cn(
+                "shrink-0 truncate text-right text-alpha-inverse-strong",
+                disabled && "text-surface-on-neutral-medium",
+              )}
+            >
+              {suffix}
+            </span>
           )}
         </span>
         {bottomLabel && (
@@ -239,7 +245,7 @@ export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(functio
       {dotStatus && (
         <span
           aria-hidden="true"
-          className="size-x1 shrink-0 rounded-corner-full bg-surface-primary-medium"
+          className="size-x1 shrink-0 rounded-corner-full bg-surface-primary-medium ring-subtle ring-global-white"
         />
       )}
       {loading && <Spinner variant="neutral" size={ICON_PX} className="shrink-0" />}

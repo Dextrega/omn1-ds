@@ -35,7 +35,7 @@ Badge Secondary / Subtle fill, the Danger _Actived_ / Outlined strokes, `Variati
 6. **Toggle handle**: a drop shadow exists but is hidden.
 7. **LoaderSpinner** fills are animated .gif images (no variable bound); colours were given by design and are now all Semantic.
 8. **Effect styles** (`DropShadow/Level 1–4`) are not exported by Tokens Studio; mirrored in `packages/tokens/effects/effects.json`.
-9. **ItemSelect**: Primary / Pressed is `Opacity/Primary/Medium` on MD but `Primary/Subtle` on SM and LG, with a 2px OUTSIDE stroke that has no visible paint; Disabled Suffix is not dimmed while TopLabel (`OnNeutral/Subtle`) and BottomLabel (`OnNeutral/Medium`) differ; DotStatus stroke is `Key/Global/White`.
+9. **ItemSelect DotStatus stroke** is `Key/Global/White` (2px OUTSIDE). It is a safety margin whose colour should follow the surface the Avatar / dot sits on; Figma cannot read the container background, so a Semantic token does not exist yet. Kept as a deliberate, documented Key token (`ring-global-white`) until design defines a scalable solution. Primary Pressed (MD vs SM / LG) and Suffix colours were corrected in Figma on 2026-11-23. Disabled TopLabel is still `OnNeutral/Subtle` (BottomLabel `OnNeutral/Medium`) in the file at that date; code follows the file.
 10. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
 
 ## Tooling finding: tailwind-merge 3 vs Tailwind 3
