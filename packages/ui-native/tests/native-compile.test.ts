@@ -10,7 +10,18 @@ import {
   itemSelectRow,
   itemSelectText,
 } from "../src/components/item-select/styles";
-import { popOverPanel, popOverSection, popOverSlot } from "../src/components/popover/styles";
+import {
+  popOverFooter,
+  popOverHeader,
+  popOverPanel,
+  popOverSlot,
+} from "../src/components/popover/styles";
+import {
+  assetItemContainer,
+  assetItemText,
+  assetItemTone,
+} from "../src/components/asset-item/styles";
+import { dotStatusDot, dotStatusRing } from "../src/components/dot-status/styles";
 import { spinnerColor } from "../src/components/spinner/styles";
 import {
   buttonCtaContainer,
@@ -83,8 +94,42 @@ function allClasses(): string[] {
     add(buttonCtaLoading(v));
   }
   for (const cls of Object.values(spinnerColor)) add(cls);
-  for (const cls of [popOverPanel, popOverSlot, popOverSection]) add(cls);
+  for (const cls of [
+    popOverPanel("default"),
+    popOverPanel("compact"),
+    popOverSlot,
+    popOverHeader,
+    popOverFooter,
+  ])
+    add(cls);
   add("border-subtle border-global-white");
+  for (const size of ["sm", "md", "lg"] as const) {
+    add(assetItemText[size]);
+    add(dotStatusRing(size));
+    for (const variant of [
+      "neutral",
+      "primary",
+      "secondary",
+      "success",
+      "warning",
+      "danger",
+      "disabled",
+    ] as const)
+      for (const appearance of ["subtle", "strong"] as const) {
+        add(assetItemContainer({ size, variant, appearance }));
+        add(assetItemTone(variant, appearance)[1]);
+      }
+    for (const variant of [
+      "neutral",
+      "primary",
+      "success",
+      "warning",
+      "danger",
+      "inverse",
+    ] as const)
+      for (const appearance of ["solid", "outlined"] as const)
+        add(dotStatusDot({ size, variant, appearance }));
+  }
   for (const size of ["sm", "md", "lg"] as const)
     for (const appearance of ["squared", "rounded"] as const)
       for (const variant of ["neutral", "primary", "success", "warning", "danger"] as const)

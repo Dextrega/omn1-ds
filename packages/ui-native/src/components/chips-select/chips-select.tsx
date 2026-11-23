@@ -56,7 +56,13 @@ export function ChipsSelect({
       >
         {label}
       </Chip>
-      <PopOver open={isOpen} onClose={() => setOpen(false)} anchorRef={anchor} align={align}>
+      <PopOver
+        width="compact"
+        open={isOpen}
+        onClose={() => setOpen(false)}
+        anchorRef={anchor}
+        align={align}
+      >
         {children}
       </PopOver>
     </View>

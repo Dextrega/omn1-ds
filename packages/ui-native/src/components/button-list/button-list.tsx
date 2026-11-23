@@ -43,7 +43,13 @@ export function ButtonList({
         icon="ellipsis-vertical"
         onPress={() => setOpen(!isOpen)}
       />
-      <PopOver open={isOpen} onClose={() => setOpen(false)} anchorRef={anchor} align={align}>
+      <PopOver
+        width="compact"
+        open={isOpen}
+        onClose={() => setOpen(false)}
+        anchorRef={anchor}
+        align={align}
+      >
         {children}
       </PopOver>
     </View>

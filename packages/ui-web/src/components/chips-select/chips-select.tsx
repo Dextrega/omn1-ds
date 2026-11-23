@@ -82,7 +82,13 @@ export function ChipsSelect({
         {label}
       </Chip>
       {isOpen && (
-        <PopOver id={panelId} role="menu" align={align} className={popOverClassName}>
+        <PopOver
+          id={panelId}
+          role="menu"
+          width="compact"
+          align={align}
+          className={popOverClassName}
+        >
           {children}
         </PopOver>
       )}

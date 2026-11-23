@@ -81,7 +81,6 @@ export function ThemeProvider({
   const vars = useMemo(() => {
     const css: Record<string, string> = brandCssVars(brandToOverrides(brand, resolvedMode));
     if (brand?.fonts?.sans) css[cssVarName("font-family-sans")] = brand.fonts.sans;
-    if (brand?.fonts?.display) css[cssVarName("font-family-display")] = brand.fonts.display;
     return css;
   }, [brand, resolvedMode]);
 

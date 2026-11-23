@@ -23,6 +23,16 @@
       "types": "./dist/names.d.ts",
       "import": "./dist/names.js",
       "require": "./dist/names.cjs"
+    },
+    "./all": {
+      "types": "./dist/all.d.ts",
+      "import": "./dist/all.js",
+      "require": "./dist/all.cjs"
+    },
+    "./native-all": {
+      "types": "./dist/native-all.d.ts",
+      "import": "./dist/native-all.js",
+      "require": "./dist/native-all.cjs"
     }
   },
   "files": [

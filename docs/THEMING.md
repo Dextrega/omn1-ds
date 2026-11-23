@@ -12,7 +12,7 @@ const acme: Brand = {
   //    escape hatch for any colour token: overrides: { "semantic-stroke-secondary-medium": "#0ea5e9" }
 
   // 2. Typography
-  fonts: { sans: '"Inter", sans-serif', display: '"Playfair Display", serif' },
+  fonts: { sans: '"Inter", sans-serif' },
 
   // 3. Icons — swap any icon from the registry, or the stroke weight for all of them
   icons: { check: AcmeCheck },

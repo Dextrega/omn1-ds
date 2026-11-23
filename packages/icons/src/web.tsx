@@ -23,6 +23,7 @@ import {
   LoaderCircle,
   Lock,
   Mail,
+  Maximize,
   Menu,
   Minus,
   Pencil,
@@ -52,9 +53,10 @@ import {
   bankFlagPaths,
   type BankFlagBrand,
 } from "./bank-flags";
-import type { IconName } from "./names";
+import type { CoreIconName, IconName } from "./names";
 
-export { iconNames, type IconName } from "./names";
+export { iconNames, type CoreIconName, type IconName } from "./names";
+export { libraryIconNames, type LibraryIconName } from "./names-library";
 
 export interface IconComponentProps extends Omit<SVGProps<SVGSVGElement>, "ref"> {
   size?: number | string;
@@ -62,7 +64,9 @@ export interface IconComponentProps extends Omit<SVGProps<SVGSVGElement>, "ref">
   color?: string;
 }
 export type IconComponent = ComponentType<IconComponentProps>;
-export type IconRegistry = Record<IconName, IconComponent>;
+/** The core icons are always present; any other Figma icon is optional (see `allIcons`). */
+export type IconRegistry = Record<CoreIconName, IconComponent> &
+  Partial<Record<Exclude<IconName, CoreIconName>, IconComponent>>;
 
 /** Default registry: Lucide. */
 export const defaultIcons: IconRegistry = {
@@ -90,6 +94,7 @@ export const defaultIcons: IconRegistry = {
   loader: LoaderCircle,
   lock: Lock,
   mail: Mail,
+  maximize: Maximize,
   menu: Menu,
   minus: Minus,
   pencil: Pencil,
@@ -131,10 +136,23 @@ export interface IconProps extends Omit<IconComponentProps, "name"> {
   name: IconName;
 }
 
+const warned = new Set<string>();
+function warnMissing(name: string) {
+  const dev = (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env?.NODE_ENV;
+  if (dev === "production" || warned.has(name)) return;
+  warned.add(name);
+  console.warn(
+    `[@omn1/icons] "${name}" is not in the registry. Register it with <IconProvider icons={allIcons}> (from "@omn1/icons/all") or pass your own icon.`,
+  );
+}
+
 export function Icon({ name, size = 20, strokeWidth, "aria-label": label, ...rest }: IconProps) {
   const ctx = useContext(IconContext);
   const Glyph = ctx.icons[name];
-  if (!Glyph) return null;
+  if (!Glyph) {
+    warnMissing(name);
+    return null;
+  }
   return createElement(Glyph, {
     size,
     strokeWidth: strokeWidth ?? ctx.strokeWidth,

@@ -12,7 +12,11 @@ import {
   Chip,
   ChipsSelect,
   ButtonList,
+  AssetItem,
+  ButtonSelect,
+  DotStatus,
   ItemSelect,
+  PopOver,
   PasswordInput,
   Spinner,
   RadioGroup,
@@ -225,6 +229,81 @@ function renderEverything() {
       <ItemSelect disabled topLabel="Top" bottomLabel="Bottom" badge="1" radiobutton toggle>
         Disabled
       </ItemSelect>
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <div key={size}>
+          {(
+            ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"] as const
+          ).flatMap((variant) =>
+            (["subtle", "strong"] as const).flatMap((appearance) => [
+              <AssetItem
+                key={`${variant}${appearance}t`}
+                size={size}
+                variant={variant}
+                appearance={appearance}
+              >
+                OM
+              </AssetItem>,
+              <AssetItem
+                key={`${variant}${appearance}i`}
+                size={size}
+                variant={variant}
+                appearance={appearance}
+                content="icon"
+              />,
+              <AssetItem
+                key={`${variant}${appearance}m`}
+                size={size}
+                variant={variant}
+                appearance={appearance}
+                content="image"
+                src="x.png"
+              />,
+            ]),
+          )}
+          {(["neutral", "primary", "success", "warning", "danger", "inverse"] as const).flatMap(
+            (variant) =>
+              (["solid", "outlined"] as const).flatMap((appearance) =>
+                [false, true].map((border) => (
+                  <DotStatus
+                    key={`${variant}${appearance}${border}`}
+                    size={size}
+                    variant={variant}
+                    appearance={appearance}
+                    border={border}
+                  />
+                )),
+              ),
+          )}
+        </div>
+      ))}
+      <PopOver
+        title="Title"
+        leadingIcon="info"
+        onResize={() => {}}
+        onClose={() => {}}
+        footerHint="Hint"
+        secondaryAction={<button>Cancel</button>}
+        primaryAction={<button>Save</button>}
+      >
+        <ItemSelect>One</ItemSelect>
+      </PopOver>
+      {(["xs", "sm", "md", "lg"] as const).flatMap((size) =>
+        (["neutral", "primary", "inverse"] as const).flatMap((variant) =>
+          (["solid", "outlined", "ghost"] as const).map((appearance) => (
+            <ButtonSelect
+              key={`${size}${variant}${appearance}`}
+              size={size}
+              variant={variant}
+              appearance={appearance}
+              label="Action"
+              leadingIcon="plus"
+              defaultOpen
+            >
+              <ItemSelect>One</ItemSelect>
+            </ButtonSelect>
+          )),
+        ),
+      )}
       <ChipsSelect label="Closed" />
       {(["wrap", "flex"] as const).flatMap((appearance) =>
         (["bottom", "top"] as const).map((align) => (

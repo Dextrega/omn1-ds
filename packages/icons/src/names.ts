@@ -1,3 +1,5 @@
+import type { LibraryIconName } from "./names-library";
+
 /**
  * Curated icon vocabulary of the design system (Lucide names, kebab-case).
  * Components only ever ask for an icon by one of these names; a client brand can re-map any of them.
@@ -28,6 +30,7 @@ export const iconNames = [
   "loader",
   "lock",
   "mail",
+  "maximize",
   "menu",
   "minus",
   "pencil",
@@ -42,4 +45,12 @@ export const iconNames = [
   "x",
 ] as const;
 
-export type IconName = (typeof iconNames)[number];
+/** The icons the components use themselves — always in the default registry. */
+export type CoreIconName = (typeof iconNames)[number];
+
+/**
+ * Every icon in the Figma `Icons` frame: the core set plus the rest of Lucide (`names-library.ts`).
+ * The library names are not in the default registry (tree-shaking) — add them with `allIcons` from
+ * `@omn1/icons/all` (web) or `@omn1/icons/native-all` (native) through `IconProvider`.
+ */
+export type IconName = CoreIconName | LibraryIconName;
