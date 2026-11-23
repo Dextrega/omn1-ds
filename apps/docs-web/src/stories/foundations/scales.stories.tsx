@@ -153,7 +153,7 @@ export const Typography: StoryObj = {
       </Section>
       <Section
         title="Display styles"
-        note="Composite text styles from Figma (family: Forma DJR Display — commercial, not bundled; falls back to Barlow)."
+        note="Composite text styles from Figma (set in the UI font, Barlow)."
       >
         {Object.entries(displayStyles).map(([name, s]) => (
           <div
@@ -167,7 +167,7 @@ export const Typography: StoryObj = {
             <span
               className="truncate"
               style={{
-                fontFamily: cssVar("font-family-display"),
+                fontFamily: cssVar("font-family-sans"),
                 fontSize: Math.min(s.fontSize, 64),
                 lineHeight: 1.1,
                 letterSpacing: s.letterSpacing,

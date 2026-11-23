@@ -3,14 +3,13 @@
     "sans": {
       "$type": "fontFamily",
       "$value": ["Barlow", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
-      "$description": "UI text. Not part of the Figma export — inferred from the component designs (Barlow Medium). Declared in code until it exists as a Figma variable.",
-      "$extensions": { "com.omn1": { "figma": "(code-only) Font Family/Sans", "authored": true } }
-    },
-    "display": {
-      "$type": "fontFamily",
-      "$value": ["Forma DJR Display", "Barlow", "system-ui", "sans-serif"],
-      "$description": "Display text styles (Giga … Overline). Commercial typeface: the font files are NOT bundled in this repo.",
-      "$extensions": { "com.omn1": { "figma": "fontFamilies/forma-djr-display", "authored": true } }
+      "$description": "UI text. Not part of the Figma export \u2014 inferred from the component designs (Barlow Medium). Declared in code until it exists as a Figma variable.",
+      "$extensions": {
+        "com.omn1": {
+          "figma": "(code-only) Font Family/Sans",
+          "authored": true
+        }
+      }
     }
   }
 }

@@ -104,7 +104,6 @@ function buildDisplayStyles(light, spacing, typography) {
     const pct = String(resolveRaw(universe, v.letterSpacing));
     const weightName = String(resolveRaw(universe, v.fontWeight)).toLowerCase().replace(/\s+/g, "");
     styles[kebab(segs.join("-"))] = {
-      fontFamily: resolveRaw(universe, v.fontFamily),
       fontWeight: weights[weightName] ?? 400,
       fontSize: Number(resolveRaw(universe, v.fontSize)),
       lineHeight: Number(resolveRaw(universe, v.lineHeight)),

@@ -17,7 +17,8 @@ import { PopOver, type PopOverAlign } from "../popover";
  * Provisional: the 43 variants where ButtonSelect differs from ButtonCTA (Neutral · Outlined stroke `Inverse/Subtle`,
  * Loading / Pressed label colours, Inverse · Focused / Actived fills) use the ButtonCTA values; the divider colour
  * (solid `alpha-neutral-subtle`, outlined / ghost `alpha-inverse-subtle`, Primary · Ghost `alpha-primary-*`); the
- * `compact` prop (Figma `Full / Compact`) hides the Text and keeps the leading icon (inferred).
+ * `compact` prop (Figma `Full / Compact`) hides the Text and keeps the leading icon (inferred). When `label` is not a string,
+ * pass `aria-label` so the icon-only main segment keeps an accessible name.
  */
 export interface ButtonSelectProps extends Omit<
   ButtonCTAProps,
