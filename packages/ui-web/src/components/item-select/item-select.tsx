@@ -115,7 +115,7 @@ export interface ItemSelectProps
 
 const ICON_PX = 16;
 
-/** Label colours (Figma): Opacity/Inverse/Strong; Disabled TopLabel OnNeutral/Subtle, BottomLabel OnNeutral/Medium. */
+/** Label colours (Figma): Opacity/Inverse/Strong; Disabled TopLabel / BottomLabel / Suffix OnNeutral/Medium. */
 const labelClass = "block truncate text-alpha-inverse-strong";
 
 export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(function ItemSelect(
@@ -209,7 +209,7 @@ export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(functio
         className="flex min-w-0 flex-1 flex-col justify-center gap-extra-subtle"
       >
         {topLabel && (
-          <span className={cn(labelClass, labelSize, disabled && "text-surface-on-neutral-subtle")}>
+          <span className={cn(labelClass, labelSize, disabled && "text-surface-on-neutral-medium")}>
             {topLabel}
           </span>
         )}
