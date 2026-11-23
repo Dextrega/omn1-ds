@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Pressable, Text, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
+import { DotStatus } from "../dot-status/dot-status";
 import { Spinner } from "../spinner/spinner";
 import {
   ITEM_SELECT_ICON_PX,
@@ -19,7 +20,7 @@ export * from "./styles";
 /**
  * Figma: ItemSelect (6:11215). Same prop names and tokens as @omn1/ui-web; no Hovered / Focused (touch-only).
  * Provisional: Primary / Warning / Danger Enabled text colour, indicator glyphs, DotStatus fill and Loader colour.
- * Provisional: the DotStatus 2px OUTSIDE stroke is `Key/Global/White` (a Key token on purpose, see ui-web).
+ * DotStatus slot = the `DotStatus` component (ring is `Key/Global/White`, provisional).
  */
 export interface ItemSelectProps extends Omit<PressableProps, "children" | "className"> {
   size?: ItemSelectSize;

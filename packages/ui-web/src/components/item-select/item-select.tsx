@@ -3,6 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
+import { DotStatus } from "../dot-status/dot-status";
 import { Spinner } from "../spinner";
 
 /**
@@ -19,8 +20,7 @@ import { Spinner } from "../spinner";
  * State mapping: Hovered → `hover:` · Pressed → `active:` · Actived → `selected` (`aria-checked`) · Disabled → `disabled`.
  * Provisional: Text colours of Primary / Warning / Danger when Enabled (only Neutral and Success were read: `…/Strong`);
  * the checked glyphs of the indicators, the DotStatus fill, the Loader colour and the focus ring (Figma has no Focused state here).
- * Provisional: the DotStatus 2px OUTSIDE stroke is `Key/Global/White` (`ring-global-white`) — a Key token, not Semantic, kept on
- * purpose until design finds a surface-relative colour (the ring is a safety margin that must follow the host surface).
+ * DotStatus slot = the `DotStatus` component (Primary · Solid · SM · Border On); its ring is `Key/Global/White`, provisional (see dot-status.tsx).
  */
 export const itemSelectVariants = cva(
   [
@@ -242,12 +242,7 @@ export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(functio
           {badge}
         </Badge>
       )}
-      {dotStatus && (
-        <span
-          aria-hidden="true"
-          className="size-x1 shrink-0 rounded-corner-full bg-surface-primary-medium ring-subtle ring-global-white"
-        />
-      )}
+      {dotStatus && <DotStatus variant="primary" size="sm" border className="shrink-0" />}
       {loading && <Spinner variant="neutral" size={ICON_PX} className="shrink-0" />}
     </button>
   );

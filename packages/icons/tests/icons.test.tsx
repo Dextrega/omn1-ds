@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { BankFlag, Icon, IconProvider, defaultIcons, iconNames } from "../src/web";
+import { allIcons } from "../src/all";
 import { bankFlagLabels, bankFlagPaths } from "../src/bank-flags";
+import { libraryIconNames } from "../src/names-library";
 
 describe("icon registry", () => {
   it("web and native registries cover exactly the curated names", () => {
@@ -47,5 +49,30 @@ describe("BankFlag", () => {
       expect(svg.querySelectorAll("path").length).toBe(bankFlagPaths[brand].length);
       unmount();
     }
+  });
+});
+
+describe("library icons (Figma `Icons` frame)", () => {
+  it("covers 1:1 the Lucide names of the Figma frame, without overlapping the core set", () => {
+    expect(libraryIconNames.length).toBeGreaterThan(1400);
+    expect(new Set(libraryIconNames).size).toBe(libraryIconNames.length);
+    for (const name of libraryIconNames) expect(iconNames as readonly string[]).not.toContain(name);
+    expect(Object.keys(allIcons).sort()).toEqual([...libraryIconNames].sort());
+    for (const name of libraryIconNames) expect(allIcons[name]).toBeTruthy();
+  });
+
+  it("renders a library icon only once it is registered", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const bare = render(<Icon name="album" />);
+    expect(bare.container.querySelector("svg")).toBeNull();
+    expect(warn).toHaveBeenCalledTimes(1);
+    bare.unmount();
+    const { container } = render(
+      <IconProvider icons={allIcons}>
+        <Icon name="album" />
+      </IconProvider>,
+    );
+    expect(container.querySelector("svg")).not.toBeNull();
+    warn.mockRestore();
   });
 });

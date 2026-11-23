@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
-import { Modal, Pressable, useWindowDimensions, View } from "react-native";
+import { Modal, Pressable, Text, useWindowDimensions, View } from "react-native";
+import { Icon, type IconName } from "@omn1/icons/native";
+import { ButtonIcon } from "../button-icon/button-icon";
 import {
   POPOVER_GAP,
   POPOVER_WIDTH,
+  popOverFooter,
+  popOverHeader,
   popOverPanel,
-  popOverSection,
+  type PopOverWidth,
   popOverShadow,
   popOverSlot,
   type PopOverAlign,
@@ -23,6 +27,20 @@ export interface PopOverProps {
   /** The trigger the panel is anchored to. */
   anchorRef: RefObject<PopOverAnchorHandle | null>;
   align?: PopOverAlign;
+  /** `default` = Figma PopOver (280); `compact` = 200, used by ChipsSelect and `_ButtonList`. */
+  width?: PopOverWidth;
+  /** Figma: Header + Text. */
+  title?: ReactNode;
+  leadingIcon?: IconName;
+  /** Figma: ButtonResize / ButtonClosable — shown when given. */
+  onResize?: () => void;
+  resizeLabel?: string;
+  closeLabel?: string;
+  /** Figma: Footer > Hint / ButtonSecondary / ButtonPrimary. */
+  footerHint?: ReactNode;
+  secondaryAction?: ReactNode;
+  primaryAction?: ReactNode;
+  /** Replaces the Header / Footer region. */
   header?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
@@ -38,10 +56,22 @@ export function PopOver({
   onClose,
   anchorRef,
   align = "bottom-left",
+  width = "default",
+  title,
+  leadingIcon,
+  onResize,
+  resizeLabel = "Resize",
+  closeLabel = "Close",
+  footerHint,
+  secondaryAction,
+  primaryAction,
   header,
   footer,
   children,
 }: PopOverProps) {
+  const panelWidth = POPOVER_WIDTH[width];
+  const hasHeader = header || title || onResize;
+  const hasFooter = footer || footerHint || secondaryAction || primaryAction;
   const { width: winW, height: winH } = useWindowDimensions();
   const [rect, setRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const measured = useRef(false);
@@ -59,7 +89,7 @@ export function PopOver({
   if (!open) return null;
   const right = align.endsWith("right");
   const top = align.startsWith("top");
-  const left = rect ? (right ? rect.x + rect.w - POPOVER_WIDTH : rect.x) : 0;
+  const left = rect ? (right ? rect.x + rect.w - panelWidth : rect.x) : 0;
   const position = rect
     ? top
       ? { left, bottom: winH - rect.y + POPOVER_GAP }
@@ -70,12 +100,64 @@ export function PopOver({
       <Pressable accessibilityLabel="Close" onPress={onClose} style={{ width: winW, height: winH }}>
         <View
           accessibilityRole="menu"
-          className={popOverPanel}
+          className={popOverPanel(width)}
           style={[{ position: "absolute" }, position, popOverShadow]}
         >
-          {header ? <View className={popOverSection}>{header}</View> : null}
+          {hasHeader ? (
+            header ? (
+              <View>{header}</View>
+            ) : (
+              <View className={popOverHeader}>
+                {leadingIcon ? (
+                  <Icon
+                    name={leadingIcon}
+                    size={16}
+                    className="text-surface-on-neutral-very-strong"
+                  />
+                ) : null}
+                <Text
+                  numberOfLines={1}
+                  className="min-w-0 flex-1 font-sans text-body-sm font-medium text-surface-on-neutral-very-strong"
+                >
+                  {title}
+                </Text>
+                {onResize ? (
+                  <ButtonIcon
+                    size="sm"
+                    variant="neutral"
+                    appearance="ghost"
+                    icon="maximize"
+                    accessibilityLabel={resizeLabel}
+                    onPress={onResize}
+                  />
+                ) : null}
+                <ButtonIcon
+                  size="sm"
+                  variant="neutral"
+                  appearance="ghost"
+                  icon="x"
+                  accessibilityLabel={closeLabel}
+                  onPress={onClose}
+                />
+              </View>
+            )
+          ) : null}
           <View className={popOverSlot}>{children}</View>
-          {footer ? <View className={popOverSection}>{footer}</View> : null}
+          {hasFooter ? (
+            footer ? (
+              <View>{footer}</View>
+            ) : (
+              <View className={popOverFooter}>
+                {footerHint ? (
+                  <Text className="min-w-0 flex-1 font-sans text-caption font-medium text-surface-on-neutral-medium">
+                    {footerHint}
+                  </Text>
+                ) : null}
+                {secondaryAction}
+                {primaryAction}
+              </View>
+            )
+          ) : null}
         </View>
       </Pressable>
     </Modal>

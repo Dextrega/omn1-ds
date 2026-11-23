@@ -37,6 +37,8 @@ Badge Secondary / Subtle fill, the Danger _Actived_ / Outlined strokes, `Variati
 8. **Effect styles** (`DropShadow/Level 1–4`) are not exported by Tokens Studio; mirrored in `packages/tokens/effects/effects.json`.
 9. **ItemSelect DotStatus stroke** is `Key/Global/White` (2px OUTSIDE). It is a safety margin whose colour should follow the surface the Avatar / dot sits on; Figma cannot read the container background, so a Semantic token does not exist yet. Kept as a deliberate, documented Key token (`ring-global-white`) until design defines a scalable solution. Primary Pressed (MD vs SM / LG) and Suffix colours were corrected in Figma on 2026-11-23. Disabled TopLabel / BottomLabel / Suffix are `OnNeutral/Medium` in code. In the file, 4 variants (SM · Warning / Danger · Squared / Rounded · Disabled) still have TopLabel `OnNeutral/Subtle` (read 2026-11-23).
 10. **State names**: `Actived`, `DIsablede (Filled)`, `Sufffix`, `Appearabce`.
+11. **v1.1.0 batch**: DotStatus LG Border is an 8px OUTSIDE ring and its colour (and the Inverse variant) is `Key/Global/White`; ButtonSelect differs from ButtonCTA in 43 variants (Neutral Outlined Enabled stroke, Loading labels, Inverse Focused / Actived fills, Outlined Actived strokes, Primary Solid Actived fill) and the divider colours were only partly sampled; PopOver is 280w while the ChipsSelect / `_ButtonList` instances are 200w; AssetItem's default icon `maximize` was missing from the core set (added).
+12. **Icons frame**: 27 non-Lucide brand logos (chrome, github, slack, figma, claude, notion, …) are not shipped; duplicated entries (apple, facebook, instagram, linkedin, youtube); typos `gihub`, `gogglee`.
 
 ## Tooling finding: tailwind-merge 3 vs Tailwind 3
 

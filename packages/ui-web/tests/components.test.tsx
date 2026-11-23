@@ -10,7 +10,11 @@ import {
   Chip,
   ChipsSelect,
   ButtonList,
+  AssetItem,
+  ButtonSelect,
+  DotStatus,
   ItemSelect,
+  PopOver,
   PasswordInput,
   RadioGroup,
   Radiobutton,
@@ -423,5 +427,66 @@ describe("TextInput Helper", () => {
   it("drops the helper container when helper={false}", () => {
     const { container } = render(<TextInput label="Email" hint="Hint" helper={false} />);
     expect(container.querySelector('[data-slot="helper"]')).toBeNull();
+  });
+});
+
+describe("AssetItem / DotStatus", () => {
+  it("AssetItem renders text, an icon or an image by `content`", () => {
+    const { container, rerender } = render(<AssetItem size="lg">OM</AssetItem>);
+    expect(container.textContent).toBe("OM");
+    rerender(<AssetItem content="icon" size="md" />);
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("width")).toBe("14");
+    rerender(<AssetItem content="image" src="a.png" alt="Avatar" />);
+    expect(container.querySelector("img")).toHaveAttribute("alt", "Avatar");
+  });
+
+  it("DotStatus is decorative unless it has a label", () => {
+    const { container, rerender } = render(<DotStatus />);
+    expect(container.firstElementChild).toHaveAttribute("aria-hidden", "true");
+    rerender(<DotStatus label="Online" variant="success" border />);
+    const dot = container.firstElementChild!;
+    expect(dot).toHaveAttribute("role", "img");
+    expect(dot.className).toContain("ring-global-white");
+  });
+});
+
+describe("PopOver / ButtonSelect", () => {
+  it("PopOver renders the Figma header and footer", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(
+      <PopOver
+        title="Filters"
+        onClose={onClose}
+        footerHint="3 selected"
+        primaryAction={<button>Apply</button>}
+      >
+        <ItemSelect>One</ItemSelect>
+      </PopOver>,
+    );
+    expect(screen.getByText("Filters")).toBeInTheDocument();
+    expect(screen.getByText("3 selected")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("ButtonSelect runs the main action and opens / closes its PopOver", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <ButtonSelect label="Save" onClick={onClick}>
+        <ItemSelect>Save as…</ItemSelect>
+      </ButtonSelect>,
+    );
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    const trigger = screen.getByRole("button", { name: "More options" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await user.click(trigger);
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-pressed", "true");
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu")).toBeNull();
   });
 });
