@@ -69,7 +69,7 @@ export const itemSelectText = (o: {
     o.disabled ? "text-surface-on-neutral-medium" : TEXT[o.variant][o.selected ? 1 : 0],
   );
 
-/** TopLabel / BottomLabel / Suffix: Opacity/Inverse/Strong; Disabled TopLabel OnNeutral/Subtle, BottomLabel OnNeutral/Medium. */
+/** TopLabel / BottomLabel / Suffix: Opacity/Inverse/Strong; Disabled all three OnNeutral/Medium. */
 export const itemSelectLabel = (o: {
   size: ItemSelectSize;
   disabled: boolean;
@@ -84,9 +84,7 @@ export const itemSelectLabel = (o: {
       : o.size === "sm"
         ? "text-overline"
         : "text-caption",
-    o.disabled && o.slot === "top" && "text-surface-on-neutral-subtle",
-    o.disabled && o.slot === "bottom" && "text-surface-on-neutral-medium",
-    o.disabled && o.slot === "suffix" && "text-surface-on-neutral-medium",
+    o.disabled && "text-surface-on-neutral-medium",
     !o.disabled && "text-alpha-inverse-strong",
   );
 
