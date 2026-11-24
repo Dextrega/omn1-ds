@@ -367,7 +367,7 @@ function allClasses(): string[] {
     for (const empty of [true, false]) add(comboBoxText(state, empty));
   }
   add(
-    "w-full items-center gap-subtle flex-row justify-center gap-very-subtle h-0 w-very-subtle shrink-0 border-t border-very-subtle border-stroke-neutral-strong font-sans text-body-sm font-medium text-surface-on-neutral-medium min-h-x2 items-start justify-end min-w-0 flex-1 gap-extra-subtle",
+    "w-full items-center gap-subtle flex-row justify-center gap-very-subtle h-0 w-very-subtle shrink-0 border-t border-very-subtle border-stroke-neutral-subtle font-sans text-body-sm font-medium text-surface-on-neutral-medium min-h-x2 items-start justify-end min-w-0 flex-1 gap-extra-subtle",
   );
   // classes written inline in the components
   add(

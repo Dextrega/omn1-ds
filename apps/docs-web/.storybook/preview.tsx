@@ -1,6 +1,7 @@
 import "@fontsource/barlow/400.css";
 import "@fontsource/barlow/500.css";
 import "@fontsource/barlow/600.css";
+import "@fontsource/share-tech-mono/400.css";
 import "@omn1/tokens/css";
 import "./tailwind.css";
 

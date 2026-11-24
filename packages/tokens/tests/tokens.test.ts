@@ -60,6 +60,16 @@ describe("build output", () => {
   });
 });
 
+describe("font families", () => {
+  it("exports Sans and Mono (Figma text styles Mono/*) as CSS vars and Tailwind fontFamily", () => {
+    const css = read("css/tokens.css");
+    expect(css).toContain("--omn1-font-family-sans:");
+    expect(css).toContain('--omn1-font-family-mono: "Share Tech Mono"');
+    const theme = JSON.parse(read("theme.json"));
+    expect(theme.fontFamily.mono).toBe("var(--omn1-font-family-mono)");
+  });
+});
+
 describe("effect tokens (DropShadow)", () => {
   it("exports every Figma DropShadow level as a CSS var, Tailwind boxShadow and map entry", () => {
     const css = read("css/tokens.css");

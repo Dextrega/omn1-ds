@@ -7,7 +7,7 @@ import { ButtonLink } from "../button-link/button-link";
 /**
  * Figma: AuthInput (314:3911). Same props and tokens as @omn1/ui-web (see its notes): Amount 4 / 6 × Divisor, and the Resend
  * row. Typing moves to the next cell, Backspace on an empty cell to the previous one; a multi-character change (paste /
- * one-time-code autofill) fills the cells. Provisional: English default copy, Divisor line `Stroke/Neutral/Strong`.
+ * one-time-code autofill) fills the cells. Verified (v1.1.6): Resend text and the Divisor line `Stroke/Neutral/Subtle`. Provisional: the Resend ButtonLink and countdown.
  */
 export interface AuthInputProps extends Omit<ViewProps, "className"> {
   amount?: 4 | 6;
@@ -38,7 +38,7 @@ export function AuthInput({
   error,
   autoCompleted,
   disabled,
-  resendText = "Didn't receive the code?",
+  resendText = "Didn’t receive code yet?",
   resendLabel = "Resend",
   resendSeconds,
   onResend,
@@ -94,7 +94,7 @@ export function AuthInput({
               fluid
             />
             {divisor && i === amount / 2 - 1 && (
-              <View className="h-0 w-very-subtle shrink-0 border-t border-very-subtle border-stroke-neutral-strong" />
+              <View className="h-0 w-very-subtle shrink-0 border-t border-very-subtle border-stroke-neutral-subtle" />
             )}
           </Fragment>
         ))}

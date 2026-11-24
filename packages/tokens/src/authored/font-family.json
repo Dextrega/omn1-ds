@@ -3,10 +3,28 @@
     "sans": {
       "$type": "fontFamily",
       "$value": ["Barlow", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
-      "$description": "UI text. Not part of the Figma export \u2014 inferred from the component designs (Barlow Medium). Declared in code until it exists as a Figma variable.",
+      "$description": "UI text (Barlow Medium). Not a Figma variable: the Sans Serif/* text styles name the family directly, so it is declared in code.",
       "$extensions": {
         "com.omn1": {
           "figma": "(code-only) Font Family/Sans",
+          "authored": true
+        }
+      }
+    },
+    "mono": {
+      "$type": "fontFamily",
+      "$value": [
+        "Share Tech Mono",
+        "ui-monospace",
+        "SFMono-Regular",
+        "Menlo",
+        "Consolas",
+        "monospace"
+      ],
+      "$description": "Mono text styles (Figma text styles Mono/Giga … Mono/Overline: Share Tech Mono Regular; size / line height / weight are bound to the Typography variables, weight Medium). The family is not a Figma variable, so it is declared in code.",
+      "$extensions": {
+        "com.omn1": {
+          "figma": "Text styles Mono/* (Share Tech Mono)",
           "authored": true
         }
       }

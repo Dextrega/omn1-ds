@@ -17,7 +17,7 @@ export const counterInputField = (required: boolean, disabled: boolean) =>
   );
 export const counterInputValue = (size: CounterInputSize, disabled: boolean) =>
   cn(
-    "min-w-x4 flex-1 text-center font-sans font-medium",
+    "min-w-x4 flex-1 text-center font-mono font-medium",
     size === "md" ? "text-body-lg" : "text-body-md",
     disabled ? "text-surface-on-neutral-subtle" : "text-surface-on-neutral-very-strong",
   );

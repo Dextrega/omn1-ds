@@ -16,7 +16,7 @@ export * from "./styles";
 /**
  * Figma: CounterInput (2354:22602). Same props and tokens as @omn1/ui-web (see its notes): value / min / max / step,
  * ButtonMinus / ButtonAdd (ButtonIcon Inverse · Solid, Disabled → Neutral · Ghost), Helper. The Required stroke is an inside
- * border (transparent otherwise, so nothing shifts). Provisional: value uses `font-sans` (no mono family token).
+ * border (transparent otherwise, so nothing shifts). The value is `font-mono` (Mono/Body MD · LG).
  */
 export interface CounterInputProps extends Omit<ViewProps, "className"> {
   size?: CounterInputSize;
