@@ -11,10 +11,11 @@ const meta: Meta<typeof ContentItem> = {
     variant: "neutral",
     appearance: "medium",
     text: "Text",
-    topLabel: undefined,
-    bottomLabel: undefined,
-    suffix: undefined,
-    badge: undefined,
+    // Empty string (not undefined) so Storybook opens a text input, never "Set string" / an object editor.
+    topLabel: "",
+    bottomLabel: "",
+    suffix: "",
+    badge: "",
   },
   argTypes: {
     size: { control: "radio", options: ["sm", "md", "lg"] },

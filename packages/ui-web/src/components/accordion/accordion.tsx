@@ -12,6 +12,8 @@ import { cn } from "../../lib/cn";
  * `Opacity/Inverse/Strong`, Disabled `OnNeutral/Subtle`), the open bottom stroke (1px `Stroke/Neutral/Strong`, Disabled
  * `Stroke/Neutral/Subtle`), the Hovered / Pressed fills (`Opacity/Inverse/VerySubtle` / `Subtle`) and the panel padding
  * (8 / 8 / 16 bottom).
+ * v1.1.5: the open stroke is the bottom side only (`border-b-very-subtle`; v1.1.3 drew all four sides) and the panel is a free
+ * slot: any node (text, icon, image, layout) renders as given, text inherits Body SM / `OnNeutral/VeryStrong`.
  * Provisional: (1) Focused is a 4px OUTSIDE `Stroke/Danger/Medium` ring — a red focus ring looks like an error colour
  * but is what Figma draws (logged in docs/FINDINGS.md); (2) when open, Figma tints the whole item on Hovered / Pressed,
  * here only the header is tinted; (3) the open state is a prop (controlled `open` or uncontrolled `defaultOpen`), the
@@ -20,9 +22,14 @@ import { cn } from "../../lib/cn";
  */
 export const accordionVariants = cva("flex w-full flex-col items-start", {
   variants: {
-    open: { true: "border-b border-very-subtle", false: "" },
-    disabled: { true: "border-stroke-neutral-subtle", false: "border-stroke-neutral-strong" },
+    open: { true: "", false: "" },
+    disabled: { true: "", false: "" },
   },
+  compoundVariants: [
+    // Figma: Open=On draws only a 1px bottom stroke (`border-b-very-subtle`: one side, not `border-very-subtle` which is all four).
+    { open: true, disabled: false, class: "border-b-very-subtle border-stroke-neutral-strong" },
+    { open: true, disabled: true, class: "border-b-very-subtle border-stroke-neutral-subtle" },
+  ],
   defaultVariants: { open: false, disabled: false },
 });
 
@@ -63,7 +70,7 @@ export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, "ti
   onOpenChange?: (open: boolean) => void;
   /** Figma: State=Disabled. */
   disabled?: boolean;
-  /** Figma: Slot — the panel content. */
+  /** Figma: Slot — free content (text, icon, image, any layout). */
   children?: ReactNode;
 }
 
@@ -159,7 +166,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
           id={panelId}
           role="region"
           data-slot="accordion-panel"
-          className="flex w-full flex-col gap-very-subtle px-very-subtle pb-subtle pt-very-subtle"
+          className="w-full px-very-subtle pb-subtle pt-very-subtle font-sans text-body-sm text-surface-on-neutral-very-strong"
         >
           {children}
         </div>

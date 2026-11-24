@@ -5,6 +5,26 @@ import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import {
+  authInputBaseCell,
+  authInputBaseText,
+  type AuthInputBaseState,
+} from "../src/components/auth-input-base/styles";
+import {
+  counterInputField,
+  counterInputHelperText,
+  counterInputLabel,
+  counterInputRoot,
+  counterInputValue,
+} from "../src/components/counter-input/styles";
+import {
+  comboBoxField,
+  comboBoxHint,
+  comboBoxIconTone,
+  comboBoxLabel,
+  comboBoxText,
+  type ComboBoxFieldState,
+} from "../src/components/combo-box/styles";
+import {
   AVATAR_DOT_POSITION,
   avatarContainer,
   avatarIconTone,
@@ -31,6 +51,7 @@ import {
   accordionIconTone,
   accordionLabel,
   accordionPanel,
+  accordionPanelText,
   accordionRoot,
   accordionTitle,
 } from "../src/components/accordion/styles";
@@ -217,6 +238,7 @@ function allClasses(): string[] {
     for (const open of [true, false]) add(accordionRoot(open, disabled));
   }
   add(accordionPanel);
+  add(accordionPanelText);
   add("rotate-180");
   for (const appearance of ["full", "compact"] as const)
     for (const active of [true, false])
@@ -309,6 +331,44 @@ function allClasses(): string[] {
   for (const align of ["bottom", "top"] as const)
     for (const disabled of [true, false]) add(tabsIndicator({ align, disabled }));
   add("gap-medium flex-col");
+  // v1.1.5: AuthInputBase, AuthInput, CounterInput, ComboBox
+  for (const state of [
+    "enabled",
+    "active",
+    "filled",
+    "required",
+    "error",
+    "autoCompleted",
+    "disabled",
+  ] as AuthInputBaseState[])
+    for (const fluid of [true, false]) add(authInputBaseCell(state, fluid));
+  for (const disabled of [true, false]) {
+    add(authInputBaseText(disabled));
+    add(counterInputLabel(disabled));
+    add(counterInputHelperText(disabled));
+    add(comboBoxLabel(disabled));
+    add(comboBoxIconTone(disabled));
+    for (const size of ["sm", "md"] as const) add(counterInputValue(size, disabled));
+    for (const required of [true, false]) add(counterInputField(required, disabled));
+    for (const danger of [true, false]) add(comboBoxHint(danger, disabled));
+  }
+  for (const size of ["sm", "md"] as const) add(counterInputRoot(size));
+  for (const state of [
+    "enabled",
+    "active",
+    "filled",
+    "required",
+    "error",
+    "autoCompleted",
+    "loading",
+    "disabled",
+  ] as ComboBoxFieldState[]) {
+    add(comboBoxField(state));
+    for (const empty of [true, false]) add(comboBoxText(state, empty));
+  }
+  add(
+    "w-full items-center gap-subtle flex-row justify-center gap-very-subtle h-0 w-very-subtle shrink-0 border-t border-very-subtle border-stroke-neutral-strong font-sans text-body-sm font-medium text-surface-on-neutral-medium min-h-x2 items-start justify-end min-w-0 flex-1 gap-extra-subtle",
+  );
   // classes written inline in the components
   add(
     "font-sans text-body-md text-caption text-alpha-inverse-strong text-surface-on-neutral-medium text-surface-on-neutral-subtle text-surface-danger-medium text-surface-on-danger-very-subtle text-surface-on-primary-very-subtle",

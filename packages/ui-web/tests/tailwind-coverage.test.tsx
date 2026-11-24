@@ -6,9 +6,13 @@ import { describe, expect, it } from "vitest";
 import {
   Accordion,
   Account,
+  AuthInput,
+  AuthInputBase,
   Avatar,
   AvatarStack,
+  ComboBox,
   ContentItem,
+  CounterInput,
   Badge,
   ButtonCTA,
   ButtonIcon,
@@ -391,6 +395,87 @@ function renderEverything() {
         )),
       )}
       <Account readOnly avatar={{ text: "OM" }} username="User" />
+      {(
+        ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"] as const
+      ).flatMap((variant) =>
+        (["subtle", "medium", "strong"] as const).map((appearance) => (
+          <ContentItem
+            key={`ci-icons-${variant}${appearance}`}
+            variant={variant}
+            appearance={appearance}
+            leadingIcon="house"
+            trailingIcon="house"
+            text="Text"
+          />
+        )),
+      )}
+      {(["sm", "md"] as const).flatMap((size) =>
+        [{}, { required: true }, { disabled: true }].map((state, i) => (
+          <CounterInput
+            key={`counter${size}${i}`}
+            size={size}
+            label="Qty"
+            helper
+            hint="Hint"
+            counter="0/10"
+            min={0}
+            max={5}
+            {...state}
+          />
+        )),
+      )}
+      {(["full", "compact"] as const).flatMap((appearance) =>
+        (["bottom", "top"] as const).flatMap((align) =>
+          [
+            {},
+            { defaultValue: "a" },
+            { required: true },
+            { error: "Error" },
+            { loading: true },
+            { autoCompleted: true },
+            { disabled: true },
+            { defaultOpen: true },
+            { defaultOpen: true, defaultValue: "a", leadingIcon: "house" as const },
+          ].map((state, i) => (
+            <ComboBox
+              key={`combo${appearance}${align}${i}`}
+              appearance={appearance}
+              align={align}
+              label="Label"
+              placeholder="Placeholder"
+              hint="Hint"
+              link={<span>Link</span>}
+              options={[
+                { value: "a", text: "Alpha" },
+                { value: "b", text: "Beta", disabled: true },
+              ]}
+              {...state}
+            />
+          )),
+        ),
+      )}
+      {([4, 6] as const).flatMap((amount) =>
+        [false, true].map((divisor) => (
+          <AuthInput
+            key={`auth${amount}${divisor}`}
+            amount={amount}
+            divisor={divisor}
+            defaultValue="12"
+            resendSeconds={59}
+          />
+        )),
+      )}
+      <AuthInput amount={4} error required autoCompleted disabled />
+      {[
+        {},
+        { required: true },
+        { error: true },
+        { autoCompleted: true },
+        { disabled: true },
+        { defaultValue: "7" },
+      ].map((state, i) => (
+        <AuthInputBase key={`authbase${i}`} aria-label="cell" {...state} />
+      ))}
       <ChipsSelect label="Closed" />
       {(["wrap", "flex"] as const).flatMap((appearance) =>
         (["bottom", "top"] as const).map((align) => (

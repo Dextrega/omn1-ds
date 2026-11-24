@@ -15,8 +15,8 @@ import { Badge } from "../badge/badge";
  * (`Surface/On<variant>/<appearance>`; Neutral Strong `OnNeutral/VeryStrong`; Disabled always `OnNeutral/Subtle`).
  * Labels and suffix are `Opacity/Inverse/Strong`; Disabled turns them `OnNeutral/Subtle` (read from Figma, v1.1.4).
  * Provisional: (1) the Avatar size per Size — Figma draws SM 24 · MD 36 and LG 36 on Subtle but 24 on Strong, so LG uses
- * the 36 of Subtle (logged in docs/FINDINGS.md); (2) icons inherit the text colour (Figma does not bind a colour on the
- * icon layers); (3) the Badge is Primary / Subtle, MD (Disabled → Disabled / Outlined, as in ItemSelect).
+ * the 36 of Subtle (logged in docs/FINDINGS.md); (2) none for the icons — v1.1.5 reads LeadingIcon / TrailingIcon from Figma:
+ * the same `Surface/On<variant>/<appearance>` as the text (Disabled `OnNeutral/Subtle`); (3) the Badge is Primary / Subtle, MD (Disabled → Disabled / Outlined, as in ItemSelect).
  */
 export const contentItemVariants = cva(
   "flex w-full items-center gap-very-subtle px-very-subtle py-extra-subtle",
@@ -67,6 +67,47 @@ export type ContentItemSize = "sm" | "md" | "lg";
 export type ContentItemVariant =
   "neutral" | "primary" | "secondary" | "success" | "warning" | "danger" | "disabled";
 export type ContentItemAppearance = "subtle" | "medium" | "strong";
+
+const ICON_TONE: Record<
+  Exclude<ContentItemVariant, "disabled">,
+  Record<ContentItemAppearance, string>
+> = {
+  neutral: {
+    subtle: "text-surface-on-neutral-subtle",
+    medium: "text-surface-on-neutral-medium",
+    strong: "text-surface-on-neutral-very-strong",
+  },
+  primary: {
+    subtle: "text-surface-on-primary-subtle",
+    medium: "text-surface-on-primary-medium",
+    strong: "text-surface-on-primary-strong",
+  },
+  secondary: {
+    subtle: "text-surface-on-secondary-subtle",
+    medium: "text-surface-on-secondary-medium",
+    strong: "text-surface-on-secondary-strong",
+  },
+  success: {
+    subtle: "text-surface-on-success-subtle",
+    medium: "text-surface-on-success-medium",
+    strong: "text-surface-on-success-strong",
+  },
+  warning: {
+    subtle: "text-surface-on-warning-subtle",
+    medium: "text-surface-on-warning-medium",
+    strong: "text-surface-on-warning-strong",
+  },
+  danger: {
+    subtle: "text-surface-on-danger-subtle",
+    medium: "text-surface-on-danger-medium",
+    strong: "text-surface-on-danger-strong",
+  },
+};
+/** LeadingIcon / TrailingIcon colour — Figma binds the icon to the same `Surface/On<variant>/<appearance>` as the text. */
+export const contentItemIconTone = (
+  variant: ContentItemVariant,
+  appearance: ContentItemAppearance,
+) => (variant === "disabled" ? "text-surface-on-neutral-subtle" : ICON_TONE[variant][appearance]);
 
 /** Figma: icon size per Size (SM 20 · MD 24 · LG 28). */
 export const CONTENT_ITEM_ICON_PX: Record<ContentItemSize, number> = { sm: 20, md: 24, lg: 28 };
@@ -122,7 +163,8 @@ export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function
   ref,
 ) {
   const px = CONTENT_ITEM_ICON_PX[size];
-  const hasLabels = topLabel !== undefined || bottomLabel !== undefined;
+  const iconTone = contentItemIconTone(variant, appearance);
+  const hasLabels = Boolean(topLabel) || Boolean(bottomLabel);
   return (
     <div
       ref={ref}
@@ -131,19 +173,21 @@ export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function
       {...rest}
     >
       {avatar && <Avatar {...avatar} size={CONTENT_ITEM_AVATAR[size]} />}
-      {leadingIcon && <Icon name={leadingIcon} size={px} className="shrink-0 self-start" />}
+      {leadingIcon && (
+        <Icon name={leadingIcon} size={px} className={cn("shrink-0 self-start", iconTone)} />
+      )}
       <span
         className={cn(
           "flex min-w-0 flex-1 flex-col justify-center",
           size === "lg" && hasLabels && "gap-ultra-subtle",
         )}
       >
-        {topLabel !== undefined && (
+        {Boolean(topLabel) && (
           <span className={cn(labelClass, labelTone(variant === "disabled"))}>{topLabel}</span>
         )}
         <span className="flex w-full items-center gap-very-subtle">
           <span className={contentItemText({ size, variant, appearance })}>{text}</span>
-          {suffix !== undefined && (
+          {Boolean(suffix) && (
             <span
               className={cn(
                 "shrink-0 truncate text-right font-sans font-medium",
@@ -155,12 +199,14 @@ export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function
             </span>
           )}
         </span>
-        {bottomLabel !== undefined && (
+        {Boolean(bottomLabel) && (
           <span className={cn(labelClass, labelTone(variant === "disabled"))}>{bottomLabel}</span>
         )}
       </span>
-      {trailingIcon && <Icon name={trailingIcon} size={px} className="shrink-0 self-start" />}
-      {badge !== undefined && badge !== null && (
+      {trailingIcon && (
+        <Icon name={trailingIcon} size={px} className={cn("shrink-0 self-start", iconTone)} />
+      )}
+      {Boolean(badge) && (
         <Badge
           size="md"
           variant={variant === "disabled" ? "disabled" : "primary"}
