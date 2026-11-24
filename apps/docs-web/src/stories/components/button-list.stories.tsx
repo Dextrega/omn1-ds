@@ -15,9 +15,9 @@ const meta: Meta<typeof ButtonList> = {
   ],
   render: (args) => (
     <ButtonList {...args}>
-      <ItemSelect>Rename</ItemSelect>
-      <ItemSelect>Duplicate</ItemSelect>
-      <ItemSelect>Delete</ItemSelect>
+      <ItemSelect text="Rename" />
+      <ItemSelect text="Duplicate" />
+      <ItemSelect text="Delete" />
     </ButtonList>
   ),
   parameters: {

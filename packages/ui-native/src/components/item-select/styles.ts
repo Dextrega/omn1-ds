@@ -33,13 +33,13 @@ const ACTIVED: Record<ItemSelectVariant, string> = {
   danger: "bg-alpha-danger-very-subtle",
 };
 
-/** Text colour: Enabled / Actived. Provisional: Primary / Warning / Danger Enabled (only Neutral and Success were read). */
+/** Text colour: Enabled / Actived (read from Figma, v1.1.4): Primary and Danger `Medium`, Neutral / Success / Warning `Strong`. */
 const TEXT: Record<ItemSelectVariant, [string, string]> = {
   neutral: ["text-surface-on-neutral-strong", "text-surface-on-neutral-strong"],
-  primary: ["text-surface-on-primary-strong", "text-surface-on-primary-medium"],
-  success: ["text-surface-on-success-strong", "text-surface-on-success-medium"],
-  warning: ["text-surface-on-warning-strong", "text-surface-on-warning-medium"],
-  danger: ["text-surface-on-danger-strong", "text-surface-on-danger-medium"],
+  primary: ["text-surface-on-primary-medium", "text-surface-on-primary-medium"],
+  success: ["text-surface-on-success-strong", "text-surface-on-success-strong"],
+  warning: ["text-surface-on-warning-strong", "text-surface-on-warning-strong"],
+  danger: ["text-surface-on-danger-medium", "text-surface-on-danger-medium"],
 };
 
 export const itemSelectRow = (o: {

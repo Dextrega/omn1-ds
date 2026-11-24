@@ -16,9 +16,9 @@ const meta: Meta<typeof ChipsSelect> = {
   ],
   render: (args) => (
     <ChipsSelect {...args}>
-      <ItemSelect selected>Newest</ItemSelect>
-      <ItemSelect>Oldest</ItemSelect>
-      <ItemSelect>Most popular</ItemSelect>
+      <ItemSelect selected text="Newest" />
+      <ItemSelect text="Oldest" />
+      <ItemSelect text="Most popular" />
     </ChipsSelect>
   ),
   parameters: {

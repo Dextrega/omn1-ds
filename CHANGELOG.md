@@ -3,6 +3,42 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.1.4 — Review: `text` prop, ContentItem labels, ItemSelect tokens, rounded popover lists
+
+### Summary
+
+Review of v1.1.3: ContentItem label props open a text control in Storybook, text props are named `text` (never `children`), ItemSelect text and icon colours follow Figma, and the ChipsSelect / ButtonList popover lists default to `appearance="rounded"`.
+
+### Breaking Changes
+
+- In **ItemSelect**, on **text**, renamed the `children` prop to `text` (`string`), on web and native.
+- In **AssetItem**, on **text**, renamed the `children` prop to `text` (`string`), on web and native.
+- In **ContentItem**, on **text**, renamed the `children` prop to `text` (`string`), on web and native.
+- In **ContentItem**, on **topLabel / bottomLabel / suffix / badge**, narrowed the type from `ReactNode` to `string`.
+- In **Accordion** and **Account**, on **title / label / username**, narrowed the type from `ReactNode` to `string`.
+
+### Added
+
+- In **ItemSelect**, on **defaults**, added `ItemSelectDefaultsContext` so a list can provide a default `appearance` to its rows; an explicit prop wins.
+- **[Provisional]** In **ItemSelect**, on **LeadingIcon / TrailingIcon**, made both inherit the text colour; Figma icon instances expose no readable colour binding.
+
+### Updated
+
+- In **ContentItem**, on **TopLabel / BottomLabel**, updated the Disabled colour to `OnNeutral/Subtle`.
+- In **ContentItem**, on **Storybook**, updated the label props to open a text control.
+- In **ItemSelect**, on **text**, updated the Enabled colour per Variant (Primary / Danger `…/Medium`, Success / Warning `…/Strong`).
+- In **ChipsSelect**, on **popover list**, updated the ItemSelect rows to default to `appearance="rounded"`.
+- In **ButtonList**, on **popover list**, updated the ItemSelect rows to default to `appearance="rounded"`.
+- In **docs**, on **FIGMA-SYNC**, added the v1.1.4 section and updated the ItemSelect provisional notes.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: ChipsSelect / ButtonList default `rounded` (explicit prop wins), ItemSelect stays squared alone, ContentItem Disabled labels, native compile test covers the new style helpers.
+
 ## v1.1.3 — Avatar, AvatarStack, ContentItem, Accordion, Account
 
 ### Summary

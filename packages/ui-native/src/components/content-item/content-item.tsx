@@ -30,12 +30,12 @@ export interface ContentItemProps extends Omit<ViewProps, "children" | "classNam
   appearance?: ContentItemAppearance;
   avatar?: Omit<AvatarProps, "size">;
   leadingIcon?: IconName;
-  topLabel?: ReactNode;
-  children?: ReactNode;
-  suffix?: ReactNode;
-  bottomLabel?: ReactNode;
+  topLabel?: string;
+  text?: string;
+  suffix?: string;
+  bottomLabel?: string;
   trailingIcon?: IconName;
-  badge?: ReactNode;
+  badge?: string;
   className?: string;
 }
 
@@ -46,7 +46,7 @@ export function ContentItem({
   avatar,
   leadingIcon,
   topLabel,
-  children,
+  text,
   suffix,
   bottomLabel,
   trailingIcon,
@@ -63,22 +63,22 @@ export function ContentItem({
       {leadingIcon && <Icon name={leadingIcon} size={px} className={cn("self-start", tone)} />}
       <View className={contentItemColumn(size, hasLabels)}>
         {topLabel !== undefined && (
-          <Text numberOfLines={1} className={contentItemLabel}>
+          <Text numberOfLines={1} className={contentItemLabel(variant === "disabled")}>
             {topLabel}
           </Text>
         )}
         <View className="w-full flex-row items-center gap-very-subtle">
           <Text numberOfLines={1} className={contentItemText({ size, variant, appearance })}>
-            {children}
+            {text}
           </Text>
           {suffix !== undefined && (
-            <Text numberOfLines={1} className={contentItemSuffix(size)}>
+            <Text numberOfLines={1} className={contentItemSuffix(size, variant === "disabled")}>
               {suffix}
             </Text>
           )}
         </View>
         {bottomLabel !== undefined && (
-          <Text numberOfLines={1} className={contentItemLabel}>
+          <Text numberOfLines={1} className={contentItemLabel(variant === "disabled")}>
             {bottomLabel}
           </Text>
         )}

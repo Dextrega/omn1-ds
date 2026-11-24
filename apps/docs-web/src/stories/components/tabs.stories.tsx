@@ -61,7 +61,7 @@ export const WithSlots: Story = {
           <TabsBase value="b" buttonIcon="x" buttonIconLabel="Close tab">
             ButtonIcon
           </TabsBase>
-          <TabsBase value="c" buttonList={<ItemSelect>Rename</ItemSelect>}>
+          <TabsBase value="c" buttonList={<ItemSelect text="Rename" />}>
             ButtonList
           </TabsBase>
         </TabsList>
@@ -125,7 +125,7 @@ export const Playground: StoryObj<{
                     buttonListLabel: buttonList.label,
                     buttonListAlign: buttonList.align,
                     buttonList: buttonList.items.map((text) => (
-                      <ItemSelect key={text}>{text}</ItemSelect>
+                      <ItemSelect key={text} text={text} />
                     )),
                   }
                 : {})}

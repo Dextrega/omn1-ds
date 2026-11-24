@@ -13,7 +13,7 @@ import { Badge } from "../badge/badge";
  * Verified against Figma: row heights, padding / gaps, text styles (SM Body SM · MD Body MD · LG Body LG, Barlow Medium;
  * labels Caption 12), icon sizes (SM 20 · MD 24 · LG 28), and the main-text colour of every Variant × Appearance
  * (`Surface/On<variant>/<appearance>`; Neutral Strong `OnNeutral/VeryStrong`; Disabled always `OnNeutral/Subtle`).
- * Labels and suffix are `Opacity/Inverse/Strong`.
+ * Labels and suffix are `Opacity/Inverse/Strong`; Disabled turns them `OnNeutral/Subtle` (read from Figma, v1.1.4).
  * Provisional: (1) the Avatar size per Size — Figma draws SM 24 · MD 36 and LG 36 on Subtle but 24 on Strong, so LG uses
  * the 36 of Subtle (logged in docs/FINDINGS.md); (2) icons inherit the text colour (Figma does not bind a colour on the
  * icon layers); (3) the Badge is Primary / Subtle, MD (Disabled → Disabled / Outlined, as in ItemSelect).
@@ -86,20 +86,22 @@ export interface ContentItemProps extends Omit<HTMLAttributes<HTMLDivElement>, "
   /** Figma: LeadingIcon (swap). */
   leadingIcon?: IconName;
   /** Figma: TopLabel. */
-  topLabel?: ReactNode;
+  topLabel?: string;
   /** Figma: Text — the main text. */
-  children?: ReactNode;
+  text?: string;
   /** Figma: Suffix. */
-  suffix?: ReactNode;
+  suffix?: string;
   /** Figma: BottomLabel. */
-  bottomLabel?: ReactNode;
+  bottomLabel?: string;
   /** Figma: TrailingIcon (swap). */
   trailingIcon?: IconName;
   /** Figma: Badge (boolean) — the badge content, e.g. a count. */
-  badge?: ReactNode;
+  badge?: string;
 }
 
-const labelClass = "block truncate font-sans text-caption font-medium text-alpha-inverse-strong";
+const labelClass = "block truncate font-sans text-caption font-medium";
+const labelTone = (disabled: boolean) =>
+  disabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong";
 
 export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function ContentItem(
   {
@@ -109,7 +111,7 @@ export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function
     avatar,
     leadingIcon,
     topLabel,
-    children,
+    text,
     suffix,
     bottomLabel,
     trailingIcon,
@@ -136,13 +138,16 @@ export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function
           size === "lg" && hasLabels && "gap-ultra-subtle",
         )}
       >
-        {topLabel !== undefined && <span className={labelClass}>{topLabel}</span>}
+        {topLabel !== undefined && (
+          <span className={cn(labelClass, labelTone(variant === "disabled"))}>{topLabel}</span>
+        )}
         <span className="flex w-full items-center gap-very-subtle">
-          <span className={contentItemText({ size, variant, appearance })}>{children}</span>
+          <span className={contentItemText({ size, variant, appearance })}>{text}</span>
           {suffix !== undefined && (
             <span
               className={cn(
-                "shrink-0 truncate text-right font-sans font-medium text-alpha-inverse-strong",
+                "shrink-0 truncate text-right font-sans font-medium",
+                labelTone(variant === "disabled"),
                 size === "sm" ? "text-body-sm" : size === "md" ? "text-body-md" : "text-body-lg",
               )}
             >
@@ -150,7 +155,9 @@ export const ContentItem = forwardRef<HTMLDivElement, ContentItemProps>(function
             </span>
           )}
         </span>
-        {bottomLabel !== undefined && <span className={labelClass}>{bottomLabel}</span>}
+        {bottomLabel !== undefined && (
+          <span className={cn(labelClass, labelTone(variant === "disabled"))}>{bottomLabel}</span>
+        )}
       </span>
       {trailingIcon && <Icon name={trailingIcon} size={px} className="shrink-0 self-start" />}
       {badge !== undefined && badge !== null && (
