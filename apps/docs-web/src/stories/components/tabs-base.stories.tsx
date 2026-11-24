@@ -57,5 +57,5 @@ export const WithIcons: Story = { args: { leadingIcon: "house", trailingIcon: "c
 export const WithBadge: Story = { args: { badge: "3" } };
 export const Loading: Story = { args: { loading: true } };
 export const WithButtonIcon: Story = { args: { buttonIcon: "x", buttonIconLabel: "Close tab" } };
-export const WithButtonList: Story = { args: { buttonList: <ItemSelect>Rename</ItemSelect> } };
+export const WithButtonList: Story = { args: { buttonList: <ItemSelect text="Rename" /> } };
 export const Disabled: Story = { args: { disabled: true } };

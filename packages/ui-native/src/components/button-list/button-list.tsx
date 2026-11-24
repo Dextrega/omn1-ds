@@ -1,12 +1,16 @@
 import { useRef, useState, type ElementRef, type ReactNode } from "react";
 import { View } from "react-native";
 import { ButtonIcon, type ButtonIconProps } from "../button-icon/button-icon";
+import { ItemSelectDefaultsContext } from "../item-select/item-select";
 import { PopOver, type PopOverAlign } from "../popover";
 
 /**
  * Figma: `_ButtonList` (2258:2482, nested / unpublished) — Size XS / SM / MD / LG × Active Off / On × Align. A
  * ButtonIcon (Neutral · Ghost, `ellipsis-vertical`) that opens a PopOver of `ItemSelect` items.
  */
+/** The list inside the PopOver defaults its ItemSelect rows to `appearance="rounded"` (an explicit prop wins). */
+const ROUNDED = { appearance: "rounded" } as const;
+
 export interface ButtonListProps extends Omit<
   ButtonIconProps,
   "icon" | "variant" | "appearance" | "onPress"
@@ -50,7 +54,9 @@ export function ButtonList({
         anchorRef={anchor}
         align={align}
       >
-        {children}
+        <ItemSelectDefaultsContext.Provider value={ROUNDED}>
+          {children}
+        </ItemSelectDefaultsContext.Provider>
       </PopOver>
     </View>
   );

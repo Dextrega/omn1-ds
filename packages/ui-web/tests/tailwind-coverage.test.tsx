@@ -194,11 +194,11 @@ function renderEverything() {
       {(["bottom-left", "bottom-right", "top-left", "top-right"] as const).map((align) => (
         <div key={align}>
           <ChipsSelect label="Select" size="sm" align={align} defaultOpen>
-            <ItemSelect selected>One</ItemSelect>
-            <ItemSelect disabled>Two</ItemSelect>
+            <ItemSelect selected text="One" />
+            <ItemSelect disabled text="Two" />
           </ChipsSelect>
           <ButtonList aria-label="More" size="md" align={align} defaultOpen>
-            <ItemSelect>One</ItemSelect>
+            <ItemSelect text="One" />
           </ButtonList>
         </div>
       ))}
@@ -224,16 +224,21 @@ function renderEverything() {
                 badge="3"
                 dotStatus
                 loading
-              >
-                Item
-              </ItemSelect>
+                text="Item"
+              />
             )),
           ),
         ),
       )}
-      <ItemSelect disabled topLabel="Top" bottomLabel="Bottom" badge="1" radiobutton toggle>
-        Disabled
-      </ItemSelect>
+      <ItemSelect
+        disabled
+        topLabel="Top"
+        bottomLabel="Bottom"
+        badge="1"
+        radiobutton
+        toggle
+        text="Disabled"
+      />
       {(["sm", "md", "lg"] as const).map((size) => (
         <div key={size}>
           {(
@@ -245,9 +250,8 @@ function renderEverything() {
                 size={size}
                 variant={variant}
                 appearance={appearance}
-              >
-                OM
-              </AssetItem>,
+                text="OM"
+              />,
               <AssetItem
                 key={`${variant}${appearance}i`}
                 size={size}
@@ -290,7 +294,7 @@ function renderEverything() {
         secondaryAction={<button>Cancel</button>}
         primaryAction={<button>Save</button>}
       >
-        <ItemSelect>One</ItemSelect>
+        <ItemSelect text="One" />
       </PopOver>
       {(["xs", "sm", "md", "lg"] as const).flatMap((size) =>
         (["neutral", "primary", "inverse"] as const).flatMap((variant) =>
@@ -304,7 +308,7 @@ function renderEverything() {
               leadingIcon="plus"
               defaultOpen
             >
-              <ItemSelect>One</ItemSelect>
+              <ItemSelect text="One" />
             </ButtonSelect>
           )),
         ),
@@ -351,9 +355,8 @@ function renderEverything() {
               bottomLabel="Bottom"
               trailingIcon="chevron-down"
               badge="3"
-            >
-              Text
-            </ContentItem>
+              text="Text"
+            />
           )),
         ),
       )}
@@ -383,7 +386,7 @@ function renderEverything() {
             disabled={disabled}
             defaultOpen
           >
-            <ItemSelect>One</ItemSelect>
+            <ItemSelect text="One" />
           </Account>
         )),
       )}
@@ -405,7 +408,7 @@ function renderEverything() {
                 badge="1"
                 loading
                 buttonIcon="x"
-                buttonList={<ItemSelect>One</ItemSelect>}
+                buttonList={<ItemSelect text="One" />}
               >
                 C
               </TabsBase>
@@ -413,7 +416,7 @@ function renderEverything() {
                 value="d"
                 buttonIcon="x"
                 buttonIconLabel="Close D"
-                buttonList={<ItemSelect>One</ItemSelect>}
+                buttonList={<ItemSelect text="One" />}
               >
                 D
               </TabsBase>

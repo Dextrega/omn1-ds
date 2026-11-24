@@ -1,5 +1,5 @@
 import { Icon, type IconName } from "@omn1/icons/native";
-import type { ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import { Pressable, Text, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
@@ -19,7 +19,8 @@ export * from "./styles";
 
 /**
  * Figma: ItemSelect (6:11215). Same prop names and tokens as @omn1/ui-web; no Hovered / Focused (touch-only).
- * Provisional: Primary / Warning / Danger Enabled text colour, indicator glyphs, DotStatus fill and Loader colour.
+ * v1.1.4: Enabled text colours verified per Variant; the text prop is `text`.
+ * Provisional: icon colour (inherits the text colour), indicator glyphs, DotStatus fill and Loader colour.
  * DotStatus slot = the `DotStatus` component (ring is `Key/Global/White`, provisional).
  */
 export interface ItemSelectProps extends Omit<PressableProps, "children" | "className"> {
@@ -41,12 +42,16 @@ export interface ItemSelectProps extends Omit<PressableProps, "children" | "clas
   dotStatus?: boolean;
   loading?: boolean;
   className?: string;
-  children?: ReactNode;
+  /** Figma: Text (string). */
+  text?: string;
 }
+
+/** Default `appearance` for the rows of a list; ChipsSelect / ButtonList provide `rounded`. An explicit prop wins. */
+export const ItemSelectDefaultsContext = createContext<{ appearance?: ItemSelectAppearance }>({});
 
 export function ItemSelect({
   size = "sm",
-  appearance = "squared",
+  appearance: appearanceProp,
   variant = "neutral",
   selected = false,
   checkbox = false,
@@ -63,9 +68,11 @@ export function ItemSelect({
   loading = false,
   disabled,
   className,
-  children,
+  text,
   ...rest
 }: ItemSelectProps) {
+  const defaults = useContext(ItemSelectDefaultsContext);
+  const appearance = appearanceProp ?? defaults.appearance ?? "squared";
   const off = Boolean(disabled);
   const textClass = itemSelectText({ size, variant, selected, disabled: off });
   return (
@@ -137,12 +144,10 @@ export function ItemSelect({
         ) : null}
         <View className="flex-row items-center gap-very-subtle">
           <View className="min-w-0 flex-1">
-            {typeof children === "string" || typeof children === "number" ? (
+            {text !== undefined && (
               <Text numberOfLines={1} className={textClass}>
-                {children}
+                {text}
               </Text>
-            ) : (
-              children
             )}
           </View>
           {suffix ? (

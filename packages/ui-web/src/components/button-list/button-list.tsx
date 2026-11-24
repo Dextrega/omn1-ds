@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { ButtonIcon, type ButtonIconProps } from "../button-icon/button-icon";
+import { ItemSelectDefaultsContext } from "../item-select/item-select";
 import { PopOver, type PopOverAlign } from "../popover";
 
 /**
@@ -9,6 +10,9 @@ import { PopOver, type PopOverAlign } from "../popover";
  * `ButtonList` slot of `_TabsBase`. Active=On → the button's Actived state (`aria-pressed`).
  * Closes on Escape and on an outside click.
  */
+/** The list inside the PopOver defaults its ItemSelect rows to `appearance="rounded"` (an explicit prop wins). */
+const ROUNDED = { appearance: "rounded" } as const;
+
 export interface ButtonListProps extends Omit<
   ButtonIconProps,
   "icon" | "variant" | "appearance" | "aria-pressed" | "children"
@@ -79,7 +83,9 @@ export function ButtonList({
           align={align}
           className={popOverClassName}
         >
-          {children}
+          <ItemSelectDefaultsContext.Provider value={ROUNDED}>
+            {children}
+          </ItemSelectDefaultsContext.Provider>
         </PopOver>
       )}
     </div>

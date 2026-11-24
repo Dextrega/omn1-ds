@@ -25,8 +25,8 @@ export * from "./styles";
 export interface AccountProps extends Omit<ViewProps, "children" | "className"> {
   appearance?: AccountAppearance;
   avatar?: Omit<AvatarProps, "size" | "onPress">;
-  username?: ReactNode;
-  label?: ReactNode;
+  username?: string;
+  label?: string;
   moreIcon?: IconName | false;
   moreLabel?: string;
   onMoreClick?: () => void;
@@ -108,7 +108,7 @@ export function Account({
   return interactive ? (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={typeof username === "string" ? username : "Account"}
+      accessibilityLabel={username ?? "Account"}
       accessibilityState={{ expanded: children ? open : undefined }}
       onPress={toggle}
       className={classes}

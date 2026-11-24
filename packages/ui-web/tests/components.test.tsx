@@ -471,7 +471,7 @@ describe("ChipsSelect / ButtonList", () => {
     render(
       <>
         <ChipsSelect label="Sort">
-          <ItemSelect>Newest</ItemSelect>
+          <ItemSelect text="Newest" />
         </ChipsSelect>
         <button>outside</button>
       </>,
@@ -492,11 +492,43 @@ describe("ChipsSelect / ButtonList", () => {
     const user = userEvent.setup();
     render(
       <ButtonList aria-label="More">
-        <ItemSelect>Rename</ItemSelect>
+        <ItemSelect text="Rename" />
       </ButtonList>,
     );
     await user.click(screen.getByRole("button", { name: "More" }));
     expect(screen.getByRole("menuitemradio", { name: "Rename" })).toBeInTheDocument();
+  });
+
+  it("ChipsSelect and ButtonList default their ItemSelect rows to appearance=rounded; an explicit prop wins", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(
+      <ChipsSelect label="Sort">
+        <ItemSelect text="Default row" />
+        <ItemSelect text="Squared row" appearance="squared" />
+      </ChipsSelect>,
+    );
+    await user.click(screen.getByRole("button", { name: "Sort" }));
+    expect(screen.getByRole("menuitemradio", { name: "Default row" }).className).not.toContain(
+      "rounded-none",
+    );
+    expect(screen.getByRole("menuitemradio", { name: "Squared row" }).className).toContain(
+      "rounded-none",
+    );
+    unmount();
+    render(
+      <ButtonList aria-label="More">
+        <ItemSelect text="Rename" />
+      </ButtonList>,
+    );
+    await user.click(screen.getByRole("button", { name: "More" }));
+    expect(screen.getByRole("menuitemradio", { name: "Rename" }).className).not.toContain(
+      "rounded-none",
+    );
+  });
+
+  it("ItemSelect outside a list stays squared", () => {
+    render(<ItemSelect text="Solo" />);
+    expect(screen.getByRole("menuitemradio", { name: "Solo" }).className).toContain("rounded-none");
   });
 });
 
@@ -509,7 +541,7 @@ describe("TextInput Helper", () => {
 
 describe("AssetItem / DotStatus", () => {
   it("AssetItem renders text, an icon or an image by `content`", () => {
-    const { container, rerender } = render(<AssetItem size="lg">OM</AssetItem>);
+    const { container, rerender } = render(<AssetItem size="lg" text="OM" />);
     expect(container.textContent).toBe("OM");
     rerender(<AssetItem content="icon" size="md" />);
     const svg = container.querySelector("svg")!;
@@ -539,7 +571,7 @@ describe("PopOver / ButtonSelect", () => {
         footerHint="3 selected"
         primaryAction={<button>Apply</button>}
       >
-        <ItemSelect>One</ItemSelect>
+        <ItemSelect text="One" />
       </PopOver>,
     );
     expect(screen.getByText("Filters")).toBeInTheDocument();
@@ -553,7 +585,7 @@ describe("PopOver / ButtonSelect", () => {
     const onClick = vi.fn();
     render(
       <ButtonSelect label="Save" onClick={onClick}>
-        <ItemSelect>Save as…</ItemSelect>
+        <ItemSelect text="Save as…" />
       </ButtonSelect>,
     );
     await user.click(screen.getByRole("button", { name: "Save" }));
@@ -605,28 +637,22 @@ describe("AvatarStack", () => {
 
 describe("ContentItem", () => {
   it("uses the Figma text colour for Variant × Appearance", () => {
-    const { rerender } = render(<ContentItem appearance="strong">Text</ContentItem>);
+    const { rerender } = render(<ContentItem appearance="strong" text="Text" />);
     expect(screen.getByText("Text").className).toContain("text-surface-on-neutral-very-strong");
-    rerender(
-      <ContentItem variant="danger" appearance="subtle">
-        Text
-      </ContentItem>,
-    );
+    rerender(<ContentItem variant="danger" appearance="subtle" text="Text" />);
     expect(screen.getByText("Text").className).toContain("text-surface-on-danger-subtle");
-    rerender(
-      <ContentItem variant="disabled" appearance="strong">
-        Text
-      </ContentItem>,
-    );
+    rerender(<ContentItem variant="disabled" appearance="strong" text="Text" />);
     expect(screen.getByText("Text").className).toContain("text-surface-on-neutral-subtle");
   });
 
+  it("Disabled uses OnNeutral/Subtle for the labels", () => {
+    render(<ContentItem variant="disabled" topLabel="Top" bottomLabel="Bottom" text="Main" />);
+    expect(screen.getByText("Top").className).toContain("text-surface-on-neutral-subtle");
+    expect(screen.getByText("Bottom").className).toContain("text-surface-on-neutral-subtle");
+  });
+
   it("renders the optional slots", () => {
-    render(
-      <ContentItem topLabel="Top" suffix="Suf" bottomLabel="Bottom" badge="3">
-        Main
-      </ContentItem>,
-    );
+    render(<ContentItem topLabel="Top" suffix="Suf" bottomLabel="Bottom" badge="3" text="Main" />);
     for (const t of ["Top", "Main", "Suf", "Bottom", "3"])
       expect(screen.getByText(t)).toBeInTheDocument();
   });
@@ -674,7 +700,7 @@ describe("Account", () => {
     const user = userEvent.setup();
     render(
       <Account username="Ana" label="Admin">
-        <ItemSelect>Profile</ItemSelect>
+        <ItemSelect text="Profile" />
       </Account>,
     );
     const trigger = screen.getByRole("button", { name: "Ana" });

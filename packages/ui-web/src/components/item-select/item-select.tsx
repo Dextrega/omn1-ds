@@ -1,6 +1,12 @@
 import { Icon, type IconName } from "@omn1/icons";
 import { cva, type VariantProps } from "class-variance-authority";
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import {
+  createContext,
+  forwardRef,
+  useContext,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
 import { DotStatus } from "../dot-status/dot-status";
@@ -18,10 +24,19 @@ import { Spinner } from "../spinner";
  * Suffix colours, Disabled colours, text styles (SM Body SM + Overline · MD / LG Body MD + Caption), Checkbox /
  * Radiobutton / Toggle indicator colours on Actived.
  * State mapping: Hovered → `hover:` · Pressed → `active:` · Actived → `selected` (`aria-checked`) · Disabled → `disabled`.
- * Provisional: Text colours of Primary / Warning / Danger when Enabled (only Neutral and Success were read: `…/Strong`);
- * the checked glyphs of the indicators, the DotStatus fill, the Loader colour and the focus ring (Figma has no Focused state here).
+ * v1.1.4: Enabled text colours read from Figma for every Variant (Primary / Danger `…/Medium`, Success / Warning `…/Strong`,
+ * Neutral `OnNeutral/Strong`); Leading / TrailingIcon inherit the text colour (16px at every size); text prop is `text`, not `children`.
+ * Provisional: the icon colour (Figma icon instances expose no readable colour binding), the checked glyphs of the indicators,
+ * the DotStatus fill, the Loader colour and the focus ring (Figma has no Focused state here).
  * DotStatus slot = the `DotStatus` component (Primary · Solid · SM · Border On); its ring is `Key/Global/White`, provisional (see dot-status.tsx).
  */
+/**
+ * Default `appearance` for the ItemSelect rows inside a list. PopOver-based lists (ChipsSelect, ButtonList) provide
+ * `rounded`; an explicit `appearance` prop on an ItemSelect always wins.
+ */
+type ItemSelectAppearance = "squared" | "rounded";
+export const ItemSelectDefaultsContext = createContext<{ appearance?: ItemSelectAppearance }>({});
+
 export const itemSelectVariants = cva(
   [
     "relative flex w-full select-none items-center gap-very-subtle px-very-subtle text-left font-sans",
@@ -37,13 +52,13 @@ export const itemSelectVariants = cva(
         neutral:
           "text-surface-on-neutral-strong hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-subtle",
         primary:
-          "text-surface-on-primary-strong hover:bg-alpha-primary-very-subtle active:bg-alpha-primary-subtle",
+          "text-surface-on-primary-medium hover:bg-alpha-primary-very-subtle active:bg-alpha-primary-subtle",
         success:
           "text-surface-on-success-strong hover:bg-alpha-success-very-subtle active:bg-alpha-success-subtle",
         warning:
           "text-surface-on-warning-strong hover:bg-alpha-warning-very-subtle active:bg-alpha-warning-subtle",
         danger:
-          "text-surface-on-danger-strong hover:bg-alpha-danger-very-subtle active:bg-alpha-danger-subtle",
+          "text-surface-on-danger-medium hover:bg-alpha-danger-very-subtle active:bg-alpha-danger-subtle",
       },
       selected: { true: "", false: "" },
     },
@@ -59,12 +74,12 @@ export const itemSelectVariants = cva(
       {
         variant: "success",
         selected: true,
-        class: "bg-alpha-success-very-subtle text-surface-on-success-medium",
+        class: "bg-alpha-success-very-subtle text-surface-on-success-strong",
       },
       {
         variant: "warning",
         selected: true,
-        class: "bg-alpha-warning-very-subtle text-surface-on-warning-medium",
+        class: "bg-alpha-warning-very-subtle text-surface-on-warning-strong",
       },
       {
         variant: "danger",
@@ -110,7 +125,7 @@ export interface ItemSelectProps
   /** Figma: Loader (boolean). */
   loading?: boolean;
   /** Figma: Text (string). */
-  children?: ReactNode;
+  text?: string;
 }
 
 const ICON_PX = 16;
@@ -121,7 +136,7 @@ const labelClass = "block truncate text-alpha-inverse-strong";
 export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(function ItemSelect(
   {
     size = "sm",
-    appearance = "squared",
+    appearance: appearanceProp,
     variant = "neutral",
     selected = false,
     checkbox = false,
@@ -138,12 +153,14 @@ export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(functio
     loading = false,
     disabled = false,
     className,
-    children,
+    text,
     type = "button",
     ...rest
   },
   ref,
 ) {
+  const defaults = useContext(ItemSelectDefaultsContext);
+  const appearance = appearanceProp ?? defaults.appearance ?? "squared";
   const labelSize = size === "sm" ? "text-overline" : "text-caption";
   return (
     <button
@@ -214,7 +231,7 @@ export const ItemSelect = forwardRef<HTMLButtonElement, ItemSelectProps>(functio
           </span>
         )}
         <span className="flex items-center gap-very-subtle">
-          <span className="min-w-0 flex-1 truncate">{children}</span>
+          <span className="min-w-0 flex-1 truncate">{text}</span>
           {suffix && (
             <span
               className={cn(

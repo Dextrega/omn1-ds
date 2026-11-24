@@ -10,7 +10,7 @@ const meta: Meta<typeof ContentItem> = {
     size: "md",
     variant: "neutral",
     appearance: "medium",
-    children: "Text",
+    text: "Text",
     topLabel: undefined,
     bottomLabel: undefined,
     suffix: undefined,
@@ -23,6 +23,11 @@ const meta: Meta<typeof ContentItem> = {
       options: ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"],
     },
     appearance: { control: "radio", options: ["subtle", "medium", "strong"] },
+    topLabel: { control: "text" },
+    text: { control: "text" },
+    bottomLabel: { control: "text" },
+    suffix: { control: "text" },
+    badge: { control: "text" },
     leadingIcon: iconControl,
     trailingIcon: iconControl,
     avatar: { control: "object" },
@@ -69,9 +74,7 @@ export const Matrix: Story = {
           {(["sm", "md", "lg"] as const).map((size) =>
             (["subtle", "medium", "strong"] as const).map((appearance) => (
               <div key={size + appearance} style={{ width: 160 }}>
-                <ContentItem size={size} variant={variant} appearance={appearance}>
-                  Text
-                </ContentItem>
+                <ContentItem size={size} variant={variant} appearance={appearance} text="Text" />
               </div>
             )),
           )}

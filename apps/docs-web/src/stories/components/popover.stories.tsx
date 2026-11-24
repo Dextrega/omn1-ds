@@ -23,9 +23,9 @@ const meta: Meta<typeof PopOver> = {
   },
   render: (args) => (
     <PopOver {...args} className="static">
-      <ItemSelect>Profile</ItemSelect>
-      <ItemSelect selected>Billing</ItemSelect>
-      <ItemSelect disabled>Team</ItemSelect>
+      <ItemSelect text="Profile" />
+      <ItemSelect selected text="Billing" />
+      <ItemSelect disabled text="Team" />
     </PopOver>
   ),
 };

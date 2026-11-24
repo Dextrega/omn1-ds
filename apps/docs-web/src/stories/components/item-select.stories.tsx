@@ -8,7 +8,7 @@ const meta: Meta<typeof ItemSelect> = {
   tags: ["autodocs"],
   args: {
     leadingIcon: "maximize",
-    children: "Item",
+    text: "Item",
     trailingIcon: "maximize",
     size: "sm",
     appearance: "squared",
@@ -19,7 +19,7 @@ const meta: Meta<typeof ItemSelect> = {
   argTypes: {
     leadingIcon: { ...iconControl },
     topLabel: { control: "text" },
-    children: { control: "text" },
+    text: { control: "text" },
     bottomLabel: { control: "text" },
     trailingIcon: { ...iconControl },
     badge: { control: "text" },
@@ -88,12 +88,8 @@ export const Matrix: Story = {
     <div className="flex flex-col gap-very-subtle">
       {(["neutral", "primary", "success", "warning", "danger"] as const).map((variant) => (
         <div key={variant} className="flex gap-very-subtle">
-          <ItemSelect variant={variant} appearance="rounded">
-            {variant}
-          </ItemSelect>
-          <ItemSelect variant={variant} appearance="rounded" selected>
-            {variant}
-          </ItemSelect>
+          <ItemSelect variant={variant} appearance="rounded" text={variant} />
+          <ItemSelect variant={variant} appearance="rounded" selected text={variant} />
         </div>
       ))}
     </div>

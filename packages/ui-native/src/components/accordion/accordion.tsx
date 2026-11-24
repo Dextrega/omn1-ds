@@ -22,8 +22,8 @@ export * from "./styles";
  */
 export interface AccordionProps extends Omit<ViewProps, "children" | "className"> {
   size?: AccordionSize;
-  title?: ReactNode;
-  label?: ReactNode;
+  title?: string;
+  label?: string;
   leadingIcon?: IconName;
   /** Default `chevron-down`; `false` hides it. */
   trailingIcon?: IconName | false;

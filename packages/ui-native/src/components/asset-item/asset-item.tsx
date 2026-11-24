@@ -25,7 +25,7 @@ export interface AssetItemProps extends Omit<ViewProps, "children" | "className"
   variant?: AssetItemVariant;
   appearance?: AssetItemAppearance;
   content?: AssetItemContent;
-  children?: ReactNode;
+  text?: string;
   icon?: IconName;
   src?: string;
   alt?: string;
@@ -37,7 +37,7 @@ export function AssetItem({
   variant = "neutral",
   appearance = "subtle",
   content = "text",
-  children,
+  text,
   icon = "maximize",
   src,
   alt = "",
@@ -48,7 +48,7 @@ export function AssetItem({
   return (
     <View className={cn(assetItemContainer({ size, variant, appearance }), className)} {...rest}>
       {content === "text" && (
-        <Text className={cn("font-sans font-medium", assetItemText[size], tone)}>{children}</Text>
+        <Text className={cn("font-sans font-medium", assetItemText[size], tone)}>{text}</Text>
       )}
       {content === "icon" && <Icon name={icon} size={ASSET_ITEM_ICON_PX[size]} className={tone} />}
       {content === "image" && (

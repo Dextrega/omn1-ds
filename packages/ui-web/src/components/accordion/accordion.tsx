@@ -49,9 +49,9 @@ const TEXT: Record<AccordionSize, { title: string; label: string; gap: string; i
 export interface AccordionProps extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "onChange"> {
   size?: AccordionSize;
   /** Figma: Title. */
-  title?: ReactNode;
+  title?: string;
   /** Figma: Label. */
-  label?: ReactNode;
+  label?: string;
   /** Figma: LeadingIcon (swap). */
   leadingIcon?: IconName;
   /** Figma: TrailingIcon (swap, default `chevron-down`); `false` hides it. */

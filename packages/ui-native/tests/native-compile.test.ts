@@ -176,7 +176,7 @@ function allClasses(): string[] {
     add(AVATAR_STACK_OVERLAP[size]);
     add(avatarStackMore(size));
     add(avatarStackMoreText(size));
-    add(contentItemSuffix(size));
+    for (const disabled of [true, false]) add(contentItemSuffix(size, disabled));
     for (const disabled of [true, false]) {
       add(avatarIconTone(disabled));
       for (const interactive of [true, false])
@@ -200,7 +200,8 @@ function allClasses(): string[] {
   add(avatarImageOverlay(true));
   add(avatarImageOverlay(false));
   add(contentItemRow);
-  add(contentItemLabel);
+  add(contentItemLabel(true));
+  add(contentItemLabel(false));
   for (const size of ["sm", "md"] as const) {
     add(accordionColumn(size));
     for (const disabled of [true, false]) {
