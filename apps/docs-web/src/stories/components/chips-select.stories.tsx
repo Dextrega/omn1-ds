@@ -6,6 +6,7 @@ const meta: Meta<typeof ChipsSelect> = {
   component: ChipsSelect,
   tags: ["autodocs"],
   args: { label: "Sort by", size: "md", align: "bottom-left" },
+  argTypes: { size: { control: "radio", options: ["sm", "md"] } },
   decorators: [
     (Story) => (
       <div className="min-h-x60 p-strong">

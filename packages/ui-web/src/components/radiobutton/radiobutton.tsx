@@ -2,6 +2,7 @@ import {
   createContext,
   forwardRef,
   useContext,
+  useEffect,
   useId,
   useState,
   type ChangeEvent,
@@ -17,10 +18,10 @@ import { cn } from "../../lib/cn";
  *
  * Verified against Figma (variable bindings read via MCP): 20×20 circle, 12px selected dot (System/x1,5), every fill
  * and stroke per Selection × State, and the 0.1s ease-out hover/press motion. Figma strokes are OUTSIDE, so they are
- * drawn as a `ring` (no layout shift). `label` / `description` / `RadioGroup` are NOT part of Figma (convenience).
+ * drawn as a `ring` (no layout shift). No Label / Description. `RadioGroup` is NOT part of Figma (convenience).
  *
  * State mapping:  Hovered → hover  ·  Pressed → active  ·  Active → focus-visible  ·  Required → `required`
- *                 Error → `invalid`  ·  Disabled → `disabled`  ·  Selection → `checked`
+ *                 Error → `invalid`  ·  Disabled → `disabled`  ·  Selection → `selection` (boolean) / `checked`
  */
 export interface RadiobuttonProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -28,8 +29,8 @@ export interface RadiobuttonProps extends Omit<
 > {
   /** Figma: State=Error. */
   invalid?: boolean;
-  label?: ReactNode;
-  description?: ReactNode;
+  /** Figma: Selection (Off / On) as a boolean. Outside a `RadioGroup` it drives `checked` (the user can still select it). */
+  selection?: boolean;
   wrapperClassName?: string;
 }
 
@@ -48,8 +49,7 @@ export const Radiobutton = forwardRef<HTMLInputElement, RadiobuttonProps>(functi
     invalid,
     required,
     disabled,
-    label,
-    description,
+    selection,
     className,
     wrapperClassName,
     id,
@@ -64,10 +64,25 @@ export const Radiobutton = forwardRef<HTMLInputElement, RadiobuttonProps>(functi
   const group = useContext(RadioGroupContext);
   const uid = useId();
   const inputId = id ?? `omn1-radio-${uid}`;
-  const descId = `${inputId}-desc`;
   const isDisabled = disabled ?? group?.disabled;
   const isInvalid = invalid ?? group?.invalid ?? false;
   const isRequired = required ?? group?.required;
+
+  const [sel, setSel] = useState(selection ?? false);
+  useEffect(() => {
+    if (selection !== undefined) setSel(selection);
+  }, [selection]);
+  const standalone =
+    selection === undefined
+      ? { name, checked, onChange }
+      : {
+          name,
+          checked: sel,
+          onChange: (e: ChangeEvent<HTMLInputElement>) => {
+            setSel(e.target.checked);
+            onChange?.(e);
+          },
+        };
 
   const groupProps = group
     ? {
@@ -78,78 +93,50 @@ export const Radiobutton = forwardRef<HTMLInputElement, RadiobuttonProps>(functi
           onChange?.(e);
         },
       }
-    : { name, checked, onChange };
+    : standalone;
 
   return (
-    <div
+    <span
       className={cn(
-        "inline-flex items-start gap-very-subtle font-sans",
+        "relative inline-flex size-x2-5 shrink-0",
         isDisabled && "cursor-not-allowed",
         wrapperClassName,
       )}
     >
-      <span className="relative inline-flex size-x2-5 shrink-0">
-        <input
-          ref={ref}
-          id={inputId}
-          type="radio"
-          value={value}
-          disabled={isDisabled}
-          required={isRequired}
-          aria-invalid={isInvalid || undefined}
-          aria-describedby={description ? descId : undefined}
-          className={cn(
-            "peer m-0 size-full cursor-pointer appearance-none rounded-full transition-colors duration-100 ease-out focus-visible:outline-none",
-            // Selection=Off — Enabled / Hovered / Pressed / Active
-            "bg-transparent ring-very-subtle ring-stroke-neutral-medium",
-            "hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-very-subtle active:ring-stroke-neutral-strong",
-            "focus-visible:ring-medium focus-visible:ring-stroke-secondary-subtle",
-            // Selection=On
-            "checked:bg-alpha-primary-subtle checked:ring-stroke-primary-subtle checked:hover:ring-stroke-primary-medium checked:active:bg-alpha-primary-medium checked:active:ring-stroke-primary-medium checked:focus-visible:ring-medium checked:focus-visible:ring-stroke-secondary-medium",
-            // State=Required
-            "required:ring-stroke-danger-medium checked:required:ring-stroke-danger-medium",
-            // State=Error
-            "aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:ring-stroke-danger-medium aria-[invalid=true]:hover:bg-surface-danger-very-subtle aria-[invalid=true]:checked:bg-surface-danger-very-subtle aria-[invalid=true]:checked:ring-stroke-danger-medium",
-            // State=Disabled
-            "disabled:cursor-not-allowed disabled:bg-surface-neutral-very-subtle disabled:ring-stroke-neutral-subtle disabled:hover:bg-surface-neutral-very-subtle",
-            "disabled:checked:bg-surface-neutral-subtle disabled:checked:ring-stroke-neutral-subtle",
-            className,
-          )}
-          {...groupProps}
-          {...rest}
-        />
-        <span
-          aria-hidden="true"
-          data-slot="dot"
-          className="pointer-events-none absolute inset-0 m-auto hidden size-x1-5 rounded-full bg-surface-primary-medium peer-checked:block peer-aria-[invalid=true]:bg-surface-danger-medium peer-disabled:bg-surface-neutral-medium"
-        />
-      </span>
-      {(label || description) && (
-        <span className="flex flex-col">
-          {label && (
-            <label
-              htmlFor={inputId}
-              className={cn(
-                "cursor-pointer text-body-md text-alpha-inverse-strong",
-                isDisabled && "cursor-not-allowed text-surface-on-neutral-subtle",
-              )}
-            >
-              {label}
-              {isRequired && (
-                <span aria-hidden="true" className="ml-extra-subtle text-surface-danger-medium">
-                  *
-                </span>
-              )}
-            </label>
-          )}
-          {description && (
-            <span id={descId} className="text-caption text-surface-on-neutral-medium">
-              {description}
-            </span>
-          )}
-        </span>
-      )}
-    </div>
+      <input
+        ref={ref}
+        id={inputId}
+        type="radio"
+        value={value}
+        disabled={isDisabled}
+        required={isRequired}
+        aria-invalid={isInvalid || undefined}
+        className={cn(
+          "peer m-0 size-full cursor-pointer appearance-none rounded-full transition-colors duration-100 ease-out focus-visible:outline-none",
+          // Selection=Off — Enabled / Hovered / Pressed / Active
+          "bg-transparent ring-very-subtle ring-stroke-neutral-medium",
+          "hover:bg-alpha-inverse-very-subtle active:bg-alpha-inverse-very-subtle active:ring-stroke-neutral-strong",
+          "focus-visible:ring-medium focus-visible:ring-stroke-secondary-subtle",
+          // Selection=On
+          "checked:bg-alpha-primary-subtle checked:ring-stroke-primary-subtle checked:hover:ring-stroke-primary-medium checked:active:bg-alpha-primary-medium checked:active:ring-stroke-primary-medium checked:focus-visible:ring-medium checked:focus-visible:ring-stroke-secondary-medium",
+          // State=Required
+          "required:ring-stroke-danger-medium checked:required:ring-stroke-danger-medium",
+          // State=Error
+          "aria-[invalid=true]:bg-surface-danger-very-subtle aria-[invalid=true]:ring-stroke-danger-medium aria-[invalid=true]:hover:bg-surface-danger-very-subtle aria-[invalid=true]:checked:bg-surface-danger-very-subtle aria-[invalid=true]:checked:ring-stroke-danger-medium",
+          // State=Disabled
+          "disabled:cursor-not-allowed disabled:bg-surface-neutral-very-subtle disabled:ring-stroke-neutral-subtle disabled:hover:bg-surface-neutral-very-subtle",
+          "disabled:checked:bg-surface-neutral-subtle disabled:checked:ring-stroke-neutral-subtle",
+          className,
+        )}
+        {...groupProps}
+        {...rest}
+      />
+      <span
+        aria-hidden="true"
+        data-slot="dot"
+        className="pointer-events-none absolute inset-0 m-auto hidden size-x1-5 rounded-full bg-surface-primary-medium peer-checked:block peer-aria-[invalid=true]:bg-surface-danger-medium peer-disabled:bg-surface-neutral-medium"
+      />
+    </span>
   );
 });
 

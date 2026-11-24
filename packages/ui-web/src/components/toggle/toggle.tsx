@@ -1,12 +1,18 @@
 import {
   forwardRef,
-  useId,
+  useEffect,
+  useRef,
   useState,
   type ButtonHTMLAttributes,
   type MouseEvent,
-  type ReactNode,
+  type PointerEvent,
 } from "react";
 import { cn } from "../../lib/cn";
+
+/** Handle travel: track 56 − 4 + 4 inset − 20 handle = 28px (`translate-x-x3-5`). */
+const TRAVEL_PX = 28;
+/** A pointer that moves less than this is a click, not a drag. */
+const DRAG_THRESHOLD_PX = 3;
 
 /**
  * Figma: Toggle (6:11983) — Selection On/Off × State Enabled/Hovered/Pressed/Active/Required/Error/Disabled
@@ -16,7 +22,10 @@ import { cn } from "../../lib/cn";
  * 20×20 handle (radius Border Radius/ExtraSubtle, Stroke/Neutral/Subtle 1px INSIDE, Surface/Neutral/VerySubtle in
  * every state; the Figma drop shadow on the handle is hidden), every track fill and stroke per Selection × State
  * (OUTSIDE strokes are drawn as a `ring`), selection animation 0.2s ease-out, hover/press 0.1s ease-out.
- * `label` / `description` / `name` are NOT part of Figma (convenience).
+ * No Label / Description (`name` is a convenience for form submission).
+ *
+ * Drag (provisional, not in Figma): the handle follows the pointer; on release it snaps to the nearer end. A press
+ * without movement toggles as before; keyboard (Space / Enter) is unchanged.
  */
 export interface ToggleProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -29,8 +38,9 @@ export interface ToggleProps extends Omit<
   invalid?: boolean;
   /** Figma: State=Required. */
   required?: boolean;
-  label?: ReactNode;
-  description?: ReactNode;
+  /** Figma: Selection (Off / On) as a boolean. Drives the state from outside; the user can still toggle it. */
+  selection?: boolean;
+  defaultSelection?: boolean;
   /** Renders a hidden input so the toggle takes part in native form submission. */
   name?: string;
   value?: string;
@@ -40,13 +50,13 @@ export interface ToggleProps extends Omit<
 export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
   {
     checked,
-    defaultChecked = false,
+    defaultChecked,
+    selection,
+    defaultSelection,
     onCheckedChange,
     invalid = false,
     required,
     disabled,
-    label,
-    description,
     name,
     value = "on",
     className,
@@ -57,38 +67,74 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
   },
   ref,
 ) {
-  const uid = useId();
-  const buttonId = id ?? `omn1-toggle-${uid}`;
-  const labelId = `${buttonId}-label`;
-  const descId = `${buttonId}-desc`;
-  const [inner, setInner] = useState(defaultChecked);
+  const [inner, setInner] = useState(selection ?? defaultSelection ?? defaultChecked ?? false);
+  useEffect(() => {
+    if (selection !== undefined) setInner(selection);
+  }, [selection]);
   const on = checked ?? inner;
+  const [drag, setDrag] = useState<number | null>(null);
+  const gesture = useRef<{ x: number; from: number; moved: boolean } | null>(null);
+  const swallowClick = useRef(false);
+
+  const commit = (next: boolean) => {
+    if (checked === undefined) setInner(next);
+    onCheckedChange?.(next);
+  };
+
+  const onPointerDown = (e: PointerEvent<HTMLSpanElement>) => {
+    if (disabled || e.button > 0) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    gesture.current = { x: e.clientX, from: on ? TRAVEL_PX : 0, moved: false };
+  };
+  const onPointerMove = (e: PointerEvent<HTMLSpanElement>) => {
+    const g = gesture.current;
+    if (!g) return;
+    const dx = e.clientX - g.x;
+    if (!g.moved && Math.abs(dx) < DRAG_THRESHOLD_PX) return;
+    g.moved = true;
+    setDrag(Math.min(TRAVEL_PX, Math.max(0, g.from + dx)));
+  };
+  const endDrag = (e: PointerEvent<HTMLSpanElement>) => {
+    const g = gesture.current;
+    gesture.current = null;
+    if (e.currentTarget.hasPointerCapture(e.pointerId))
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    if (!g?.moved) return;
+    swallowClick.current = true; // the browser fires a click after a pointerup that moved
+    const next = (drag ?? g.from) > TRAVEL_PX / 2;
+    setDrag(null);
+    if (next !== on) commit(next);
+  };
+
+  /** A cancelled pointer (e.g. the browser took over to scroll) fires no click: snap back and commit nothing. */
+  const cancelDrag = (e: PointerEvent<HTMLSpanElement>) => {
+    gesture.current = null;
+    swallowClick.current = false;
+    if (e.currentTarget.hasPointerCapture(e.pointerId))
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    setDrag(null);
+  };
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     onClick?.(e);
+    if (swallowClick.current) {
+      swallowClick.current = false;
+      return;
+    }
     if (e.defaultPrevented) return;
-    if (checked === undefined) setInner(!on);
-    onCheckedChange?.(!on);
+    commit(!on);
   };
 
   return (
-    <div
-      className={cn(
-        "inline-flex items-start gap-very-subtle font-sans",
-        disabled && "cursor-not-allowed",
-        wrapperClassName,
-      )}
-    >
+    <span className={cn("inline-flex", disabled && "cursor-not-allowed", wrapperClassName)}>
       <button
         ref={ref}
-        id={buttonId}
+        id={id}
         type="button"
         role="switch"
         aria-checked={on}
         aria-required={required || undefined}
         aria-invalid={invalid || undefined}
-        aria-labelledby={label ? labelId : undefined}
-        aria-describedby={description ? descId : undefined}
         disabled={disabled}
         onClick={handleClick}
         className={cn(
@@ -113,40 +159,20 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
         <span
           aria-hidden="true"
           data-slot="thumb"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={cancelDrag}
+          style={drag === null ? undefined : { transform: `translateX(${drag}px)` }}
           className={cn(
-            "pointer-events-none size-x2-5 rounded-extra-subtle bg-surface-neutral-very-subtle outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-subtle",
-            "translate-x-0 transition-transform duration-200 ease-out motion-reduce:transition-none",
-            "group-aria-checked:translate-x-x3-5",
+            "size-x2-5 touch-none rounded-extra-subtle bg-surface-neutral-very-subtle outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-subtle",
+            drag === null
+              ? "translate-x-0 transition-transform duration-200 ease-out motion-reduce:transition-none group-aria-checked:translate-x-x3-5"
+              : "cursor-grabbing",
           )}
         />
       </button>
       {name && <input type="hidden" name={name} value={on ? value : ""} disabled={disabled} />}
-      {(label || description) && (
-        <span className="flex flex-col">
-          {label && (
-            <span
-              id={labelId}
-              onClick={() => !disabled && document.getElementById(buttonId)?.click()}
-              className={cn(
-                "cursor-pointer text-body-md text-alpha-inverse-strong",
-                disabled && "cursor-not-allowed text-surface-on-neutral-subtle",
-              )}
-            >
-              {label}
-              {required && (
-                <span aria-hidden="true" className="ml-extra-subtle text-surface-danger-medium">
-                  *
-                </span>
-              )}
-            </span>
-          )}
-          {description && (
-            <span id={descId} className="text-caption text-surface-on-neutral-medium">
-              {description}
-            </span>
-          )}
-        </span>
-      )}
-    </div>
+    </span>
   );
 });

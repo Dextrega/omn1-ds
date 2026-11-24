@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import { Pressable, Text, View, type PressableProps, type ViewProps } from "react-native";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { Pressable, View, type PressableProps, type ViewProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { radioCircle, radioDot } from "./styles";
 
@@ -30,8 +30,8 @@ export interface RadiobuttonProps extends Omit<
   invalid?: boolean;
   required?: boolean;
   disabled?: boolean;
-  label?: ReactNode;
-  description?: ReactNode;
+  /** Figma: Selection (Off / On) as a boolean. Outside a `RadioGroup` it drives the state. */
+  selection?: boolean;
   className?: string;
 }
 
@@ -42,18 +42,24 @@ export function Radiobutton({
   invalid,
   required,
   disabled,
-  label,
-  description,
+  selection,
   className,
   ...rest
 }: RadiobuttonProps) {
   const group = useContext(RadioGroupContext);
+  const [inner, setInner] = useState(selection ?? false);
+  useEffect(() => {
+    if (selection !== undefined) setInner(selection);
+  }, [selection]);
   const isDisabled = disabled ?? group?.disabled ?? false;
   const isInvalid = invalid ?? group?.invalid ?? false;
   const isRequired = required ?? group?.required ?? false;
-  const selected = group ? value !== undefined && value === group.value : (checked ?? false);
+  // A Radiobutton without `value` inside a group cannot be matched by the group, so it behaves standalone.
+  const inGroup = group !== null && value !== undefined;
+  const selected = inGroup ? value === group.value : (checked ?? inner);
   const press = () => {
-    if (group && value !== undefined) group.onValueChange(value);
+    if (inGroup) group.onValueChange(value);
+    else setInner(true);
     onCheckedChange?.(true);
   };
   return (
@@ -62,7 +68,7 @@ export function Radiobutton({
       accessibilityState={{ checked: selected, disabled: isDisabled }}
       disabled={isDisabled}
       onPress={press}
-      className={cn("flex-row items-start gap-very-subtle", className)}
+      className={cn("flex-row", className)}
       {...rest}
     >
       <View
@@ -75,26 +81,6 @@ export function Radiobutton({
       >
         {selected && <View className={radioDot({ invalid: isInvalid, disabled: isDisabled })} />}
       </View>
-      {(label || description) && (
-        <View className="shrink">
-          {label && (
-            <Text
-              className={cn(
-                "font-sans text-body-md",
-                isDisabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong",
-              )}
-            >
-              {label}
-              {isRequired ? <Text className="text-surface-danger-medium"> *</Text> : null}
-            </Text>
-          )}
-          {description && (
-            <Text className="font-sans text-caption text-surface-on-neutral-medium">
-              {description}
-            </Text>
-          )}
-        </View>
-      )}
     </Pressable>
   );
 }

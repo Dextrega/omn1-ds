@@ -9,7 +9,8 @@ export type ButtonLinkVariant = "neutral" | "primary";
 export type ButtonLinkSize = "sm" | "md";
 
 export const buttonLinkContainer = cva(
-  "relative flex-row items-center justify-center gap-extra-subtle rounded-none",
+  // The 1px border is always present (transparent when the stroke is not drawn) so Outline / Pressed never change the size.
+  "relative flex-row items-center justify-center gap-extra-subtle rounded-none border border-very-subtle border-transparent",
   {
     variants: {
       variant: { neutral: "", primary: "" },
@@ -21,34 +22,30 @@ export const buttonLinkContainer = cva(
         variant: "neutral",
         outline: true,
         disabled: false,
-        class:
-          "border border-very-subtle border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
+        class: "border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
       },
       {
         variant: "neutral",
         outline: false,
         disabled: false,
-        class:
-          "active:border active:border-very-subtle active:border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
+        class: "active:border-stroke-neutral-strong active:bg-alpha-inverse-subtle",
       },
       {
         variant: "primary",
         outline: true,
         disabled: false,
-        class:
-          "border border-very-subtle border-stroke-primary-medium active:bg-alpha-primary-subtle",
+        class: "border-stroke-primary-medium active:bg-alpha-primary-subtle",
       },
       {
         variant: "primary",
         outline: false,
         disabled: false,
-        class:
-          "active:border active:border-very-subtle active:border-stroke-primary-medium active:bg-alpha-primary-subtle",
+        class: "active:border-stroke-primary-medium active:bg-alpha-primary-subtle",
       },
       {
         outline: true,
         disabled: true,
-        class: "border border-very-subtle border-stroke-neutral-subtle",
+        class: "border-stroke-neutral-subtle",
       },
     ],
     defaultVariants: { variant: "primary", outline: false, disabled: false },

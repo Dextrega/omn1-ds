@@ -73,9 +73,18 @@ export const WithSlots: Story = {
   ),
 };
 
-type TabItem = Omit<ComponentProps<typeof TabsBase>, "children"> & { label: string };
+/** One entry of the `items` control: the `_TabsBase` props and, separately, its nested `ButtonList`. */
+interface TabItem {
+  tab: Omit<ComponentProps<typeof TabsBase>, "children" | "buttonList"> & { label: string };
+  /** Figma: ButtonList (boolean) — set to `null` to hide it. Its PopOver lists `items` as ItemSelect rows. */
+  buttonList: {
+    label: string;
+    align: "bottom-left" | "bottom-right" | "top-left" | "top-right";
+    items: string[];
+  } | null;
+}
 
-/** Edit each item (`items` control) to customise every nested `_TabsBase` individually. */
+/** Edit each item (`items` control) to customise every nested `_TabsBase` — and its nested ButtonList — individually. */
 export const Playground: StoryObj<{
   appearance: "wrap" | "flex";
   align: "bottom" | "top";
@@ -85,10 +94,17 @@ export const Playground: StoryObj<{
     appearance: "wrap",
     align: "bottom",
     items: [
-      { value: "overview", label: "Overview", leadingIcon: "house" },
-      { value: "activity", label: "Activity", badge: "3" },
-      { value: "settings", label: "Settings", trailingIcon: "settings" },
-      { value: "archived", label: "Archived", disabled: true },
+      { tab: { value: "overview", label: "Overview", leadingIcon: "house" }, buttonList: null },
+      { tab: { value: "activity", label: "Activity", badge: "3" }, buttonList: null },
+      {
+        tab: { value: "settings", label: "Settings", trailingIcon: "settings" },
+        buttonList: {
+          label: "Settings options",
+          align: "bottom-left",
+          items: ["Rename", "Duplicate"],
+        },
+      },
+      { tab: { value: "archived", label: "Archived", disabled: true }, buttonList: null },
     ],
   },
   argTypes: {
@@ -97,19 +113,33 @@ export const Playground: StoryObj<{
     items: { control: "object" },
   },
   render: ({ appearance, align, items }) => (
-    <Tabs defaultValue={items[0]?.value}>
-      <TabsList aria-label="Playground" appearance={appearance} align={align}>
-        {items.map(({ label, ...item }) => (
-          <TabsBase key={item.value} {...item}>
-            {label}
-          </TabsBase>
+    <div className="min-h-x40">
+      <Tabs defaultValue={items[0]?.tab.value}>
+        <TabsList aria-label="Playground" appearance={appearance} align={align}>
+          {items.map(({ tab: { label, ...tab }, buttonList }) => (
+            <TabsBase
+              key={tab.value}
+              {...tab}
+              {...(buttonList
+                ? {
+                    buttonListLabel: buttonList.label,
+                    buttonListAlign: buttonList.align,
+                    buttonList: buttonList.items.map((text) => (
+                      <ItemSelect key={text}>{text}</ItemSelect>
+                    )),
+                  }
+                : {})}
+            >
+              {label}
+            </TabsBase>
+          ))}
+        </TabsList>
+        {items.map(({ tab }) => (
+          <TabsPanel key={tab.value} value={tab.value} className="p-subtle font-sans text-body-md">
+            {tab.label} content
+          </TabsPanel>
         ))}
-      </TabsList>
-      {items.map((item) => (
-        <TabsPanel key={item.value} value={item.value} className="p-subtle font-sans text-body-md">
-          {item.label} content
-        </TabsPanel>
-      ))}
-    </Tabs>
+      </Tabs>
+    </div>
   ),
 };

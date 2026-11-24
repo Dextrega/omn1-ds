@@ -3,7 +3,6 @@ import { useState, type ReactNode } from "react";
 import { Pressable, Text, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
-import { ButtonIcon } from "../button-icon/button-icon";
 import {
   CHIP_ICON_PX,
   chipAvatar,
@@ -22,7 +21,7 @@ export * from "./styles";
  * Same props and the same Figma → token mapping as @omn1/ui-web (see its doc comment for what was verified).
  *
  * Native differences: no Hovered / Actived (touch); Pressed → `active:`; Selection → `accessibilityState.selected`.
- * Provisional: the close ButtonIcon is always Ghost/Inverse (as on web). ChipsSelect is built on this chip.
+ * When Selection=On the TrailingIcon is the fixed `circle-x` (no ButtonIcon). ChipsSelect is built on this chip.
  */
 export interface ChipProps extends Omit<
   PressableProps,
@@ -36,17 +35,14 @@ export interface ChipProps extends Omit<
   onSelectedChange?: (selected: boolean) => void;
   /** Figma: LeadingIcon. */
   leadingIcon?: IconName;
-  /** Figma: TrailingIcon. */
+  /** Figma: TrailingIcon, shown when Selection=Off. When On it is the fixed `circle-x`. */
   trailingIcon?: IconName;
   /** Figma: Badge — the badge content, e.g. a count. */
   badge?: ReactNode;
   /** Figma: Avatar — an image / initials slot at the start of the chip. */
   avatar?: ReactNode;
-  /** Figma: ButtonIcon (default true) — the close button shown when Selection=On. */
-  buttonIcon?: boolean;
-  onClose?: () => void;
-  /** Accessible name of the close button. */
-  closeLabel?: string;
+  /** @internal ChipsSelect shows its own chevron instead of the Selection=On `circle-x`. */
+  closable?: boolean;
   disabled?: boolean;
   className?: string;
   children?: ReactNode;
@@ -62,9 +58,7 @@ export function Chip({
   trailingIcon,
   badge,
   avatar,
-  buttonIcon = true,
-  onClose,
-  closeLabel = "Remove",
+  closable = true,
   disabled = false,
   className,
   children,
@@ -78,6 +72,7 @@ export function Chip({
   };
   const state = { size, appearance, selected: isOn, disabled };
   const iconColor = chipLabelColor(state);
+  const trailing = isOn && closable ? "circle-x" : trailingIcon;
   return (
     <Pressable
       accessibilityRole="button"
@@ -104,21 +99,8 @@ export function Chip({
             {badge}
           </Badge>
         )}
-        {trailingIcon && (
-          <Icon name={trailingIcon} size={CHIP_ICON_PX[size]} className={iconColor} />
-        )}
+        {trailing && <Icon name={trailing} size={CHIP_ICON_PX[size]} className={iconColor} />}
       </View>
-      {isOn && buttonIcon && (
-        <ButtonIcon
-          size={size === "sm" ? "xs" : "sm"}
-          appearance="ghost"
-          variant="inverse"
-          icon="circle-x"
-          accessibilityLabel={closeLabel}
-          disabled={disabled}
-          onPress={() => (onClose ? onClose() : setOn(false))}
-        />
-      )}
     </Pressable>
   );
 }

@@ -63,7 +63,9 @@ function Sample({ title, brand }: { title: string; brand?: Brand }) {
           leadingIcon="mail"
           hint="Same component, client tokens"
         />
-        <Checkbox label="Remember me" defaultChecked />
+        <label className="flex items-center gap-very-subtle">
+          <Checkbox defaultChecked /> Remember me
+        </label>
         <div className="flex gap-very-subtle text-surface-primary-medium">
           <Icon name="heart" />
           <Icon name="bell" />

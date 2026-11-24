@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -172,26 +172,60 @@ describe("TextInput", () => {
 describe("Checkbox", () => {
   it("toggles and is labelled", async () => {
     const onChange = vi.fn();
-    render(<Checkbox label="Accept" onChange={onChange} />);
+    render(<Checkbox aria-label="Accept" onChange={onChange} />);
     const box = screen.getByRole("checkbox", { name: "Accept" });
     await userEvent.click(box);
     expect(box).toBeChecked();
     expect(onChange).toHaveBeenCalled();
   });
   it("supports the indeterminate state", () => {
-    render(<Checkbox label="Some" indeterminate />);
+    render(<Checkbox aria-label="Some" indeterminate />);
     const box = screen.getByRole("checkbox") as HTMLInputElement;
     expect(box.indeterminate).toBe(true);
   });
   it("is not interactive when disabled", async () => {
-    render(<Checkbox label="Nope" disabled />);
+    render(<Checkbox aria-label="Nope" disabled />);
     const box = screen.getByRole("checkbox");
     await userEvent.click(box);
     expect(box).not.toBeChecked();
   });
   it("flags invalid", () => {
-    render(<Checkbox label="Terms" invalid />);
+    render(<Checkbox aria-label="Terms" invalid />);
     expect(screen.getByRole("checkbox")).toBeInvalid();
+  });
+});
+
+describe("Selection prop", () => {
+  it("Checkbox and Radiobutton follow `selection` and stay togglable", async () => {
+    render(
+      <>
+        <Checkbox aria-label="c" selection />
+        <Radiobutton aria-label="r" selection name="solo" />
+      </>,
+    );
+    expect(screen.getByRole("checkbox")).toBeChecked();
+    expect(screen.getByRole("radio")).toBeChecked();
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+  });
+
+  it("Checkbox with `selection` / `defaultSelection` toggles AND calls the caller's onChange", async () => {
+    const onChange = vi.fn();
+    const { rerender } = render(<Checkbox aria-label="c" selection onChange={onChange} />);
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+    rerender(<Checkbox aria-label="c" defaultSelection={false} onChange={onChange} />);
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(onChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("Checkbox without selection props still forwards onChange", async () => {
+    const onChange = vi.fn();
+    render(<Checkbox aria-label="c" onChange={onChange} />);
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("checkbox")).toBeChecked();
   });
 });
 
@@ -231,7 +265,7 @@ describe("ButtonLink", () => {
   });
 
   it("maps Figma states to attributes", () => {
-    render(<Radiobutton label="X" invalid disabled />);
+    render(<Radiobutton aria-label="X" invalid disabled />);
     const r = screen.getByLabelText("X");
     expect(r).toBeDisabled();
     expect(r).toHaveAttribute("aria-invalid", "true");
@@ -242,7 +276,7 @@ describe("ButtonLink", () => {
 describe("Toggle", () => {
   it("is a switch that toggles uncontrolled and reports changes", async () => {
     const onCheckedChange = vi.fn();
-    render(<Toggle label="Wifi" onCheckedChange={onCheckedChange} />);
+    render(<Toggle aria-label="Wifi" onCheckedChange={onCheckedChange} />);
     const sw = screen.getByRole("switch", { name: "Wifi" });
     expect(sw).toHaveAttribute("aria-checked", "false");
     await userEvent.click(sw);
@@ -262,10 +296,46 @@ describe("Toggle", () => {
     expect(onCheckedChange).toHaveBeenCalledTimes(1);
   });
 
-  it("clicking the label toggles", async () => {
-    render(<Toggle label="Wifi" />);
-    await userEvent.click(screen.getByText("Wifi"));
+  it("selection drives the state and the user can still toggle", async () => {
+    const { rerender } = render(<Toggle aria-label="Wifi" selection />);
+    const sw = screen.getByRole("switch");
+    expect(sw).toHaveAttribute("aria-checked", "true");
+    await userEvent.click(sw);
+    expect(sw).toHaveAttribute("aria-checked", "false");
+    rerender(<Toggle aria-label="Wifi" selection={false} />);
+    rerender(<Toggle aria-label="Wifi" selection />);
+    expect(sw).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("dragging the handle past the middle turns it on and does not also click", () => {
+    const onCheckedChange = vi.fn();
+    render(<Toggle aria-label="Wifi" onCheckedChange={onCheckedChange} />);
+    const thumb = screen.getByRole("switch").querySelector('[data-slot="thumb"]') as HTMLElement;
+    thumb.setPointerCapture = vi.fn();
+    thumb.hasPointerCapture = () => false;
+    fireEvent.pointerDown(thumb, { clientX: 0, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(thumb, { clientX: 24, pointerId: 1 });
+    expect(thumb.style.transform).toBe("translateX(24px)");
+    fireEvent.pointerUp(thumb, { clientX: 24, pointerId: 1 });
+    fireEvent.click(screen.getByRole("switch"));
+    expect(onCheckedChange).toHaveBeenCalledTimes(1);
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
     expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("a cancelled drag changes nothing and does not swallow the next click", () => {
+    const onCheckedChange = vi.fn();
+    render(<Toggle aria-label="Wifi" onCheckedChange={onCheckedChange} />);
+    const thumb = screen.getByRole("switch").querySelector('[data-slot="thumb"]') as HTMLElement;
+    thumb.setPointerCapture = vi.fn();
+    thumb.hasPointerCapture = () => false;
+    fireEvent.pointerDown(thumb, { clientX: 0, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(thumb, { clientX: 24, pointerId: 1 });
+    fireEvent.pointerCancel(thumb, { pointerId: 1 });
+    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(thumb.style.transform).toBe("");
+    fireEvent.click(screen.getByRole("switch"));
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
   });
 });
 
@@ -276,12 +346,14 @@ describe("Chip", () => {
     const chip = screen.getByRole("button", { name: "Tag" });
     expect(chip).toHaveAttribute("aria-pressed", "false");
     expect(chip.closest("[data-slot=chip]")).toHaveClass("h-x4-5");
-    expect(screen.queryByRole("button", { name: "Remove" })).toBeNull();
+    expect(chip.querySelector("svg")).toBeNull();
     await userEvent.click(chip);
     expect(chip).toHaveAttribute("aria-pressed", "true");
     expect(onSelectedChange).toHaveBeenCalledWith(true);
-    // Figma: ButtonIcon appears when Selection=On and clears the selection
-    await userEvent.click(screen.getByRole("button", { name: "Remove" }));
+    // Figma: Selection=On shows the fixed `circle-x` as TrailingIcon (no separate button); clicking the chip clears it
+    expect(chip.querySelector("svg")).not.toBeNull();
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+    await userEvent.click(chip);
     expect(chip).toHaveAttribute("aria-pressed", "false");
     expect(onSelectedChange).toHaveBeenLastCalledWith(false);
   });

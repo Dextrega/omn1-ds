@@ -1,15 +1,47 @@
 import { ItemSelect } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { iconControl } from "../icon-control";
 
 const meta: Meta<typeof ItemSelect> = {
   title: "Components/ItemSelect",
   component: ItemSelect,
   tags: ["autodocs"],
-  args: { children: "Item", size: "sm", appearance: "squared", variant: "neutral" },
+  args: {
+    leadingIcon: "maximize",
+    children: "Item",
+    trailingIcon: "maximize",
+    size: "sm",
+    appearance: "squared",
+    variant: "neutral",
+    disabled: false,
+  },
+  // Same order as the Figma component properties (booleans + their swap / text first, variants last).
+  argTypes: {
+    leadingIcon: { ...iconControl },
+    topLabel: { control: "text" },
+    children: { control: "text" },
+    bottomLabel: { control: "text" },
+    trailingIcon: { ...iconControl },
+    badge: { control: "text" },
+    avatar: { control: "text" },
+    checkbox: { control: "boolean" },
+    radiobutton: { control: "boolean" },
+    suffix: { control: "text" },
+    toggle: { control: "boolean" },
+    dotStatus: { control: "boolean" },
+    loading: { control: "boolean" },
+    size: { control: "radio", options: ["sm", "md", "lg"] },
+    appearance: { control: "radio", options: ["squared", "rounded"] },
+    variant: { control: "radio", options: ["neutral", "primary", "success", "warning", "danger"] },
+    selected: { control: "boolean" },
+    disabled: { control: "boolean" },
+  },
   decorators: [
     (Story) => (
-      <div className="w-x30 p-strong">
-        <Story />
+      <div className="p-strong">
+        <div style={{ width: 312 }}>
+          <Story />
+        </div>
       </div>
     ),
   ],

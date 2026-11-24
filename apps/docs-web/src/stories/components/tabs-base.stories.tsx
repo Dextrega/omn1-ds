@@ -1,15 +1,30 @@
 import { ItemSelect, Tabs, TabsBase, TabsList, TabsPanel } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { iconControl } from "../icon-control";
 
 const meta: Meta<typeof TabsBase> = {
   title: "Components/TabsBase",
   component: TabsBase,
   tags: ["autodocs"],
-  args: { value: "tab", children: "Label" },
+  args: { value: "tab", children: "Tab" },
+  // `_TabsBase` props and the nested `ButtonList` are separate groups of controls.
   argTypes: {
-    leadingIcon: { control: "text" },
-    trailingIcon: { control: "text" },
-    buttonIcon: { control: "text" },
+    value: { table: { category: "TabsBase" } },
+    children: { control: "text", table: { category: "TabsBase" } },
+    loading: { control: "boolean", table: { category: "TabsBase" } },
+    leadingIcon: { ...iconControl, table: { category: "TabsBase" } },
+    badge: { control: "text", table: { category: "TabsBase" } },
+    trailingIcon: { ...iconControl, table: { category: "TabsBase" } },
+    buttonIcon: { ...iconControl, table: { category: "TabsBase" } },
+    buttonIconLabel: { control: "text", table: { category: "TabsBase" } },
+    disabled: { control: "boolean", table: { category: "TabsBase" } },
+    buttonListLabel: { control: "text", table: { category: "ButtonList (nested)" } },
+    buttonListAlign: {
+      control: "select",
+      options: ["bottom-left", "bottom-right", "top-left", "top-right"],
+      table: { category: "ButtonList (nested)" },
+    },
+    buttonList: { table: { category: "ButtonList (nested)" } },
   },
   decorators: [
     (Story) => (

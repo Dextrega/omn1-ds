@@ -6,11 +6,16 @@ const meta = {
   component: Chip,
   tags: ["autodocs"],
   args: { children: "Design" },
+  argTypes: {
+    closable: { table: { disable: true } },
+    size: { control: "inline-radio" },
+    appearance: { control: "inline-radio" },
+  },
   parameters: {
     docs: {
       description: {
         component:
-          "Figma: **Chips** (6:12377), 40 variants (Size × Appearance × State × Selection). A chip is a toggle button (`aria-pressed`); when selected it shows a close ButtonIcon. Verified against Figma, except the close button always being Ghost/Inverse.",
+          "Figma: **Chips** (6:12377), 40 variants (Size × Appearance × State × Selection). A chip is a toggle button (`aria-pressed`); when selected its TrailingIcon is the fixed `circle-x` (no ButtonIcon, no swap); when off, `trailingIcon` is optional. Verified against Figma.",
       },
     },
   },

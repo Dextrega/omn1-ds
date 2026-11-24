@@ -17,6 +17,8 @@ Found while importing. None block the build; each is a decision for design. Code
 11. **No font-family variable for UI text.** Components use **Barlow Medium** (OFL, bundled via Fontsource / expo-google-fonts). Declared in code. The Figma export still carries `fontFamilies/forma-djr-display` and the Display text styles point at it; that typeface was removed from the code on 2026-11-23 (no component uses it) and the build ignores the family of Display styles. Remove the variable in Figma when convenient.
 12. **Semantic `Opacity`** is really "Key colour at N% alpha" (not an opacity). Renamed `alpha-*` in Tailwind to avoid clashing with `opacity-*`.
 
+13. **v1.1.2 batch**: the Chips component set still declares the boolean property `ButtonIcon#2433:0` (default true) although the ButtonIcon child was removed; Chips Off still has a boolean + swap TrailingIcon. ButtonLink Neutral / Off / Hovered has its stroke OUTSIDE while every other variant is CENTER (code follows the 1px CENTER majority; verify in Figma). ButtonLink was re-read across all 32 variants on 2026-11-24 and matches the web code.
+
 ## Component naming in Figma
 
 - `Actived` (should likely be _Active_), `DIsablede (Filled)`, `Appearabce` (ComboBox), `Sharped` / `Squared`, `Carroussel`.

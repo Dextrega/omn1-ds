@@ -1,6 +1,6 @@
 import { Icon } from "@omn1/icons/native";
-import { useState, type ReactNode } from "react";
-import { Pressable, Text, View, type PressableProps } from "react-native";
+import { useEffect, useState } from "react";
+import { Pressable, View, type PressableProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { checkboxBox } from "./styles";
 
@@ -8,7 +8,7 @@ export * from "./styles";
 
 /**
  * Figma: Checkbox (6:11899). All 21 variants verified (see @omn1/ui-web for the state mapping).
- * Pressed → `active:`. Controlled (`checked` + `onCheckedChange`) or uncontrolled (`defaultChecked`).
+ * No Label / Description. Pressed → `active:`. Controlled (`checked` + `onCheckedChange`) or uncontrolled (`defaultChecked`).
  */
 export interface CheckboxProps extends Omit<
   PressableProps,
@@ -21,25 +21,29 @@ export interface CheckboxProps extends Omit<
   invalid?: boolean;
   required?: boolean;
   disabled?: boolean;
-  label?: ReactNode;
-  description?: ReactNode;
+  /** Figma: Selection (Unselected / Selected) as a boolean. Drives the state; the user can still toggle it. */
+  selection?: boolean;
+  defaultSelection?: boolean;
   className?: string;
 }
 
 export function Checkbox({
   checked,
-  defaultChecked = false,
+  defaultChecked,
+  selection,
+  defaultSelection,
   onCheckedChange,
   indeterminate = false,
   invalid = false,
   required = false,
   disabled = false,
-  label,
-  description,
   className,
   ...rest
 }: CheckboxProps) {
-  const [inner, setInner] = useState(defaultChecked);
+  const [inner, setInner] = useState(selection ?? defaultSelection ?? defaultChecked ?? false);
+  useEffect(() => {
+    if (selection !== undefined) setInner(selection);
+  }, [selection]);
   const isChecked = checked ?? inner;
   const selected = isChecked || indeterminate;
   const toggle = () => {
@@ -59,7 +63,7 @@ export function Checkbox({
       accessibilityState={{ checked: indeterminate ? "mixed" : isChecked, disabled }}
       disabled={disabled}
       onPress={toggle}
-      className={cn("flex-row items-start gap-very-subtle", className)}
+      className={cn("flex-row", className)}
       {...rest}
     >
       <View className={checkboxBox({ selected, invalid, required, disabled })}>
@@ -72,26 +76,6 @@ export function Checkbox({
           />
         )}
       </View>
-      {(label || description) && (
-        <View className="shrink">
-          {label && (
-            <Text
-              className={cn(
-                "font-sans text-body-md",
-                disabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong",
-              )}
-            >
-              {label}
-              {required ? <Text className="text-surface-danger-medium"> *</Text> : null}
-            </Text>
-          )}
-          {description && (
-            <Text className="font-sans text-caption text-surface-on-neutral-medium">
-              {description}
-            </Text>
-          )}
-        </View>
-      )}
     </Pressable>
   );
 }
