@@ -5,7 +5,7 @@ const meta: Meta<typeof AssetItem> = {
   title: "Components/AssetItem",
   component: AssetItem,
   tags: ["autodocs"],
-  args: { size: "lg", variant: "neutral", appearance: "subtle", content: "text", children: "OM" },
+  args: { size: "lg", variant: "neutral", appearance: "subtle", content: "text", text: "OM" },
   parameters: {
     docs: {
       description: {
@@ -44,9 +44,13 @@ export const Matrix: Story = {
         (["subtle", "strong"] as const).map((appearance) => (
           <div key={size + appearance} className="flex items-center gap-very-subtle">
             {variants.map((variant) => (
-              <AssetItem key={variant} size={size} variant={variant} appearance={appearance}>
-                OM
-              </AssetItem>
+              <AssetItem
+                key={variant}
+                size={size}
+                variant={variant}
+                appearance={appearance}
+                text="OM"
+              />
             ))}
             {variants.map((variant) => (
               <AssetItem

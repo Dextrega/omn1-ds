@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { Chip, type ChipProps } from "../chips/chips";
+import { ItemSelectDefaultsContext } from "../item-select/item-select";
 import { PopOver, type PopOverAlign } from "../popover";
 
 /**
@@ -9,6 +10,9 @@ import { PopOver, type PopOverAlign } from "../popover";
  * Active=On → the chip's Actived look (Selection On, keeping the chevron instead of the `circle-x`).
  * Closes on Escape and on an outside click.
  */
+/** The list inside the PopOver defaults its ItemSelect rows to `appearance="rounded"` (an explicit prop wins). */
+const ROUNDED = { appearance: "rounded" } as const;
+
 export interface ChipsSelectProps extends Omit<
   ChipProps,
   | "selected"
@@ -89,7 +93,9 @@ export function ChipsSelect({
           align={align}
           className={popOverClassName}
         >
-          {children}
+          <ItemSelectDefaultsContext.Provider value={ROUNDED}>
+            {children}
+          </ItemSelectDefaultsContext.Provider>
         </PopOver>
       )}
     </div>

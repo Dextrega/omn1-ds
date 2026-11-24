@@ -42,9 +42,9 @@ export interface AccountProps extends Omit<HTMLAttributes<HTMLDivElement>, "onCh
   /** Figma: Avatar (boolean) — props of the Avatar (MD); omit to hide it. */
   avatar?: Omit<AvatarProps, "size" | "onClick">;
   /** Figma: Username. */
-  username?: ReactNode;
+  username?: string;
   /** Figma: Label (Full only). */
-  label?: ReactNode;
+  label?: string;
   /** Figma: ButtonList / ButtonMore (Full only) — the icon of the trailing ButtonIcon; `false` hides it. */
   moreIcon?: IconName | false;
   moreLabel?: string;
@@ -102,7 +102,7 @@ export const Account = forwardRef<HTMLDivElement, AccountProps>(function Account
         <button
           type="button"
           aria-expanded={children ? open : undefined}
-          aria-label={typeof username === "string" ? username : "Account"}
+          aria-label={username ?? "Account"}
           onClick={toggle}
           className={cn(
             "absolute inset-0 cursor-pointer rounded-very-subtle focus-visible:outline-none focus-visible:ring-medium focus-visible:ring-stroke-danger-medium",

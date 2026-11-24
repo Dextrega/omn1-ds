@@ -1,12 +1,16 @@
 import { useRef, useState, type ElementRef, type ReactNode } from "react";
 import { View } from "react-native";
 import { Chip, type ChipProps } from "../chips/chips";
+import { ItemSelectDefaultsContext } from "../item-select/item-select";
 import { PopOver, type PopOverAlign } from "../popover";
 
 /**
  * Figma: ChipsSelect (2411:11516) — Size SM / MD × Active Off / On × Align. Same props as @omn1/ui-web: an Outlined
  * Chip with a trailing chevron (down Off, up On) that opens a PopOver of `ItemSelect` items.
  */
+/** The list inside the PopOver defaults its ItemSelect rows to `appearance="rounded"` (an explicit prop wins). */
+const ROUNDED = { appearance: "rounded" } as const;
+
 export interface ChipsSelectProps extends Omit<
   ChipProps,
   | "selected"
@@ -63,7 +67,9 @@ export function ChipsSelect({
         anchorRef={anchor}
         align={align}
       >
-        {children}
+        <ItemSelectDefaultsContext.Provider value={ROUNDED}>
+          {children}
+        </ItemSelectDefaultsContext.Provider>
       </PopOver>
     </View>
   );

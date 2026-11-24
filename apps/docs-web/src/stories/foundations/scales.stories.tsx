@@ -115,7 +115,7 @@ export const Typography: StoryObj = {
     <div className="p-strong">
       <Section
         title="Type scale"
-        note="text-<step> sets font-size + line-height together. UI text is Barlow Medium (declared in code, not yet a Figma variable)."
+        note="text-<step> sets font-size + line-height together. UI text is Barlow Medium (`font-sans`); numeric readouts use Share Tech Mono (`font-mono`, the Figma text styles Mono/*). Both families are declared in code (Figma has no family variable)."
       >
         {shared("size").map((l) => {
           const step = l.path[1]!;
@@ -150,6 +150,29 @@ export const Typography: StoryObj = {
             </span>
           ))}
         </div>
+      </Section>
+      <Section
+        title="Mono styles"
+        note="Figma text styles Mono/* — Share Tech Mono, size and line height from the Size / Line Height variables. `font-mono` + `text-<step>`."
+      >
+        {(["body-lg", "body-md", "body-sm", "caption", "overline"] as const).map((step) => (
+          <div
+            key={step}
+            className="flex items-baseline gap-subtle border-b border-stroke-neutral-subtle py-extra-subtle"
+          >
+            <code className="w-[140px] shrink-0 text-caption">font-mono text-{step}</code>
+            <span
+              className="truncate"
+              style={{
+                fontFamily: cssVar("font-family-mono"),
+                fontSize: cssVar(`size-${step}`),
+                lineHeight: cssVar(`line-height-${step}`),
+              }}
+            >
+              0123456789 ABC
+            </span>
+          </div>
+        ))}
       </Section>
       <Section
         title="Display styles"

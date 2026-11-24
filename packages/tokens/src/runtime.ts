@@ -164,7 +164,7 @@ export interface BrandTokens {
   /** Escape hatch: override any colour token by name (e.g. `"semantic-stroke-secondary-medium"`). */
   overrides?: PerMode<ColorOverrides>;
   /** Font families. Web: any CSS family name/stack. Native: the loaded font family name. */
-  fonts?: { sans?: string };
+  fonts?: { sans?: string; mono?: string };
 }
 
 const isPerMode = (v: object): v is { light?: unknown; dark?: unknown } =>

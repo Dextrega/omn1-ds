@@ -10,11 +10,12 @@ const meta: Meta<typeof ContentItem> = {
     size: "md",
     variant: "neutral",
     appearance: "medium",
-    children: "Text",
-    topLabel: undefined,
-    bottomLabel: undefined,
-    suffix: undefined,
-    badge: undefined,
+    text: "Text",
+    // Empty string (not undefined) so Storybook opens a text input, never "Set string" / an object editor.
+    topLabel: "",
+    bottomLabel: "",
+    suffix: "",
+    badge: "",
   },
   argTypes: {
     size: { control: "radio", options: ["sm", "md", "lg"] },
@@ -23,6 +24,11 @@ const meta: Meta<typeof ContentItem> = {
       options: ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"],
     },
     appearance: { control: "radio", options: ["subtle", "medium", "strong"] },
+    topLabel: { control: "text" },
+    text: { control: "text" },
+    bottomLabel: { control: "text" },
+    suffix: { control: "text" },
+    badge: { control: "text" },
     leadingIcon: iconControl,
     trailingIcon: iconControl,
     avatar: { control: "object" },
@@ -69,9 +75,7 @@ export const Matrix: Story = {
           {(["sm", "md", "lg"] as const).map((size) =>
             (["subtle", "medium", "strong"] as const).map((appearance) => (
               <div key={size + appearance} style={{ width: 160 }}>
-                <ContentItem size={size} variant={variant} appearance={appearance}>
-                  Text
-                </ContentItem>
+                <ContentItem size={size} variant={variant} appearance={appearance} text="Text" />
               </div>
             )),
           )}

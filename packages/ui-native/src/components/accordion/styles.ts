@@ -8,7 +8,7 @@ export const accordionRoot = (open: boolean, disabled: boolean) =>
   cn(
     "w-full items-start",
     open && [
-      "border-b border-very-subtle",
+      "border-b-very-subtle",
       disabled ? "border-stroke-neutral-subtle" : "border-stroke-neutral-strong",
     ],
   );
@@ -33,4 +33,6 @@ export const accordionLabel = (size: AccordionSize, disabled: boolean) =>
   );
 export const accordionIconTone = (disabled: boolean) =>
   disabled ? "text-surface-on-neutral-subtle" : "text-surface-on-neutral-very-strong";
-export const accordionPanel = "w-full gap-very-subtle px-very-subtle pb-subtle pt-very-subtle";
+export const accordionPanel = "w-full px-very-subtle pb-subtle pt-very-subtle";
+/** Plain string / number children are wrapped in a Text with this style (a raw string inside a View throws on native). */
+export const accordionPanelText = "font-sans text-body-sm text-surface-on-neutral-very-strong";

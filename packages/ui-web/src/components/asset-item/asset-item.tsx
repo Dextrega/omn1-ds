@@ -119,7 +119,7 @@ export interface AssetItemProps
   /** Figma: Content. */
   content?: AssetItemContent;
   /** Figma: Text — the initials (Content=Text). */
-  children?: ReactNode;
+  text?: string;
   /** Figma: Icon (swap) — Content=Icon. */
   icon?: IconName;
   /** Image URL — Content=Image. */
@@ -134,7 +134,7 @@ export const AssetItem = forwardRef<HTMLSpanElement, AssetItemProps>(function As
     variant = "neutral",
     appearance = "subtle",
     content = "text",
-    children,
+    text,
     icon = "maximize",
     src,
     alt = "",
@@ -150,7 +150,7 @@ export const AssetItem = forwardRef<HTMLSpanElement, AssetItemProps>(function As
       className={cn(assetItemVariants({ size, variant, appearance }), className)}
       {...rest}
     >
-      {content === "text" && children}
+      {content === "text" && text}
       {content === "icon" && <Icon name={icon} size={ASSET_ITEM_ICON_PX[size]} />}
       {content === "image" && (
         <>

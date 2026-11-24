@@ -23,6 +23,13 @@ const twMerge = extendTailwindMerge({
       "font-size": [{ text: [...themeKeys.fontSize] }],
       rounded: [{ rounded: [...themeKeys.borderRadius] }],
       "border-w": [{ border: [...themeKeys.borderWidth] }],
+      // Side widths (`border-b-very-subtle`): without these tailwind-merge reads the key as a border *colour* and drops it.
+      "border-w-x": [{ "border-x": [...themeKeys.borderWidth] }],
+      "border-w-y": [{ "border-y": [...themeKeys.borderWidth] }],
+      "border-w-t": [{ "border-t": [...themeKeys.borderWidth] }],
+      "border-w-r": [{ "border-r": [...themeKeys.borderWidth] }],
+      "border-w-b": [{ "border-b": [...themeKeys.borderWidth] }],
+      "border-w-l": [{ "border-l": [...themeKeys.borderWidth] }],
       "ring-w": [{ ring: [...themeKeys.borderWidth] }],
       "font-weight": [{ font: [...themeKeys.fontWeight] }],
       tracking: [{ tracking: [...themeKeys.letterSpacing] }],

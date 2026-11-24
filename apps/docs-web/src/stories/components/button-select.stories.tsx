@@ -22,9 +22,9 @@ const meta: Meta<typeof ButtonSelect> = {
   ],
   render: (args) => (
     <ButtonSelect {...args}>
-      <ItemSelect>Save as…</ItemSelect>
-      <ItemSelect>Save a copy</ItemSelect>
-      <ItemSelect>Export</ItemSelect>
+      <ItemSelect text="Save as…" />
+      <ItemSelect text="Save a copy" />
+      <ItemSelect text="Export" />
     </ButtonSelect>
   ),
   parameters: {

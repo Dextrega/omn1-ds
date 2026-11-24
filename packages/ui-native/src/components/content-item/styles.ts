@@ -12,14 +12,22 @@ export const contentItemRow =
   "w-full flex-row items-center gap-very-subtle px-very-subtle py-extra-subtle";
 export const contentItemColumn = (size: ContentItemSize, hasLabels: boolean) =>
   cn("min-w-0 flex-1 justify-center", size === "lg" && hasLabels && "gap-ultra-subtle");
-export const contentItemLabel = "font-sans text-caption font-medium text-alpha-inverse-strong";
+export const contentItemLabel = (disabled: boolean) =>
+  cn(
+    "font-sans text-caption font-medium",
+    disabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong",
+  );
 const SIZE_TEXT: Record<ContentItemSize, string> = {
   sm: "text-body-sm",
   md: "text-body-md",
   lg: "text-body-lg",
 };
-export const contentItemSuffix = (size: ContentItemSize) =>
-  cn("font-sans font-medium text-alpha-inverse-strong", SIZE_TEXT[size]);
+export const contentItemSuffix = (size: ContentItemSize, disabled: boolean) =>
+  cn(
+    "font-sans font-medium",
+    SIZE_TEXT[size],
+    disabled ? "text-surface-on-neutral-subtle" : "text-alpha-inverse-strong",
+  );
 
 const TONE: Record<
   Exclude<ContentItemVariant, "disabled">,

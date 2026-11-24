@@ -9,6 +9,7 @@ import {
   accordionIconTone,
   accordionLabel,
   accordionPanel,
+  accordionPanelText,
   accordionRoot,
   accordionTitle,
   type AccordionSize,
@@ -22,8 +23,8 @@ export * from "./styles";
  */
 export interface AccordionProps extends Omit<ViewProps, "children" | "className"> {
   size?: AccordionSize;
-  title?: ReactNode;
-  label?: ReactNode;
+  title?: string;
+  label?: string;
   leadingIcon?: IconName;
   /** Default `chevron-down`; `false` hides it. */
   trailingIcon?: IconName | false;
@@ -31,6 +32,7 @@ export interface AccordionProps extends Omit<ViewProps, "children" | "className"
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   disabled?: boolean;
+  /** Free content (text, icon, image, any layout). */
   children?: ReactNode;
   className?: string;
 }
@@ -83,7 +85,15 @@ export function Accordion({
           <Icon name={trailingIcon} size={px} className={cn(open && "rotate-180", tone)} />
         )}
       </Pressable>
-      {open && <View className={accordionPanel}>{children}</View>}
+      {open && (
+        <View className={accordionPanel}>
+          {typeof children === "string" || typeof children === "number" ? (
+            <Text className={accordionPanelText}>{children}</Text>
+          ) : (
+            children
+          )}
+        </View>
+      )}
     </View>
   );
 }
