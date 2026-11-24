@@ -16,7 +16,11 @@ type RequirementArgs = Record<(typeof REQUIREMENT_ARGS)[number], string>;
 type Args = PasswordInputProps & RequirementArgs;
 
 const requirementsFrom = (args: RequirementArgs) =>
-  DEFAULT_PASSWORD_REQUIREMENTS.map((rule, i) => ({ ...rule, label: args[REQUIREMENT_ARGS[i]!] }));
+  DEFAULT_PASSWORD_REQUIREMENTS.map((rule, i) => {
+    const key = REQUIREMENT_ARGS[i];
+    // A rule without a text control keeps the library's own label.
+    return { ...rule, label: key ? args[key] : rule.label };
+  });
 
 const meta: Meta<Args> = {
   title: "Components/PasswordInput",

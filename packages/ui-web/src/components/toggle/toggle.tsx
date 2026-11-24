@@ -100,10 +100,19 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
     if (e.currentTarget.hasPointerCapture(e.pointerId))
       e.currentTarget.releasePointerCapture(e.pointerId);
     if (!g?.moved) return;
-    swallowClick.current = true;
+    swallowClick.current = true; // the browser fires a click after a pointerup that moved
     const next = (drag ?? g.from) > TRAVEL_PX / 2;
     setDrag(null);
     if (next !== on) commit(next);
+  };
+
+  /** A cancelled pointer (e.g. the browser took over to scroll) fires no click: snap back and commit nothing. */
+  const cancelDrag = (e: PointerEvent<HTMLSpanElement>) => {
+    gesture.current = null;
+    swallowClick.current = false;
+    if (e.currentTarget.hasPointerCapture(e.pointerId))
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    setDrag(null);
   };
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -153,7 +162,7 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
-          onPointerCancel={endDrag}
+          onPointerCancel={cancelDrag}
           style={drag === null ? undefined : { transform: `translateX(${drag}px)` }}
           className={cn(
             "size-x2-5 touch-none rounded-extra-subtle bg-surface-neutral-very-subtle outline outline-very-subtle -outline-offset-1 outline-stroke-neutral-subtle",

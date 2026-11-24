@@ -208,6 +208,25 @@ describe("Selection prop", () => {
     await userEvent.click(screen.getByRole("checkbox"));
     expect(screen.getByRole("checkbox")).not.toBeChecked();
   });
+
+  it("Checkbox with `selection` / `defaultSelection` toggles AND calls the caller's onChange", async () => {
+    const onChange = vi.fn();
+    const { rerender } = render(<Checkbox aria-label="c" selection onChange={onChange} />);
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+    rerender(<Checkbox aria-label="c" defaultSelection={false} onChange={onChange} />);
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(onChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("Checkbox without selection props still forwards onChange", async () => {
+    const onChange = vi.fn();
+    render(<Checkbox aria-label="c" onChange={onChange} />);
+    await userEvent.click(screen.getByRole("checkbox"));
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("checkbox")).toBeChecked();
+  });
 });
 
 describe("ButtonLink", () => {
@@ -302,6 +321,21 @@ describe("Toggle", () => {
     expect(onCheckedChange).toHaveBeenCalledTimes(1);
     expect(onCheckedChange).toHaveBeenCalledWith(true);
     expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("a cancelled drag changes nothing and does not swallow the next click", () => {
+    const onCheckedChange = vi.fn();
+    render(<Toggle aria-label="Wifi" onCheckedChange={onCheckedChange} />);
+    const thumb = screen.getByRole("switch").querySelector('[data-slot="thumb"]') as HTMLElement;
+    thumb.setPointerCapture = vi.fn();
+    thumb.hasPointerCapture = () => false;
+    fireEvent.pointerDown(thumb, { clientX: 0, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(thumb, { clientX: 24, pointerId: 1 });
+    fireEvent.pointerCancel(thumb, { pointerId: 1 });
+    expect(onCheckedChange).not.toHaveBeenCalled();
+    expect(thumb.style.transform).toBe("");
+    fireEvent.click(screen.getByRole("switch"));
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
   });
 });
 

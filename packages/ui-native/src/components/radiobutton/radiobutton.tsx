@@ -54,9 +54,11 @@ export function Radiobutton({
   const isDisabled = disabled ?? group?.disabled ?? false;
   const isInvalid = invalid ?? group?.invalid ?? false;
   const isRequired = required ?? group?.required ?? false;
-  const selected = group ? value !== undefined && value === group.value : (checked ?? inner);
+  // A Radiobutton without `value` inside a group cannot be matched by the group, so it behaves standalone.
+  const inGroup = group !== null && value !== undefined;
+  const selected = inGroup ? value === group.value : (checked ?? inner);
   const press = () => {
-    if (group && value !== undefined) group.onValueChange(value);
+    if (inGroup) group.onValueChange(value);
     else setInner(true);
     onCheckedChange?.(true);
   };

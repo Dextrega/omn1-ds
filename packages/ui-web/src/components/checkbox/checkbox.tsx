@@ -48,6 +48,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
     className,
     wrapperClassName,
     id,
+    onChange,
     ...rest
   },
   ref,
@@ -65,15 +66,16 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
     if (selection !== undefined) setSel(selection);
   }, [selection]);
   const usesSelection = selection !== undefined || defaultSelection !== undefined;
+  // Spread after `rest` so the internal handler wins, and call the caller's `onChange` from it.
   const selectionProps = usesSelection
     ? {
         checked: sel,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           setSel(e.target.checked);
-          rest.onChange?.(e);
+          onChange?.(e);
         },
       }
-    : {};
+    : { onChange };
 
   return (
     <span
@@ -90,7 +92,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         disabled={disabled}
         required={required}
         aria-invalid={invalid || undefined}
-        {...selectionProps}
         aria-checked={indeterminate ? "mixed" : undefined}
         className={cn(
           "peer m-0 size-full cursor-pointer appearance-none rounded-extra-subtle transition-colors duration-100 ease-out focus-visible:outline-none",
@@ -112,6 +113,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           className,
         )}
         {...rest}
+        {...selectionProps}
       />
       <Icon
         name="check"

@@ -33,6 +33,10 @@ Selection controls (Checkbox, Radiobutton, Toggle) become label-free primitives 
 - In **ItemSelect**, on **Disabled**, changed the Storybook control to `type=boolean`.
 - In **ItemSelect**, on **Storybook canvas**, set the default width to 312px and reordered props to match Figma.
 - In **TabsBase**, on **Storybook controls**, split TabsBase props and ButtonList props into separate groups (ButtonList is nested).
+- In **Checkbox**, on **onChange**, updated the handler order so a caller's `onChange` no longer replaces the internal `selection` handler; the box toggles and the callback runs.
+- In **Toggle**, on **Handle**, updated pointer-cancel handling: a cancelled drag snaps back, commits nothing and no longer swallows the next click.
+- In **Radiobutton** (native), on **RadioGroup**, updated a button without `value` to behave standalone, so its selected state matches `onCheckedChange`.
+- In **PasswordInput**, on **Requirements** story, updated the Badge text mapping so a rule without a text control keeps the library label.
 - **[Provisional]** In **ButtonLink** (native), on **border**, always render a transparent border so Outline and Pressed cause no layout shift. Web already matched Figma in all 32 variants; the requested rework has no Figma delta yet.
 
 ### Removed
