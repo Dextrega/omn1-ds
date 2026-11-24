@@ -6,7 +6,7 @@ import { PopOver, type PopOverAlign } from "../popover";
 /**
  * Figma: ChipsSelect (2411:11516) — Size SM / MD × Active Off / On × Align. A Chip (Outlined) with a trailing
  * chevron (`chevron-down` Off, `chevron-up` On); when On it opens a PopOver whose Slot holds ItemSelect items.
- * Active=On → the chip's Actived look (Selection On, without the close button).
+ * Active=On → the chip's Actived look (Selection On, keeping the chevron instead of the `circle-x`).
  * Closes on Escape and on an outside click.
  */
 export interface ChipsSelectProps extends Omit<
@@ -15,7 +15,7 @@ export interface ChipsSelectProps extends Omit<
   | "defaultSelected"
   | "onSelectedChange"
   | "trailingIcon"
-  | "buttonIcon"
+  | "closable"
   | "appearance"
   | "children"
 > {
@@ -73,7 +73,7 @@ export function ChipsSelect({
         appearance="outlined"
         selected={isOpen}
         onSelectedChange={setOpen}
-        buttonIcon={false}
+        closable={false}
         trailingIcon={isOpen ? "chevron-up" : "chevron-down"}
         aria-haspopup="menu"
         aria-expanded={isOpen}

@@ -4,6 +4,8 @@ import "@fontsource/barlow/600.css";
 import "@omn1/tokens/css";
 import "./tailwind.css";
 
+import { allIcons } from "@omn1/icons/all";
+import { IconProvider } from "@omn1/icons";
 import { ThemeProvider } from "@omn1/ui-web";
 import type { Preview } from "@storybook/react-vite";
 import { brands } from "./brands";
@@ -48,7 +50,9 @@ const preview: Preview = {
           className="bg-background-neutral-subtle p-strong font-sans text-surface-on-neutral-very-strong"
           style={ctx.parameters.layout === "fullscreen" ? { minHeight: "100vh" } : undefined}
         >
-          <Story />
+          <IconProvider icons={allIcons}>
+            <Story />
+          </IconProvider>
         </ThemeProvider>
       );
     },

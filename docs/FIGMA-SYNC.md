@@ -61,6 +61,15 @@ from the container so icons can reuse it. Tabs have no indicator animation.
 
 See [FINDINGS.md](./FINDINGS.md) — code reproduces Figma until design decides which side is the bug.
 
+### v1.1.2 (2026-11-24)
+
+- **Checkbox / Radiobutton / Toggle**: `label` and `description` removed; compose the label outside. New boolean `selection` (alias of checked / On; syncs from the prop while the user can still toggle; Checkbox keeps `indeterminate` for the third Figma value).
+- **Toggle drag** on the Handle (web: pointer events, native: `PanResponder`; snaps at half travel, a drag never fires the click). **Provisional** — Figma has no prototype for it.
+- **Chips**: ButtonIcon replaced by a fixed trailing `circle-x` when selected (no boolean, no swap). ChipsSelect keeps its chevron through the internal `closable` prop.
+- **ChipsSelect / ItemSelect** Storybook: `size`, `variant`, `appearance` are radios, `disabled` boolean; ItemSelect icons pick from the whole library (default `maximize`), width 312px, props in Figma order.
+- **PasswordInput / TabsBase / Tabs** stories: requirement Badge labels and ButtonList props are grouped as nested controls.
+- **ButtonLink**: re-verified against Figma; native border is now always present (transparent) so Outline / Pressed cause no layout shift. **Provisional**: the requested "rework" has no Figma delta yet.
+
 ### API notes
 
 The prop `variation` is now `variant`, following Figma's _Variant_. `TextInput.helper` is the boolean for the Figma _Helper_

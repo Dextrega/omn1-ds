@@ -13,7 +13,7 @@ export interface ChipsSelectProps extends Omit<
   | "defaultSelected"
   | "onSelectedChange"
   | "trailingIcon"
-  | "buttonIcon"
+  | "closable"
   | "appearance"
   | "children"
 > {
@@ -51,7 +51,7 @@ export function ChipsSelect({
         appearance="outlined"
         selected={isOpen}
         onSelectedChange={setOpen}
-        buttonIcon={false}
+        closable={false}
         trailingIcon={isOpen ? "chevron-up" : "chevron-down"}
       >
         {label}

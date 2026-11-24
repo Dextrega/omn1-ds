@@ -9,21 +9,20 @@ import {
 } from "react";
 import { cn } from "../../lib/cn";
 import { Badge } from "../badge/badge";
-import { ButtonIcon } from "../button-icon/button-icon";
 
 /**
  * Figma: Chips (6:12377) — Size SM (24h) / MD (36h) × Appearance Filled / Outlined × State
  * (Enabled · Hovered · Pressed · Actived · Disabled) × Selection Off / On (40 variants).
  *
- * Verified against Figma (variable bindings read via MCP): anatomy (root → optional Avatar + `Content` frame +
- * ButtonIcon when On), Content padding / gap (SM 8/8 · MD 16/8), text styles (Caption · Body SM), icon px (12 · 16),
+ * Verified against Figma (variable bindings read via MCP): anatomy (root → optional Avatar + `Content` frame), Content padding / gap (SM 8/8 · MD 16/8), text styles (Caption · Body SM), icon px (12 · 16),
  * radius Corner Radius/Full, every fill / stroke / label colour per Appearance × Selection × State, the Badge
  * (SM; Primary/Strong when Off, Primary/Subtle when On, Disabled when disabled), 0.1s ease-out motion.
  * Figma strokes are OUTSIDE, so they are drawn as a `ring`.
  * State mapping:  Selection → `selected` (aria-pressed on the inner button)  ·  Hovered → hover  ·  Pressed → active
  *                 Actived → keyboard focus (`:focus-visible` inside the chip)  ·  Disabled → `disabled`
  * Selected: Actived keeps the Primary/Medium fill with a 1px Stroke/Primary/Strong ring; Outlined Pressed is
- * Primary/Strong with a 2px Opacity/Primary/Medium ring. The close ButtonIcon is Ghost/Inverse in every state.
+ * Primary/Strong with a 2px Opacity/Primary/Medium ring. When Selection=On the TrailingIcon is the fixed `circle-x`
+ * (no ButtonIcon, no swap: a click anywhere on the chip deselects it); when Off it is the optional `trailingIcon`.
  * ChipsSelect (2411:11516) is a separate component built on this one.
  */
 export const chipVariants = cva(
@@ -104,20 +103,16 @@ export interface ChipProps
   onSelectedChange?: (selected: boolean) => void;
   /** Figma: LeadingIcon (boolean + swap). */
   leadingIcon?: IconName;
-  /** Figma: TrailingIcon (boolean + swap). */
+  /** Figma: TrailingIcon (boolean + swap), shown when Selection=Off. When On it is the fixed `circle-x`. */
   trailingIcon?: IconName;
   /** Figma: Badge (boolean) — the badge content, e.g. a count. */
   badge?: ReactNode;
   /** Figma: Avatar (boolean) — an image / initials slot at the start of the chip. */
   avatar?: ReactNode;
   /**
-   * Figma: ButtonIcon (boolean, default true) — the close button shown when Selection=On.
-   * Clicking it calls `onClose`, or clears the selection when `onClose` is not given.
+   * @internal ChipsSelect shows its own chevron instead of the Selection=On `circle-x`. Leave it on for a plain Chip.
    */
-  buttonIcon?: boolean;
-  onClose?: () => void;
-  /** Accessible name of the close button. */
-  closeLabel?: string;
+  closable?: boolean;
   /** Figma: Text (string). */
   children?: ReactNode;
   /** Class for the chip root (the rest of the props go to the inner `<button>`). */
@@ -138,9 +133,7 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
     trailingIcon,
     badge,
     avatar: avatarSlot,
-    buttonIcon = true,
-    onClose,
-    closeLabel = "Remove",
+    closable = true,
     disabled = false,
     className,
     children,
@@ -153,6 +146,7 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
   const [inner, setInner] = useState(defaultSelected);
   const isOn = selected ?? inner;
   const s = size ?? "md";
+  const trailing = isOn && closable ? "circle-x" : trailingIcon;
   const setOn = (next: boolean) => {
     if (selected === undefined) setInner(next);
     onSelectedChange?.(next);
@@ -189,19 +183,8 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
             {badge}
           </Badge>
         )}
-        {trailingIcon && <Icon name={trailingIcon} size={ICON_PX[s]} />}
+        {trailing && <Icon name={trailing} size={ICON_PX[s]} />}
       </button>
-      {isOn && buttonIcon && (
-        <ButtonIcon
-          size={s === "sm" ? "xs" : "sm"}
-          appearance="ghost"
-          variant="inverse"
-          icon="circle-x"
-          aria-label={closeLabel}
-          disabled={disabled}
-          onClick={() => (onClose ? onClose() : setOn(false))}
-        />
-      )}
     </div>
   );
 });

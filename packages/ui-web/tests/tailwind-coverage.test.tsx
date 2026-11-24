@@ -113,10 +113,10 @@ function renderEverything() {
       <TextInput label="Required" required />
       <TextInput label="Error" error="Something is wrong" />
       <TextInput label="Disabled" disabled />
-      <Checkbox label="One" description="More" />
-      <Checkbox label="Two" defaultChecked required />
-      <Checkbox label="Three" indeterminate invalid />
-      <Checkbox label="Four" disabled defaultChecked />
+      <Checkbox aria-label="One" />
+      <Checkbox aria-label="Two" defaultChecked required />
+      <Checkbox aria-label="Three" indeterminate invalid />
+      <Checkbox aria-label="Four" disabled defaultChecked />
       {(["sm", "md"] as const).flatMap((size) =>
         (["neutral", "primary"] as const).flatMap((variant) =>
           [true, false].map((outline) => (
@@ -142,18 +142,18 @@ function renderEverything() {
       <ButtonLink disabled outline>
         Disabled
       </ButtonLink>
-      <Radiobutton label="One" description="More" />
-      <Radiobutton label="Two" defaultChecked required />
-      <Radiobutton label="Three" invalid />
-      <Radiobutton label="Four" disabled defaultChecked />
+      <Radiobutton aria-label="One" />
+      <Radiobutton aria-label="Two" defaultChecked required />
+      <Radiobutton aria-label="Three" invalid />
+      <Radiobutton aria-label="Four" disabled defaultChecked />
       <RadioGroup defaultValue="a" invalid required orientation="horizontal">
-        <Radiobutton value="a" label="A" />
-        <Radiobutton value="b" label="B" />
+        <Radiobutton value="a" aria-label="A" />
+        <Radiobutton value="b" aria-label="B" />
       </RadioGroup>
-      <Toggle label="One" description="More" />
-      <Toggle label="Two" defaultChecked required />
-      <Toggle label="Three" invalid defaultChecked name="t" />
-      <Toggle label="Four" disabled defaultChecked />
+      <Toggle aria-label="One" />
+      <Toggle aria-label="Two" defaultChecked required />
+      <Toggle aria-label="Three" invalid defaultChecked name="t" />
+      <Toggle aria-label="Four" disabled defaultChecked />
       {(["sm", "md"] as const).flatMap((size) =>
         (["filled", "outlined"] as const).flatMap((appearance) =>
           [false, true].map((selected) => (
