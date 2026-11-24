@@ -13,8 +13,9 @@ import { ButtonIcon } from "../button-icon/button-icon";
  * Disabled `OnNeutral/Subtle`).
  * Behaviour (not in Figma): `value` / `defaultValue` / `onValueChange` with `min`, `max`, `step`; the minus / plus button
  * disables at the bound.
- * Provisional: (1) the value is Figma's mono text style (Share Tech Mono) but the library has no mono family token, so it
- * is `font-sans` with `tabular-nums` (logged in docs/FINDINGS.md); (2) Required = the 1px stroke only while `required` is
+ * The value uses the Figma text styles `Mono/Body MD` (SM) and `Mono/Body LG` (MD): `font-mono` (Share Tech Mono, token
+ * `font-family-mono`) + `text-body-md` / `text-body-lg` + `font-medium`.
+ * Provisional: Required = the 1px stroke only while `required` is
  * set (it has no other behaviour).
  */
 export interface CounterInputProps extends Omit<
@@ -136,7 +137,7 @@ export const CounterInput = forwardRef<HTMLDivElement, CounterInputProps>(functi
         <output
           aria-live="polite"
           className={cn(
-            "flex min-w-x4 flex-1 items-center justify-center font-sans font-medium tabular-nums",
+            "flex min-w-x4 flex-1 items-center justify-center font-mono font-medium",
             size === "md" ? "text-body-lg" : "text-body-md",
             disabled ? "text-surface-on-neutral-subtle" : "text-surface-on-neutral-very-strong",
           )}

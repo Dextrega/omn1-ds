@@ -21,7 +21,7 @@ const meta: Meta<typeof CounterInput> = {
     docs: {
       description: {
         component:
-          "Figma: **CounterInput** (2354:22602) — Size SM (160) / MD (200) × State Enabled / Disabled / Required. ButtonIcon Inverse · Solid for − / +, Disabled → Neutral · Ghost. The value uses `font-sans` with tabular numbers because the library has no mono family token (provisional).",
+          "Figma: **CounterInput** (2354:22602) — Size SM (160) / MD (200) × State Enabled / Disabled / Required. ButtonIcon Inverse · Solid for − / +, Disabled → Neutral · Ghost. The value uses the `Mono/Body MD` (SM) and `Mono/Body LG` (MD) text styles: `font-mono` (Share Tech Mono).",
       },
     },
   },

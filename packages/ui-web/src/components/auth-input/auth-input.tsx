@@ -17,9 +17,10 @@ import { ButtonLink } from "../button-link/button-link";
  *
  * Behaviour (not in Figma): typing moves to the next cell, Backspace to the previous one, pasting fills the cells,
  * `onComplete` fires when every cell has a character.
- * Provisional: (1) the default copy is English ("Didn't receive the code?" · "Resend") while Figma has Portuguese — pass
- * `resendText` / `resendLabel` to localise; (2) the Divisor line is `Stroke/Neutral/Strong` (the Figma line is an image asset
- * with no readable colour); (3) the Resend countdown "(59)" is `resendSeconds`; (4) the Resend row is always shown.
+ * Verified against Figma (v1.1.6): the Resend text "Didn’t receive code yet?" (English) and the Divisor line
+ * `Stroke/Neutral/Subtle`, 1px, 8px wide.
+ * Provisional: (1) the ButtonLink "Resend" and the countdown "(59)" (`resendSeconds`) are not in the Figma component any more —
+ * only the Resend text is; (2) the Resend row is always shown.
  */
 export interface AuthInputProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -65,7 +66,7 @@ export const AuthInput = forwardRef<HTMLDivElement, AuthInputProps>(function Aut
     error,
     autoCompleted,
     disabled,
-    resendText = "Didn't receive the code?",
+    resendText = "Didn’t receive code yet?",
     resendLabel = "Resend",
     resendSeconds,
     onResend,
@@ -141,7 +142,7 @@ export const AuthInput = forwardRef<HTMLDivElement, AuthInputProps>(function Aut
               <span
                 aria-hidden="true"
                 data-slot="divisor"
-                className="h-0 w-very-subtle shrink-0 border-t-very-subtle border-stroke-neutral-strong"
+                className="h-0 w-very-subtle shrink-0 border-t-very-subtle border-stroke-neutral-subtle"
               />
             )}
           </Fragment>

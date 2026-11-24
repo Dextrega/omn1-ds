@@ -3,6 +3,38 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.1.6 — Mono font token, AuthInput divisor
+
+### Summary
+
+The Mono text styles from Figma become a font-family token (`font-mono`) used by CounterInput, and AuthInput takes the Figma divisor colour and English copy.
+
+### Breaking Changes
+
+None.
+
+### Added
+
+- In **tokens**, on **font-family**, added `mono` (Share Tech Mono) as `--omn1-font-family-mono` and the Tailwind `font-mono` utility, from the Figma text styles `Mono/*`.
+- **[Provisional]** In **tokens**, on **font-family-mono**, declared the family in code because Figma has no font-family variable; the Mono styles bind Weight/Medium on a font that ships only Regular.
+- In **ThemeProvider**, on **fonts**, added `mono` to the brand fonts (web CSS variable; native `DEFAULT_FONTS.mono`).
+- In **Storybook**, on **Typography**, added the Mono styles section and loaded `@fontsource/share-tech-mono`.
+
+### Updated
+
+- In **CounterInput**, on **Value**, updated the font to `font-mono` (`Mono/Body MD` for SM, `Mono/Body LG` for MD), web and native.
+- In **AuthInput**, on **Divisor**, updated the line colour to `Stroke/Neutral/Subtle`, web and native.
+- In **AuthInput**, on **Resend text**, updated the default copy to the Figma English text "Didn’t receive code yet?".
+- In **docs**, on **FIGMA-SYNC / FINDINGS**, added the v1.1.6 section and marked anomaly 14 (a), (c) as resolved.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: the font-family tokens in the build output, and the CounterInput value in the Mono style.
+
 ## v1.1.5 — Review: Accordion, ContentItem, ComboBox, CounterInput, AuthInput, AuthInputBase
 
 ### Summary

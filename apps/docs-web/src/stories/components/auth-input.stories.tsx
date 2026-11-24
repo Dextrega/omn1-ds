@@ -28,7 +28,7 @@ const meta: Meta<typeof AuthInput> = {
     docs: {
       description: {
         component:
-          "Figma: **AuthInput** (314:3911) — Amount 4 / 6 × Divisor. A row of AuthInputBase cells and the Resend row. Typing advances, Backspace goes back, paste fills the cells. Default copy is English (Figma is Portuguese) — provisional.",
+          "Figma: **AuthInput** (314:3911) — Amount 4 / 6 × Divisor. A row of AuthInputBase cells and the Resend row. Typing advances, Backspace goes back, paste fills the cells. The Divisor is `Stroke/Neutral/Subtle` and the Resend copy follows Figma (English).",
       },
     },
   },

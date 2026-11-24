@@ -834,6 +834,14 @@ describe("CounterInput", () => {
     expect(screen.getByRole("status")).toHaveTextContent("0");
   });
 
+  it("sets the value in the Mono text style (font-mono, Body MD SM / Body LG MD)", () => {
+    const { rerender } = render(<CounterInput defaultValue={3} />);
+    expect(screen.getByRole("status").className).toContain("font-mono");
+    expect(screen.getByRole("status").className).toContain("text-body-md");
+    rerender(<CounterInput size="md" defaultValue={3} />);
+    expect(screen.getByRole("status").className).toContain("text-body-lg");
+  });
+
   it("disables everything when disabled", () => {
     render(<CounterInput disabled />);
     expect(screen.getByRole("button", { name: "Increase" })).toBeDisabled();
