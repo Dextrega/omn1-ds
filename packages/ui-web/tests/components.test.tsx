@@ -2,6 +2,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
+  Accordion,
+  Account,
+  Avatar,
+  AvatarStack,
+  ContentItem,
   Badge,
   ButtonCTA,
   ButtonIcon,
@@ -560,5 +565,140 @@ describe("PopOver / ButtonSelect", () => {
     expect(trigger).toHaveAttribute("aria-pressed", "true");
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("menu")).toBeNull();
+  });
+});
+
+describe("Avatar", () => {
+  it("is a static span without onClick and a button with it", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    const { rerender } = render(<Avatar text="OM" data-testid="a" />);
+    expect(screen.getByTestId("a").tagName).toBe("SPAN");
+    rerender(<Avatar text="OM" onClick={onClick} data-testid="a" />);
+    await user.click(screen.getByTestId("a"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId("a").className).toContain("hover:bg-alpha-inverse-subtle");
+  });
+
+  it("maps Border to a ring and Disabled to the neutral surface", () => {
+    render(<Avatar size="lg" border disabled text="OM" data-testid="a" />);
+    const el = screen.getByTestId("a");
+    expect(el.className).toContain("ring-medium");
+    expect(el.className).toContain("ring-global-white");
+    expect(el.className).toContain("bg-surface-neutral-subtle");
+    expect(el).toHaveAttribute("aria-disabled", "true");
+  });
+});
+
+describe("AvatarStack", () => {
+  it("collapses avatars beyond max into a +N chip", () => {
+    render(<AvatarStack avatars={[1, 2, 3, 4, 5, 6, 7].map((n) => ({ src: `${n}.png` }))} />);
+    expect(document.querySelectorAll("[data-slot=avatar]").length).toBe(4);
+    expect(screen.getByText("+3")).toBeInTheDocument();
+  });
+
+  it("shows no chip when everything fits", () => {
+    render(<AvatarStack avatars={[{ src: "1.png" }, { src: "2.png" }]} />);
+    expect(screen.queryByText(/^\+/)).toBeNull();
+  });
+});
+
+describe("ContentItem", () => {
+  it("uses the Figma text colour for Variant × Appearance", () => {
+    const { rerender } = render(<ContentItem appearance="strong">Text</ContentItem>);
+    expect(screen.getByText("Text").className).toContain("text-surface-on-neutral-very-strong");
+    rerender(
+      <ContentItem variant="danger" appearance="subtle">
+        Text
+      </ContentItem>,
+    );
+    expect(screen.getByText("Text").className).toContain("text-surface-on-danger-subtle");
+    rerender(
+      <ContentItem variant="disabled" appearance="strong">
+        Text
+      </ContentItem>,
+    );
+    expect(screen.getByText("Text").className).toContain("text-surface-on-neutral-subtle");
+  });
+
+  it("renders the optional slots", () => {
+    render(
+      <ContentItem topLabel="Top" suffix="Suf" bottomLabel="Bottom" badge="3">
+        Main
+      </ContentItem>,
+    );
+    for (const t of ["Top", "Main", "Suf", "Bottom", "3"])
+      expect(screen.getByText(t)).toBeInTheDocument();
+  });
+});
+
+describe("Accordion", () => {
+  it("toggles its panel with aria-expanded (uncontrolled)", async () => {
+    const user = userEvent.setup();
+    render(<Accordion title="Title">Panel</Accordion>);
+    const header = screen.getByRole("button", { name: "Title" });
+    expect(header).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Panel")).toBeNull();
+    await user.click(header);
+    expect(header).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Panel")).toBeInTheDocument();
+  });
+
+  it("is controlled by `open` and reports changes", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+    render(
+      <Accordion title="Title" open={false} onOpenChange={onOpenChange}>
+        Panel
+      </Accordion>,
+    );
+    await user.click(screen.getByRole("button", { name: "Title" }));
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    expect(screen.queryByText("Panel")).toBeNull();
+  });
+
+  it("does not toggle when disabled", async () => {
+    const user = userEvent.setup();
+    render(
+      <Accordion title="Title" disabled>
+        Panel
+      </Accordion>,
+    );
+    await user.click(screen.getByRole("button", { name: "Title" }));
+    expect(screen.queryByText("Panel")).toBeNull();
+  });
+});
+
+describe("Account", () => {
+  it("opens its menu while Actived and exposes aria-expanded", async () => {
+    const user = userEvent.setup();
+    render(
+      <Account username="Ana" label="Admin">
+        <ItemSelect>Profile</ItemSelect>
+      </Account>,
+    );
+    const trigger = screen.getByRole("button", { name: "Ana" });
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Profile")).toBeNull();
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Profile")).toBeInTheDocument();
+  });
+
+  it("Read only renders no hit area; Disabled blocks the ButtonMore", () => {
+    const { rerender } = render(<Account readOnly username="Ana" />);
+    expect(screen.queryByRole("button", { name: "Ana" })).toBeNull();
+    rerender(<Account disabled username="Ana" />);
+    expect(screen.queryByRole("button", { name: "Ana" })).toBeNull();
+    expect(screen.getByRole("button", { name: "More" })).toBeDisabled();
+  });
+
+  it("the ButtonMore does not toggle the account", async () => {
+    const user = userEvent.setup();
+    const onMoreClick = vi.fn();
+    render(<Account username="Ana" onMoreClick={onMoreClick} />);
+    await user.click(screen.getByRole("button", { name: "More" }));
+    expect(onMoreClick).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText("Profile")).toBeNull();
   });
 });

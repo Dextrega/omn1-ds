@@ -4,6 +4,44 @@ import { nativeVars } from "@omn1/tokens";
 import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
+import {
+  AVATAR_DOT_POSITION,
+  avatarContainer,
+  avatarIconTone,
+  avatarImageOverlay,
+  avatarRing,
+  avatarText,
+} from "../src/components/avatar/styles";
+import {
+  AVATAR_STACK_OVERLAP,
+  avatarStackMore,
+  avatarStackMoreText,
+} from "../src/components/avatar-stack/styles";
+import {
+  contentItemColumn,
+  contentItemLabel,
+  contentItemRow,
+  contentItemSuffix,
+  contentItemText,
+  contentItemTone,
+} from "../src/components/content-item/styles";
+import {
+  accordionColumn,
+  accordionHeader,
+  accordionIconTone,
+  accordionLabel,
+  accordionPanel,
+  accordionRoot,
+  accordionTitle,
+} from "../src/components/accordion/styles";
+import {
+  accountColumn,
+  accountLabel,
+  accountMenu,
+  accountRoot,
+  accountRow,
+  accountUsername,
+} from "../src/components/account/styles";
 import { badgeContainer, badgeTone } from "../src/components/badge/styles";
 import {
   itemSelectLabel,
@@ -130,6 +168,62 @@ function allClasses(): string[] {
       for (const appearance of ["solid", "outlined"] as const)
         add(dotStatusDot({ size, variant, appearance }));
   }
+  for (const size of ["sm", "md", "lg"] as const) {
+    add(avatarText(size, true));
+    add(avatarText(size, false));
+    add(avatarRing(size));
+    add(AVATAR_DOT_POSITION[size]);
+    add(AVATAR_STACK_OVERLAP[size]);
+    add(avatarStackMore(size));
+    add(avatarStackMoreText(size));
+    add(contentItemSuffix(size));
+    for (const disabled of [true, false]) {
+      add(avatarIconTone(disabled));
+      for (const interactive of [true, false])
+        add(avatarContainer({ size, disabled, interactive }));
+    }
+    for (const hasLabels of [true, false]) add(contentItemColumn(size, hasLabels));
+    for (const variant of [
+      "neutral",
+      "primary",
+      "secondary",
+      "success",
+      "warning",
+      "danger",
+      "disabled",
+    ] as const)
+      for (const appearance of ["subtle", "medium", "strong"] as const) {
+        add(contentItemTone(variant, appearance));
+        add(contentItemText({ size, variant, appearance }));
+      }
+  }
+  add(avatarImageOverlay(true));
+  add(avatarImageOverlay(false));
+  add(contentItemRow);
+  add(contentItemLabel);
+  for (const size of ["sm", "md"] as const) {
+    add(accordionColumn(size));
+    for (const disabled of [true, false]) {
+      add(accordionTitle(size, disabled));
+      add(accordionLabel(size, disabled));
+    }
+  }
+  for (const disabled of [true, false]) {
+    add(accordionIconTone(disabled));
+    add(accordionHeader(disabled));
+    add(accountUsername(disabled));
+    add(accountLabel(disabled));
+    for (const open of [true, false]) add(accordionRoot(open, disabled));
+  }
+  add(accordionPanel);
+  add("rotate-180");
+  for (const appearance of ["full", "compact"] as const)
+    for (const active of [true, false])
+      for (const interactive of [true, false])
+        add(accountRoot({ appearance, active, interactive }));
+  add(accountMenu);
+  add(accountRow);
+  add(accountColumn);
   for (const size of ["sm", "md", "lg"] as const)
     for (const appearance of ["squared", "rounded"] as const)
       for (const variant of ["neutral", "primary", "success", "warning", "danger"] as const)

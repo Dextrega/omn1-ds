@@ -3,6 +3,44 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.1.3 — Avatar, AvatarStack, ContentItem, Accordion, Account
+
+### Summary
+
+Five components from Figma (Avatar, AvatarStack, ContentItem, Accordion, Account) land on web and native with the same props, plus Storybook stories and tests.
+
+### Breaking Changes
+
+None.
+
+### Added
+
+- In **Avatar**, on **component**, added Size SM / MD / LG × Content (`text` / `icon` / `image`) × Border × DotStatus × Disabled. Hovered / Pressed are CSS states and apply when `onClick` (web) or `onPress` (native) is given.
+- **[Provisional]** In **Avatar**, on **label**, used `font-sans` (Barlow) because Figma sets IBM Plex Sans, which the library does not have.
+- **[Provisional]** In **Avatar**, on **Disabled image**, drew 0.4 opacity (web adds a saturation-blend overlay; native has no blend) because no opacity token exists.
+- **[Provisional]** In **Avatar**, on **DotStatus**, added `dotStatusVariant` (default `success`); Figma has no such property.
+- In **AvatarStack**, on **component**, added Size SM / MD / LG with overlapping image Avatars and a "+N" chip.
+- **[Provisional]** In **AvatarStack**, on **Amount**, derived the Figma variant from `avatars.length` and `max` (default 4).
+- In **ContentItem**, on **component**, added Size SM / MD / LG × Variant (7) × Appearance Subtle / Medium / Strong with Avatar, LeadingIcon, TopLabel, Text, Suffix, BottomLabel, TrailingIcon and Badge slots.
+- **[Provisional]** In **ContentItem**, on **Avatar**, used the 36px Avatar for LG (Figma draws 36 on Subtle and 24 on Strong), made icons inherit the text colour and used a Primary / Subtle Badge.
+- In **Accordion**, on **component**, added Size SM / MD with `open` / `defaultOpen` / `onOpenChange`, LeadingIcon, Title, Label, swappable TrailingIcon and the panel slot.
+- **[Provisional]** In **Accordion**, on **Focused**, drew the 4px OUTSIDE `Stroke/Danger/Medium` ring exactly as Figma does, and tinted only the header on Hovered / Pressed when open.
+- In **Account**, on **component**, added Appearance Full / Compact × Read only × Disabled with Avatar, Username, Label, ButtonMore and the Menu slot (Actived).
+- **[Provisional]** In **Account**, on **Actived**, exposed the state with `aria-expanded` (`accessibilityState.expanded` on native) and, on Compact, a compact PopOver on web / an inline menu on native.
+- In **Storybook**, on **stories**, added Avatar, AvatarStack, ContentItem, Accordion and Account with radio / boolean controls and icon pickers.
+
+### Updated
+
+- In **docs**, on **FIGMA-SYNC / FINDINGS**, added the five components, the `aria-expanded` state mapping and Figma anomaly 13.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: coverage for every new class on web (Tailwind) and native (NativeWind compile), plus behaviour tests for Avatar, AvatarStack, ContentItem, Accordion and Account.
+
 ## v1.1.2 — Selection controls, Chips trailing icon, Storybook controls
 
 ### Summary

@@ -25,3 +25,8 @@ export * from "./components/item-select";
 export * from "./components/dot-status";
 export * from "./components/asset-item";
 export * from "./components/button-select";
+export * from "./components/avatar";
+export * from "./components/avatar-stack";
+export * from "./components/content-item";
+export * from "./components/accordion";
+export * from "./components/account";
