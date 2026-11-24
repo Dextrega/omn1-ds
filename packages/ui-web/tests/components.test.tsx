@@ -14,6 +14,10 @@ import {
   Checkbox,
   Chip,
   ChipsSelect,
+  ComboBox,
+  CounterInput,
+  AuthInput,
+  AuthInputBase,
   ButtonList,
   AssetItem,
   ButtonSelect,
@@ -726,5 +730,171 @@ describe("Account", () => {
     await user.click(screen.getByRole("button", { name: "More" }));
     expect(onMoreClick).toHaveBeenCalledTimes(1);
     expect(screen.queryByText("Profile")).toBeNull();
+  });
+});
+
+describe("Accordion (v1.1.5)", () => {
+  it("draws the open stroke on the bottom side only, and a free children slot", () => {
+    const { container } = render(
+      <Accordion title="T" defaultOpen>
+        <img alt="pic" src="a.png" />
+        <svg data-testid="svg" />
+        plain text
+      </Accordion>,
+    );
+    const root = container.querySelector("[data-slot=accordion]")!;
+    expect(root.className).toContain("border-b-very-subtle");
+    expect(root.className).not.toMatch(/(^|\s)border-very-subtle/);
+    expect(screen.getByAltText("pic")).toBeInTheDocument();
+    expect(screen.getByTestId("svg")).toBeInTheDocument();
+    expect(screen.getByText(/plain text/)).toBeInTheDocument();
+  });
+});
+
+describe("ContentItem icons (v1.1.5)", () => {
+  it("colours LeadingIcon / TrailingIcon like the text", () => {
+    const { container } = render(
+      <ContentItem
+        variant="primary"
+        appearance="medium"
+        leadingIcon="house"
+        trailingIcon="house"
+        text="T"
+      />,
+    );
+    const icons = container.querySelectorAll("svg");
+    expect(icons).toHaveLength(2);
+    icons.forEach((i) =>
+      expect(i.getAttribute("class")).toContain("text-surface-on-primary-medium"),
+    );
+  });
+
+  it("treats empty label strings as absent", () => {
+    const { container } = render(
+      <ContentItem topLabel="" bottomLabel="" suffix="" badge="" text="T" />,
+    );
+    expect(container.querySelectorAll("span.truncate").length).toBe(1);
+  });
+});
+
+describe("ComboBox", () => {
+  const options = [
+    { value: "a", text: "Alpha" },
+    { value: "b", text: "Beta" },
+  ];
+  it("opens the list, picks an option, clears it and closes on Escape", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <ComboBox
+        label="Pick"
+        placeholder="Choose"
+        options={options}
+        onValueChange={onValueChange}
+      />,
+    );
+    const trigger = screen.getByRole("combobox", { name: /Pick/ });
+    expect(trigger).toHaveTextContent("Choose");
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await user.click(screen.getByRole("menuitemradio", { name: "Beta" }));
+    expect(onValueChange).toHaveBeenLastCalledWith("b");
+    expect(trigger).toHaveTextContent("Beta");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await user.click(screen.getByRole("button", { name: "Clear" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(undefined);
+    await user.click(trigger);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("does not open when disabled; shows the error as an alert", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ComboBox label="Pick" options={options} disabled />);
+    await user.click(screen.getByRole("combobox"));
+    expect(screen.queryByRole("menu")).toBeNull();
+    rerender(<ComboBox label="Pick" options={options} error="Required" />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Required");
+  });
+});
+
+describe("CounterInput", () => {
+  it("steps within min / max and disables the buttons at the bounds", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <CounterInput label="Qty" defaultValue={1} min={0} max={2} onValueChange={onValueChange} />,
+    );
+    await user.click(screen.getByRole("button", { name: "Increase" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(2);
+    expect(screen.getByRole("button", { name: "Increase" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Decrease" }));
+    await user.click(screen.getByRole("button", { name: "Decrease" }));
+    expect(screen.getByRole("button", { name: "Decrease" })).toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent("0");
+  });
+
+  it("disables everything when disabled", () => {
+    render(<CounterInput disabled />);
+    expect(screen.getByRole("button", { name: "Increase" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Decrease" })).toBeDisabled();
+  });
+});
+
+describe("AuthInput / AuthInputBase", () => {
+  it("moves between cells, completes and handles paste and backspace", async () => {
+    const user = userEvent.setup();
+    const onComplete = vi.fn();
+    render(<AuthInput amount={4} onComplete={onComplete} />);
+    const cells = screen.getAllByRole("textbox");
+    expect(cells).toHaveLength(4);
+    await user.click(cells[0]!);
+    await user.keyboard("1234");
+    expect(onComplete).toHaveBeenCalledWith("1234");
+    expect(cells.map((c) => (c as HTMLInputElement).value)).toEqual(["1", "2", "3", "4"]);
+    await user.keyboard("{Backspace}");
+    expect((cells[3] as HTMLInputElement).value).toBe("");
+  });
+
+  it("paste fills the cells; 6 cells and the divisor render", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<AuthInput amount={6} divisor />);
+    expect(screen.getAllByRole("textbox")).toHaveLength(6);
+    expect(container.querySelector("[data-slot=divisor]")).not.toBeNull();
+    await user.click(screen.getAllByRole("textbox")[0]!);
+    await user.paste("123456");
+    expect(
+      screen
+        .getAllByRole("textbox")
+        .map((c) => (c as HTMLInputElement).value)
+        .join(""),
+    ).toBe("123456");
+  });
+
+  it("resend is disabled while counting down", () => {
+    const onResend = vi.fn();
+    const { rerender } = render(<AuthInput resendSeconds={59} onResend={onResend} />);
+    expect(screen.getByRole("button", { name: "Resend (59)" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Resend (59)" }));
+    expect(onResend).not.toHaveBeenCalled();
+    rerender(<AuthInput resendSeconds={0} onResend={onResend} />);
+    fireEvent.click(screen.getByRole("button", { name: "Resend" }));
+    expect(onResend).toHaveBeenCalled();
+  });
+
+  it("AuthInputBase derives its state", () => {
+    const { rerender } = render(<AuthInputBase aria-label="c" />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "enabled");
+    rerender(<AuthInputBase aria-label="c" required />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "required");
+    rerender(<AuthInputBase aria-label="c" defaultValue="1" />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "filled");
+    rerender(<AuthInputBase aria-label="c" error />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "error");
+    rerender(<AuthInputBase aria-label="c" disabled />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "disabled");
   });
 });

@@ -22,7 +22,7 @@ export * from "./styles";
 
 /**
  * Figma: ContentItem (2403:1410). Same props and tokens as @omn1/ui-web.
- * Provisional: Avatar size per Size (LG uses 36, see ui-web); icons inherit the text colour; Badge is Primary / Subtle MD.
+ * Provisional: Avatar size per Size (LG uses 36, see ui-web); icon colours follow the text (read from Figma, v1.1.5); Badge is Primary / Subtle MD.
  */
 export interface ContentItemProps extends Omit<ViewProps, "children" | "className"> {
   size?: ContentItemSize;
@@ -56,13 +56,13 @@ export function ContentItem({
 }: ContentItemProps) {
   const px = CONTENT_ITEM_ICON_PX[size];
   const tone = contentItemTone(variant, appearance);
-  const hasLabels = topLabel !== undefined || bottomLabel !== undefined;
+  const hasLabels = Boolean(topLabel) || Boolean(bottomLabel);
   return (
     <View className={cn(contentItemRow, className)} {...rest}>
       {avatar && <Avatar {...avatar} size={CONTENT_ITEM_AVATAR[size]} />}
       {leadingIcon && <Icon name={leadingIcon} size={px} className={cn("self-start", tone)} />}
       <View className={contentItemColumn(size, hasLabels)}>
-        {topLabel !== undefined && (
+        {Boolean(topLabel) && (
           <Text numberOfLines={1} className={contentItemLabel(variant === "disabled")}>
             {topLabel}
           </Text>
@@ -71,20 +71,20 @@ export function ContentItem({
           <Text numberOfLines={1} className={contentItemText({ size, variant, appearance })}>
             {text}
           </Text>
-          {suffix !== undefined && (
+          {Boolean(suffix) && (
             <Text numberOfLines={1} className={contentItemSuffix(size, variant === "disabled")}>
               {suffix}
             </Text>
           )}
         </View>
-        {bottomLabel !== undefined && (
+        {Boolean(bottomLabel) && (
           <Text numberOfLines={1} className={contentItemLabel(variant === "disabled")}>
             {bottomLabel}
           </Text>
         )}
       </View>
       {trailingIcon && <Icon name={trailingIcon} size={px} className={cn("self-start", tone)} />}
-      {badge !== undefined && badge !== null && (
+      {Boolean(badge) && (
         <Badge
           size="md"
           variant={variant === "disabled" ? "disabled" : "primary"}

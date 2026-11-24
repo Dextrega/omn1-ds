@@ -30,3 +30,7 @@ export * from "./components/avatar-stack";
 export * from "./components/content-item";
 export * from "./components/accordion";
 export * from "./components/account";
+export * from "./components/combo-box";
+export * from "./components/counter-input";
+export * from "./components/auth-input-base";
+export * from "./components/auth-input";

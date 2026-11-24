@@ -3,6 +3,45 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.1.5 — Review: Accordion, ContentItem, ComboBox, CounterInput, AuthInput, AuthInputBase
+
+### Summary
+
+Accordion gets its open border fixed and a free children slot, ContentItem icons and labels are corrected, and four components land from Figma on web and native: ComboBox, CounterInput, AuthInput and AuthInputBase.
+
+### Breaking Changes
+
+None.
+
+### Added
+
+- In **ComboBox**, on **component**, added Appearance Full / Compact × Align Bottom / Top × State (Enabled, Required, Active, Filled, Loading, AutoCompleted, Error, Disabled) with Label, LeadingIcon, TrailingIcon, Hint, ButtonLink and an ItemSelect list in a PopOver (`rounded` rows, `options` prop).
+- **[Provisional]** In **ComboBox**, on **Required / Error / Loading / AutoCompleted / Disabled**, reused the TextInput tokens of the same state; they were not re-read in this component.
+- In **CounterInput**, on **component**, added Size SM / MD × State Enabled / Disabled / Required with ButtonMinus, Value, ButtonAdd, Label and Helper (Hint, Counter, ButtonLink), plus `value` / `min` / `max` / `step`.
+- **[Provisional]** In **CounterInput**, on **Value**, used `font-sans` with tabular numbers because Figma's mono family (Share Tech Mono) has no token.
+- In **AuthInputBase**, on **component**, added the 48×48 cell with the nine states (Hovered / Pressed / Active are CSS states).
+- In **AuthInput**, on **component**, added Amount 4 / 6 × Divisor with the Resend row, focus advance, Backspace, paste and `onComplete`.
+- **[Provisional]** In **AuthInput**, on **Resend**, used English default copy (Figma is Portuguese) and a `Stroke/Neutral/Strong` Divisor (the Figma line is an image).
+- In **Storybook**, on **stories**, added ComboBox, CounterInput, AuthInput and AuthInputBase.
+- In **cn**, on **border widths**, added the side widths (`border-b-very-subtle`, …) to the tailwind-merge config.
+
+### Updated
+
+- In **Accordion**, on **open=true**, updated the stroke to the bottom side only (`border-b-very-subtle`); it was drawn on all four sides.
+- In **Accordion**, on **children**, updated the panel to a free slot (text, icon, image, any layout); native wraps a plain string in a `Text`.
+- In **ContentItem**, on **LeadingIcon / TrailingIcon**, updated the colour to `Surface/On<variant>/<appearance>`, as in Figma (web icons had no colour).
+- In **ContentItem**, on **TopLabel / BottomLabel / Suffix / Badge**, updated empty strings to count as absent, and the Storybook controls to start as empty text inputs.
+- In **ContentItem**, on **native text slots**, kept the slots typed `string` so a `View` cannot reach a `Text` (Graphify finding on PR #9).
+- In **docs**, on **FIGMA-SYNC / FINDINGS**, added the v1.1.5 section, four component rows and anomaly 14.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: behaviour tests for ComboBox, CounterInput, AuthInput and AuthInputBase, Accordion border and free slot, ContentItem icon colours; Tailwind and NativeWind coverage for every new class.
+
 ## v1.1.4 — Review: `text` prop, ContentItem labels, ItemSelect tokens, rounded popover lists
 
 ### Summary
