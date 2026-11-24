@@ -40,5 +40,7 @@ pnpm storybook    # http://localhost:6006
 pnpm tokens:build # re-generate tokens only
 ```
 
+Every release adds an entry to `CHANGELOG.md` using the format at the bottom of that file (the PR template mirrors it).
+
 Refreshing tokens: drop the new Tokens Studio export into `packages/tokens/figma-export/` and run `pnpm build`.
 The build fails loudly on unresolved references or light/dark mismatches.
