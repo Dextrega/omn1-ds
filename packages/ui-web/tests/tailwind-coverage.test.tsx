@@ -4,6 +4,11 @@ import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import {
+  Accordion,
+  Account,
+  Avatar,
+  AvatarStack,
+  ContentItem,
   Badge,
   ButtonCTA,
   ButtonIcon,
@@ -304,6 +309,85 @@ function renderEverything() {
           )),
         ),
       )}
+      {(["sm", "md", "lg"] as const).flatMap((size) =>
+        (["text", "icon", "image"] as const).flatMap((content) =>
+          [false, true].flatMap((border) =>
+            [false, true].map((disabled) => (
+              <span key={`av${size}${content}${border}${disabled}`}>
+                <Avatar
+                  size={size}
+                  content={content}
+                  src="a.png"
+                  border={border}
+                  disabled={disabled}
+                  dotStatus
+                  onClick={() => undefined}
+                />
+                <Avatar size={size} content={content} src="a.png" border={border} />
+              </span>
+            )),
+          ),
+        ),
+      )}
+      {(["sm", "md", "lg"] as const).map((size) => (
+        <AvatarStack
+          key={`as${size}`}
+          size={size}
+          avatars={[1, 2, 3, 4, 5, 6].map((n) => ({ src: `${n}.png` }))}
+        />
+      ))}
+      {(["sm", "md", "lg"] as const).flatMap((size) =>
+        badgeVariants.flatMap((variant) =>
+          (["subtle", "medium", "strong"] as const).map((appearance) => (
+            <ContentItem
+              key={`ci${size}${variant}${appearance}`}
+              size={size}
+              variant={variant}
+              appearance={appearance}
+              avatar={{ text: "OM" }}
+              leadingIcon="house"
+              topLabel="Top"
+              suffix="S"
+              bottomLabel="Bottom"
+              trailingIcon="chevron-down"
+              badge="3"
+            >
+              Text
+            </ContentItem>
+          )),
+        ),
+      )}
+      {(["sm", "md"] as const).flatMap((size) =>
+        [false, true].flatMap((disabled) => (
+          <Accordion
+            key={`ac${size}${disabled}`}
+            size={size}
+            title="T"
+            label="L"
+            leadingIcon="house"
+            disabled={disabled}
+            defaultOpen
+          >
+            Body
+          </Accordion>
+        )),
+      )}
+      {(["full", "compact"] as const).flatMap((appearance) =>
+        [false, true].flatMap((disabled) => (
+          <Account
+            key={`acc${appearance}${disabled}`}
+            appearance={appearance}
+            avatar={{ src: "a.png", dotStatus: true }}
+            username="User"
+            label="Label"
+            disabled={disabled}
+            defaultOpen
+          >
+            <ItemSelect>One</ItemSelect>
+          </Account>
+        )),
+      )}
+      <Account readOnly avatar={{ text: "OM" }} username="User" />
       <ChipsSelect label="Closed" />
       {(["wrap", "flex"] as const).flatMap((appearance) =>
         (["bottom", "top"] as const).map((align) => (
