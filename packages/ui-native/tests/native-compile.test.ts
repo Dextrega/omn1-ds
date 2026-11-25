@@ -5,6 +5,37 @@ import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import {
+  CALLOUT_ICON_PX,
+  calloutContainer,
+  calloutContent,
+  calloutDescription,
+  calloutSlotText,
+  calloutTitle,
+  calloutTone,
+  type CalloutVariant,
+} from "../src/components/callout/styles";
+import {
+  toastBottomLabel,
+  toastContainer,
+  toastContent,
+  toastDescription,
+  toastFooter,
+  toastRow,
+  toastStack,
+  toastTitle,
+  toastTone,
+  type ToastVariant,
+} from "../src/components/toast/styles";
+import {
+  tooltipBubble,
+  tooltipColumn,
+  tooltipCursor,
+  tooltipFloat,
+  tooltipRibbon,
+  tooltipText,
+} from "../src/components/tooltip/styles";
+import { wizardLabel, wizardRoot, wizardStep, wizardSteps } from "../src/components/wizard/styles";
+import {
   authInputBaseCell,
   authInputBaseText,
   type AuthInputBaseState,
@@ -220,6 +251,42 @@ function allClasses(): string[] {
   }
   add(avatarImageOverlay(true));
   add(avatarImageOverlay(false));
+  add(calloutDescription);
+  add(calloutSlotText);
+  for (const size of ["sm", "md"] as const) {
+    add(calloutContent(size));
+    expect(CALLOUT_ICON_PX[size]).toBeGreaterThan(0);
+    for (const variant of Object.keys(calloutTone) as CalloutVariant[]) {
+      add(calloutTitle(size, variant));
+      for (const appearance of ["rounded", "sharped"] as const)
+        add(calloutContainer({ size, variant, appearance }));
+    }
+  }
+  for (const variant of Object.keys(toastTone) as ToastVariant[]) {
+    add(toastContainer(variant));
+    add(toastTitle(variant));
+  }
+  for (const c of [
+    toastRow,
+    toastContent,
+    toastDescription,
+    toastFooter,
+    toastBottomLabel,
+    toastStack,
+  ])
+    add(c);
+  for (const variant of ["neutral", "primary", "inverse"] as const) {
+    add(tooltipText(variant));
+    add(tooltipRibbon(variant));
+    for (const align of ["center", "left", "right"] as const) {
+      add(tooltipBubble(variant, align));
+      add(tooltipColumn(align));
+      add(tooltipCursor(align));
+      add(tooltipFloat(align));
+    }
+  }
+  for (const c of [wizardRoot, wizardSteps, wizardLabel, wizardStep(true), wizardStep(false)])
+    add(c);
   add(contentItemRow);
   add(contentItemLabel(true));
   add(contentItemLabel(false));

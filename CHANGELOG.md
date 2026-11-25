@@ -3,6 +3,41 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.1.7 — Callout, Toast, Tooltip, Wizard
+
+### Summary
+
+Four feedback / navigation components land from Figma on web and native: Callout, Toast (with a provider and `useToast`), Tooltip and Wizard.
+
+### Breaking Changes
+
+None.
+
+### Added
+
+- In **Callout**, on **component**, added Size SM / MD × Appearance Rounded / Sharped × Variant Neutral · Primary · Secondary · Success · Warning · Danger with LeadingIcon, AssetItem, title, description, free `children` slot, Badge, ButtonCTA and ButtonDismiss.
+- **[Provisional]** In **Callout**, on **LeadingIcon and ButtonCTA**, used the title colour for the icon (the Figma instance has no readable colour) and ButtonCTA Outlined · Neutral (XS on SM, SM on MD).
+- In **Toast**, on **component**, added Variant Neutral · Primary · Success · Warning · Danger with AssetItem, LeadingIcon, title, description, ButtonDismiss and the footer (BottomLabel + ButtonLink), using the `shadow-level-3` / `nativeShadow("level-3")` effect token.
+- **[Provisional]** In **Toast**, on **Success**, kept the Secondary tokens that Figma binds to this variant (it renders pink, unlike Callout's green Success); on **width**, used `w-full` because 312 has no spacing token.
+- **[Provisional]** In **Toast**, on **ToastProvider / useToast**, added an imperative API (bottom stack, 5 s auto-dismiss, `aria-live`) that Figma does not specify.
+- In **Tooltip**, on **component**, added `TooltipBubble` (Variant Neutral · Primary · Inverse × Align Center · Left · Right × Cursor, with the 8×4 Ribbon and `shadow-level-2`) and the `Tooltip` trigger wrapper.
+- **[Provisional]** In **Tooltip**, on **behaviour**, added placement above the trigger, hover / focus / Escape on web, long-press on native, `role="tooltip"` and the `mouse-pointer-2` cursor glyph.
+- In **Wizard**, on **component**, added Amount 2–8 × Label from the Wizard Step (Idle / Active) tokens.
+- **[Provisional]** In **Wizard**, on **current**, added `current` (steps up to it are Active) because Figma only draws the first step Active.
+- In **Storybook**, on **stories**, added Callout, Toast, Tooltip and Wizard.
+
+### Updated
+
+- In **docs**, on **FIGMA-SYNC / FINDINGS**, added the v1.1.7 section, four component rows and anomaly 15.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: every Callout / Toast / Tooltip / Wizard variant compiles in Tailwind and NativeWind; behaviour tests for dismiss, the provider (auto-dismiss, stacking), Tooltip hover / focus / Escape and Wizard clamping.
+
 ## v1.1.6 — Mono font token, AuthInput divisor
 
 ### Summary

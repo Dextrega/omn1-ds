@@ -6,6 +6,11 @@ import { describe, expect, it } from "vitest";
 import {
   Accordion,
   Account,
+  Callout,
+  Toast,
+  Tooltip,
+  TooltipBubble,
+  Wizard,
   AuthInput,
   AuthInputBase,
   Avatar,
@@ -379,6 +384,59 @@ function renderEverything() {
           </Accordion>
         )),
       )}
+      {(["sm", "md"] as const).flatMap((size) =>
+        (["rounded", "sharped"] as const).flatMap((appearance) =>
+          (["neutral", "primary", "secondary", "success", "warning", "danger"] as const).map(
+            (variant) => (
+              <Callout
+                key={`co${size}${appearance}${variant}`}
+                size={size}
+                appearance={appearance}
+                variant={variant}
+                title="T"
+                description="D"
+                leadingIcon="info"
+                assetItem="OM"
+                badge="B"
+                actionLabel="Go"
+              >
+                Slot
+              </Callout>
+            ),
+          ),
+        ),
+      )}
+      {(["neutral", "primary", "success", "warning", "danger"] as const).map((variant) => (
+        <Toast
+          key={`to${variant}`}
+          variant={variant}
+          title="T"
+          description="D"
+          leadingIcon="info"
+          assetItem="OM"
+          bottomLabel="L"
+          actionLabel="Go"
+        />
+      ))}
+      {(["neutral", "primary", "inverse"] as const).flatMap((variant) =>
+        (["center", "left", "right"] as const).map((align) => (
+          <TooltipBubble
+            key={`tt${variant}${align}`}
+            variant={variant}
+            align={align}
+            text="Text"
+            cursor
+          />
+        )),
+      )}
+      {(["center", "left", "right"] as const).map((align) => (
+        <Tooltip key={`tp${align}`} text="Text" align={align} open>
+          <button type="button">x</button>
+        </Tooltip>
+      ))}
+      {[2, 3, 8].map((amount) => (
+        <Wizard key={`wz${amount}`} amount={amount} current={2} label="Label" />
+      ))}
       {(["full", "compact"] as const).flatMap((appearance) =>
         [false, true].flatMap((disabled) => (
           <Account
@@ -546,5 +604,5 @@ describe("Tailwind coverage", () => {
       (c) => !MARKERS.has(c) && !isThirdParty(c) && !hasRule(result.css, c),
     );
     expect(missing).toEqual([]);
-  });
+  }, 30_000);
 });

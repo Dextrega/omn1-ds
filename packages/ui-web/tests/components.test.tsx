@@ -1,9 +1,17 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   Accordion,
   Account,
+  Callout,
+  Toast,
+  ToastProvider,
+  Tooltip,
+  TooltipBubble,
+  useToast,
+  Wizard,
+  clampWizardAmount,
   Avatar,
   AvatarStack,
   ContentItem,
@@ -904,5 +912,165 @@ describe("AuthInput / AuthInputBase", () => {
     expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "error");
     rerender(<AuthInputBase aria-label="c" disabled />);
     expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "disabled");
+  });
+});
+
+describe("Callout", () => {
+  it("renders title, description, optional parts and dismisses", async () => {
+    const onDismiss = vi.fn();
+    const onAction = vi.fn();
+    render(
+      <Callout
+        title="Heads up"
+        description="Details"
+        badge="New"
+        actionLabel="Open"
+        onAction={onAction}
+        onDismiss={onDismiss}
+      >
+        <span>slot</span>
+      </Callout>,
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("Heads up");
+    expect(screen.getByText("New")).toBeInTheDocument();
+    expect(screen.getByText("slot")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Open" }));
+    await userEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+    expect(onAction).toHaveBeenCalled();
+    expect(onDismiss).toHaveBeenCalled();
+  });
+
+  it("hides the dismiss button, empty labels and the slot when absent", () => {
+    render(<Callout dismissible={false} title="" description="" assetItem="" badge="" />);
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("status").querySelector("[data-slot=slot]")).toBeNull();
+    expect(screen.getByRole("status").querySelector("p")).toBeNull();
+  });
+
+  it("Sharped has no radius or stroke; Rounded does", () => {
+    const { rerender } = render(<Callout appearance="sharped" title="T" />);
+    expect(screen.getByRole("status").className).not.toMatch(/border-very-subtle|rounded-corner/);
+    rerender(<Callout appearance="rounded" variant="danger" title="T" />);
+    expect(screen.getByRole("status").className).toMatch(/border-very-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/border-alpha-danger-subtle/);
+  });
+});
+
+describe("Toast", () => {
+  it("shows the footer only with an action or bottom label", async () => {
+    const onAction = vi.fn();
+    const { rerender } = render(<Toast title="Saved" />);
+    expect(screen.getByRole("status").querySelector("[data-slot=footer]")).toBeNull();
+    rerender(<Toast title="Saved" actionLabel="Undo" onAction={onAction} />);
+    await userEvent.click(screen.getByRole("button", { name: "Undo" }));
+    expect(onAction).toHaveBeenCalled();
+    rerender(<Toast title="Saved" bottomLabel="2 min ago" />);
+    expect(screen.getByText("2 min ago")).toBeInTheDocument();
+  });
+
+  it("success follows the Figma secondary tokens", () => {
+    render(<Toast variant="success" title="Done" />);
+    expect(screen.getByRole("status").className).toMatch(/border-stroke-secondary-medium/);
+  });
+
+  it("the provider stacks toasts, dismisses by button and auto-dismisses", async () => {
+    vi.useFakeTimers();
+    function Trigger() {
+      const { toast } = useToast();
+      return (
+        <>
+          <button onClick={() => toast({ title: "Sticky", duration: 0 })}>sticky</button>
+          <button onClick={() => toast({ title: "Auto", duration: 1000 })}>auto</button>
+        </>
+      );
+    }
+    render(
+      <ToastProvider>
+        <Trigger />
+      </ToastProvider>,
+    );
+    fireEvent.click(screen.getByText("sticky"));
+    fireEvent.click(screen.getByText("auto"));
+    expect(screen.getByText("Sticky")).toBeInTheDocument();
+    expect(screen.getByText("Auto")).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(1100);
+    });
+    expect(screen.queryByText("Auto")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+    expect(screen.queryByText("Sticky")).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it("useToast throws outside the provider", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    function Bad() {
+      useToast();
+      return null;
+    }
+    expect(() => render(<Bad />)).toThrow(/ToastProvider/);
+    spy.mockRestore();
+  });
+});
+
+describe("Tooltip", () => {
+  it("TooltipBubble squares the corner next to the ribbon", () => {
+    const { container, rerender } = render(<TooltipBubble text="Hi" align="left" />);
+    expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-bl-none/);
+    rerender(<TooltipBubble text="Hi" align="right" />);
+    expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-br-none/);
+    rerender(<TooltipBubble text="Hi" cursor />);
+    expect(container.querySelector("[data-slot=cursor]")).not.toBeNull();
+  });
+
+  it("shows on hover / focus, links aria-describedby and closes on Escape", async () => {
+    render(
+      <Tooltip text="Explains">
+        <button>trigger</button>
+      </Tooltip>,
+    );
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    await userEvent.hover(screen.getByRole("button", { name: "trigger" }));
+    const tip = screen.getByRole("tooltip");
+    expect(tip).toHaveTextContent("Explains");
+    expect(screen.getByRole("button", { name: "trigger" })).toHaveAttribute(
+      "aria-describedby",
+      tip.id,
+    );
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    await userEvent.tab();
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
+  });
+
+  it("is controllable with `open`", () => {
+    render(
+      <Tooltip text="Always" open>
+        <button>t</button>
+      </Tooltip>,
+    );
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
+  });
+});
+
+describe("Wizard", () => {
+  it("renders `amount` steps (2–8) and marks steps up to `current` active", () => {
+    const { container, rerender } = render(<Wizard amount={5} current={3} label="Step" />);
+    const steps = [...container.querySelectorAll("[data-slot=step]")];
+    expect(steps).toHaveLength(5);
+    expect(steps.map((s) => s.getAttribute("data-state"))).toEqual([
+      "active",
+      "active",
+      "active",
+      "idle",
+      "idle",
+    ]);
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "3");
+    expect(screen.getByText("Step")).toBeInTheDocument();
+    rerender(<Wizard amount={99} current={0} />);
+    expect(container.querySelectorAll("[data-slot=step]")).toHaveLength(8);
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+    expect(clampWizardAmount(1)).toBe(2);
+    expect(clampWizardAmount(Number.NaN)).toBe(2);
   });
 });
