@@ -32,6 +32,7 @@ import {
   tooltipCursor,
   tooltipFloat,
   tooltipRibbon,
+  tooltipRibbonPath,
   tooltipText,
 } from "../src/components/tooltip/styles";
 import { wizardLabel, wizardRoot, wizardStep, wizardSteps } from "../src/components/wizard/styles";
@@ -258,6 +259,7 @@ function allClasses(): string[] {
     expect(CALLOUT_ICON_PX[size]).toBeGreaterThan(0);
     for (const variant of Object.keys(calloutTone) as CalloutVariant[]) {
       add(calloutTitle(size, variant));
+      add(calloutTone[variant].icon);
       for (const appearance of ["rounded", "sharped"] as const)
         add(calloutContainer({ size, variant, appearance }));
     }
@@ -283,6 +285,7 @@ function allClasses(): string[] {
       add(tooltipColumn(align));
       add(tooltipCursor(align));
       add(tooltipFloat(align));
+      expect(tooltipRibbonPath[align]).toMatch(/^M/);
     }
   }
   for (const c of [wizardRoot, wizardSteps, wizardLabel, wizardStep(true), wizardStep(false)])
@@ -339,6 +342,7 @@ function allClasses(): string[] {
     "success",
     "warning",
     "danger",
+    "informative",
     "disabled",
   ] as const)
     for (const appearance of ["subtle", "strong", "outlined"] as const)

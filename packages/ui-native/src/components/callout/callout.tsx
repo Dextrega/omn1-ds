@@ -32,9 +32,14 @@ export interface CalloutProps extends Omit<ViewProps, "children"> {
   title?: string;
   description?: string;
   leadingIcon?: IconName;
-  /** Figma: AssetItem — the initials shown in the tile. */
-  assetItem?: string;
-  badge?: string;
+  /** Figma: AssetItem (boolean). */
+  assetItem?: boolean;
+  /** Text inside the AssetItem tile (Figma default "OM"). */
+  assetItemText?: string;
+  /** Figma: Badge (boolean). */
+  badge?: boolean;
+  /** Text inside the Badge (Figma default "Badge"). */
+  badgeText?: string;
   actionLabel?: string;
   onAction?: () => void;
   /** Figma: ButtonDismiss (default on). */
@@ -53,8 +58,10 @@ export function Callout({
   title,
   description,
   leadingIcon,
-  assetItem,
-  badge,
+  assetItem = false,
+  assetItemText = "OM",
+  badge = false,
+  badgeText = "Badge",
   actionLabel,
   onAction,
   dismissible = true,
@@ -73,10 +80,10 @@ export function Callout({
       {...rest}
     >
       {leadingIcon && (
-        <Icon name={leadingIcon} size={CALLOUT_ICON_PX[size]} className={tone.title} />
+        <Icon name={leadingIcon} size={CALLOUT_ICON_PX[size]} className={tone.icon} />
       )}
-      {Boolean(assetItem) && (
-        <AssetItem size={size} variant={tone.asset} appearance="subtle" text={assetItem} />
+      {assetItem && (
+        <AssetItem size={size} variant={tone.asset} appearance="subtle" text={assetItemText} />
       )}
       <View className={calloutContent(size)}>
         {Boolean(title) && <Text className={calloutTitle(size, variant)}>{title}</Text>}
@@ -88,9 +95,9 @@ export function Callout({
             children
           ))}
       </View>
-      {Boolean(badge) && (
+      {badge && (
         <Badge size={size === "sm" ? "sm" : "md"} variant="primary" appearance="subtle">
-          {badge}
+          {badgeText}
         </Badge>
       )}
       {Boolean(actionLabel) && (

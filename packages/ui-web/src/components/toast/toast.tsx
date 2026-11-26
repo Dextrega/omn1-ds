@@ -18,30 +18,26 @@ import { ButtonLink } from "../button-link";
 
 export type ToastVariant = "neutral" | "primary" | "success" | "warning" | "danger";
 
-/**
- * Literal class strings per variant. NOTE (Figma anomaly): the Figma `Success` variant is bound to the SECONDARY tokens
- * (`Surface/Secondary/VeryStrong…`, `Stroke/Secondary/Medium`, `OnSecondary/Strong`) — the Callout's Success uses the
- * green Success tokens. Code follows Figma, so `success` renders pink here (see docs/FINDINGS.md).
- */
+/** Literal class strings per variant (Semantic tokens; stroke is `Stroke/{Variant}/Subtle`). */
 export const toastTone: Record<ToastVariant, { box: string; title: string }> = {
   neutral: {
-    box: "bg-surface-neutral-very-subtle border-stroke-neutral-medium",
+    box: "bg-surface-neutral-very-subtle border-stroke-neutral-subtle",
     title: "text-surface-on-neutral-very-strong",
   },
   primary: {
-    box: "bg-surface-primary-very-subtle border-stroke-primary-medium",
+    box: "bg-surface-primary-very-subtle border-stroke-primary-subtle",
     title: "text-surface-on-primary-strong",
   },
   success: {
-    box: "bg-surface-secondary-very-subtle border-stroke-secondary-medium",
-    title: "text-surface-on-secondary-strong",
+    box: "bg-surface-success-very-subtle border-stroke-success-subtle",
+    title: "text-surface-on-success-strong",
   },
   warning: {
-    box: "bg-surface-warning-very-subtle border-stroke-warning-medium",
+    box: "bg-surface-warning-very-subtle border-stroke-warning-subtle",
     title: "text-surface-on-warning-strong",
   },
   danger: {
-    box: "bg-surface-danger-very-subtle border-stroke-danger-medium",
+    box: "bg-surface-danger-very-subtle border-stroke-danger-subtle",
     title: "text-surface-on-danger-strong",
   },
 };
@@ -49,7 +45,7 @@ export const toastTone: Record<ToastVariant, { box: string; title: string }> = {
 /**
  * Figma: Toast (component set 280:1058) — Variant Neutral · Primary · Success · Warning · Danger.
  *
- * Verified against Figma: padding + gap Spacement/Subtle, 1px stroke `Stroke/{Variant}/Medium`, radius Border Radius/Medium,
+ * Verified against Figma: padding + footer gap Spacement/Subtle (Container gap Spacement/VerySubtle), 1px stroke `Stroke/{Variant}/Subtle`, radius Border Radius/Medium,
  * fill `Surface/{Variant}/VerySubtle`, effect DropShadow/Level 3 (token `shadow-level-3`), title Body MD
  * `Surface/On{Variant}/Strong`, description Caption `Opacity/Inverse/VeryStrong`, AssetItem 36 (always Neutral), LeadingIcon 20,
  * ButtonDismiss = ButtonIcon XS · Neutral · Ghost, Footer (end-aligned) = BottomLabel Overline + ButtonLink MD · Primary.
@@ -105,7 +101,7 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(function Toast(
       )}
       {...rest}
     >
-      <div data-slot="container" className="flex w-full items-start gap-subtle">
+      <div data-slot="container" className="flex w-full items-start gap-very-subtle">
         {Boolean(assetItem) && (
           <AssetItem size="md" variant="neutral" appearance="subtle" text={assetItem} />
         )}

@@ -4,12 +4,13 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../../lib/cn";
 
 /**
- * Figma: Badge (component set 6:9302) — Size SM/MD/LG × Variant × Appearance Subtle/Strong/Outlined (63 variants).
+ * Figma: Badge (component set 6:9302) — Size SM/MD/LG × Variant × Appearance Subtle/Strong/Outlined (72 variants).
  *
  * Verified against Figma (variable bindings read via MCP): every Variant × Appearance fill / stroke / text pair,
  * sizes (SM 16h · padX Spacement/ExtraSubtle · radius Border Radius/ExtraSubtle · Overline;
  * MD 24h · padX VerySubtle · radius VerySubtle · Caption; LG 32h · padX VerySubtle · radius VerySubtle · Body MD),
  * icon px (10 · 12 · 20) and the 1px OUTSIDE stroke of Outlined (drawn as a ring, so the box keeps its size).
+ * LeadingIcon follows the text colour in every variant (read from Figma; Warning / Strong is `OnWarning/VeryStrong`, same as its text).
  * Figma quirk kept on purpose: Secondary/Subtle is filled with Surface/Danger/Subtle (see docs/FINDINGS.md).
  */
 // Class names are spelled out in full on purpose: Tailwind only generates classes it can find as literal strings.
@@ -44,6 +45,11 @@ const tones = {
     subtle: "bg-surface-danger-subtle text-surface-on-danger-strong",
     outlined: "ring-very-subtle ring-stroke-danger-medium text-surface-on-danger-medium",
   },
+  informative: {
+    strong: "bg-surface-information-medium text-surface-on-information-very-subtle",
+    subtle: "bg-surface-information-subtle text-surface-on-information-strong",
+    outlined: "ring-very-subtle ring-stroke-information-medium text-surface-on-information-medium",
+  },
   disabled: {
     strong: "bg-alpha-inverse-subtle text-surface-on-neutral-medium",
     subtle: "bg-surface-neutral-subtle text-surface-on-neutral-medium",
@@ -67,6 +73,7 @@ export const badgeVariants = cva(
         success: "",
         warning: "",
         danger: "",
+        informative: "",
         disabled: "",
       },
       appearance: { subtle: "", strong: "", outlined: "" },

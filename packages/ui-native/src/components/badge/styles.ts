@@ -36,6 +36,11 @@ const tones = {
     subtle: ["bg-surface-danger-subtle", "text-surface-on-danger-strong"],
     outlined: ["border-stroke-danger-medium", "text-surface-on-danger-medium"],
   },
+  informative: {
+    strong: ["bg-surface-information-medium", "text-surface-on-information-very-subtle"],
+    subtle: ["bg-surface-information-subtle", "text-surface-on-information-strong"],
+    outlined: ["border-stroke-information-medium", "text-surface-on-information-medium"],
+  },
   disabled: {
     strong: ["bg-alpha-inverse-subtle", "text-surface-on-neutral-medium"],
     subtle: ["bg-surface-neutral-subtle", "text-surface-on-neutral-medium"],

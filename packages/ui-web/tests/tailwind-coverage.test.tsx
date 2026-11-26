@@ -58,6 +58,7 @@ const badgeVariants = [
   "success",
   "warning",
   "danger",
+  "informative",
   "disabled",
 ] as const;
 const badgeAppearances = ["subtle", "strong", "outlined"] as const;
@@ -350,24 +351,26 @@ function renderEverything() {
         />
       ))}
       {(["sm", "md", "lg"] as const).flatMap((size) =>
-        badgeVariants.flatMap((variant) =>
-          (["subtle", "medium", "strong"] as const).map((appearance) => (
-            <ContentItem
-              key={`ci${size}${variant}${appearance}`}
-              size={size}
-              variant={variant}
-              appearance={appearance}
-              avatar={{ text: "OM" }}
-              leadingIcon="house"
-              topLabel="Top"
-              suffix="S"
-              bottomLabel="Bottom"
-              trailingIcon="chevron-down"
-              badge="3"
-              text="Text"
-            />
-          )),
-        ),
+        badgeVariants
+          .filter((v) => v !== "informative")
+          .flatMap((variant) =>
+            (["subtle", "medium", "strong"] as const).map((appearance) => (
+              <ContentItem
+                key={`ci${size}${variant}${appearance}`}
+                size={size}
+                variant={variant}
+                appearance={appearance}
+                avatar={{ text: "OM" }}
+                leadingIcon="house"
+                topLabel="Top"
+                suffix="S"
+                bottomLabel="Bottom"
+                trailingIcon="chevron-down"
+                badge="3"
+                text="Text"
+              />
+            )),
+          ),
       )}
       {(["sm", "md"] as const).flatMap((size) =>
         [false, true].flatMap((disabled) => (
@@ -386,24 +389,32 @@ function renderEverything() {
       )}
       {(["sm", "md"] as const).flatMap((size) =>
         (["rounded", "sharped"] as const).flatMap((appearance) =>
-          (["neutral", "primary", "secondary", "success", "warning", "danger"] as const).map(
-            (variant) => (
-              <Callout
-                key={`co${size}${appearance}${variant}`}
-                size={size}
-                appearance={appearance}
-                variant={variant}
-                title="T"
-                description="D"
-                leadingIcon="info"
-                assetItem="OM"
-                badge="B"
-                actionLabel="Go"
-              >
-                Slot
-              </Callout>
-            ),
-          ),
+          (
+            [
+              "neutral",
+              "primary",
+              "secondary",
+              "success",
+              "warning",
+              "danger",
+              "informative",
+            ] as const
+          ).map((variant) => (
+            <Callout
+              key={`co${size}${appearance}${variant}`}
+              size={size}
+              appearance={appearance}
+              variant={variant}
+              title="T"
+              description="D"
+              leadingIcon="info"
+              assetItem
+              badge
+              actionLabel="Go"
+            >
+              Slot
+            </Callout>
+          )),
         ),
       )}
       {(["neutral", "primary", "success", "warning", "danger"] as const).map((variant) => (

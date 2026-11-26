@@ -915,6 +915,29 @@ describe("AuthInput / AuthInputBase", () => {
   });
 });
 
+describe("Badge Informative", () => {
+  it("renders the Information tokens in every appearance", () => {
+    const { rerender } = render(
+      <Badge variant="informative" appearance="subtle">
+        B
+      </Badge>,
+    );
+    expect(screen.getByText("B").className).toMatch(/bg-surface-information-subtle/);
+    rerender(
+      <Badge variant="informative" appearance="strong">
+        B
+      </Badge>,
+    );
+    expect(screen.getByText("B").className).toMatch(/text-surface-on-information-very-subtle/);
+    rerender(
+      <Badge variant="informative" appearance="outlined">
+        B
+      </Badge>,
+    );
+    expect(screen.getByText("B").className).toMatch(/ring-stroke-information-medium/);
+  });
+});
+
 describe("Callout", () => {
   it("renders title, description, optional parts and dismisses", async () => {
     const onDismiss = vi.fn();
@@ -923,7 +946,8 @@ describe("Callout", () => {
       <Callout
         title="Heads up"
         description="Details"
-        badge="New"
+        badge
+        badgeText="New"
         actionLabel="Open"
         onAction={onAction}
         onDismiss={onDismiss}
@@ -941,10 +965,28 @@ describe("Callout", () => {
   });
 
   it("hides the dismiss button, empty labels and the slot when absent", () => {
-    render(<Callout dismissible={false} title="" description="" assetItem="" badge="" />);
+    render(<Callout dismissible={false} title="" description="" assetItem={false} badge={false} />);
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.getByRole("status").querySelector("[data-slot=slot]")).toBeNull();
     expect(screen.getByRole("status").querySelector("p")).toBeNull();
+  });
+
+  it("assetItem and badge are booleans with Figma default texts", () => {
+    const { rerender } = render(<Callout title="T" assetItem badge />);
+    expect(screen.getByText("OM")).toBeInTheDocument();
+    expect(screen.getByText("Badge")).toBeInTheDocument();
+    rerender(<Callout title="T" assetItem assetItemText="AB" badge badgeText="Hot" />);
+    expect(screen.getByText("AB")).toBeInTheDocument();
+    expect(screen.getByText("Hot")).toBeInTheDocument();
+  });
+
+  it("gap is VerySubtle on SM and Subtle on MD; Informative uses the Information tokens", () => {
+    const { rerender } = render(<Callout size="sm" variant="informative" title="T" />);
+    expect(screen.getByRole("status").className).toMatch(/gap-very-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/bg-surface-information-very-subtle/);
+    rerender(<Callout size="md" appearance="rounded" variant="informative" title="T" />);
+    expect(screen.getByRole("status").className).toMatch(/gap-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/border-alpha-information-subtle/);
   });
 
   it("Sharped has no radius or stroke; Rounded does", () => {
@@ -968,9 +1010,12 @@ describe("Toast", () => {
     expect(screen.getByText("2 min ago")).toBeInTheDocument();
   });
 
-  it("success follows the Figma secondary tokens", () => {
-    render(<Toast variant="success" title="Done" />);
-    expect(screen.getByRole("status").className).toMatch(/border-stroke-secondary-medium/);
+  it("uses the Success tokens and the Subtle strokes", () => {
+    const { rerender } = render(<Toast variant="success" title="Done" />);
+    expect(screen.getByRole("status").className).toMatch(/bg-surface-success-very-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/border-stroke-success-subtle/);
+    rerender(<Toast variant="danger" title="Done" />);
+    expect(screen.getByRole("status").className).toMatch(/border-stroke-danger-subtle/);
   });
 
   it("the provider stacks toasts, dismisses by button and auto-dismisses", async () => {
@@ -1019,6 +1064,18 @@ describe("Tooltip", () => {
     expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-bl-none/);
     rerender(<TooltipBubble text="Hi" align="right" />);
     expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-br-none/);
+    rerender(<TooltipBubble text="Hi" align="center" />);
+    expect(container.querySelector("[data-slot=ribbon] path")!.getAttribute("d")).toBe(
+      "M4 4L8 0H0Z",
+    );
+    rerender(<TooltipBubble text="Hi" align="left" />);
+    expect(container.querySelector("[data-slot=ribbon] path")!.getAttribute("d")).toBe(
+      "M0 4L8 0H0Z",
+    );
+    rerender(<TooltipBubble text="Hi" align="right" />);
+    expect(container.querySelector("[data-slot=ribbon] path")!.getAttribute("d")).toBe(
+      "M8 4L0 0H8Z",
+    );
     rerender(<TooltipBubble text="Hi" cursor />);
     expect(container.querySelector("[data-slot=cursor]")).not.toBeNull();
   });
