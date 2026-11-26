@@ -1,9 +1,17 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   Accordion,
   Account,
+  Callout,
+  Toast,
+  ToastProvider,
+  Tooltip,
+  TooltipBubble,
+  useToast,
+  Wizard,
+  clampWizardAmount,
   Avatar,
   AvatarStack,
   ContentItem,
@@ -14,6 +22,10 @@ import {
   Checkbox,
   Chip,
   ChipsSelect,
+  ComboBox,
+  CounterInput,
+  AuthInput,
+  AuthInputBase,
   ButtonList,
   AssetItem,
   ButtonSelect,
@@ -471,7 +483,7 @@ describe("ChipsSelect / ButtonList", () => {
     render(
       <>
         <ChipsSelect label="Sort">
-          <ItemSelect>Newest</ItemSelect>
+          <ItemSelect text="Newest" />
         </ChipsSelect>
         <button>outside</button>
       </>,
@@ -492,11 +504,43 @@ describe("ChipsSelect / ButtonList", () => {
     const user = userEvent.setup();
     render(
       <ButtonList aria-label="More">
-        <ItemSelect>Rename</ItemSelect>
+        <ItemSelect text="Rename" />
       </ButtonList>,
     );
     await user.click(screen.getByRole("button", { name: "More" }));
     expect(screen.getByRole("menuitemradio", { name: "Rename" })).toBeInTheDocument();
+  });
+
+  it("ChipsSelect and ButtonList default their ItemSelect rows to appearance=rounded; an explicit prop wins", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(
+      <ChipsSelect label="Sort">
+        <ItemSelect text="Default row" />
+        <ItemSelect text="Squared row" appearance="squared" />
+      </ChipsSelect>,
+    );
+    await user.click(screen.getByRole("button", { name: "Sort" }));
+    expect(screen.getByRole("menuitemradio", { name: "Default row" }).className).not.toContain(
+      "rounded-none",
+    );
+    expect(screen.getByRole("menuitemradio", { name: "Squared row" }).className).toContain(
+      "rounded-none",
+    );
+    unmount();
+    render(
+      <ButtonList aria-label="More">
+        <ItemSelect text="Rename" />
+      </ButtonList>,
+    );
+    await user.click(screen.getByRole("button", { name: "More" }));
+    expect(screen.getByRole("menuitemradio", { name: "Rename" }).className).not.toContain(
+      "rounded-none",
+    );
+  });
+
+  it("ItemSelect outside a list stays squared", () => {
+    render(<ItemSelect text="Solo" />);
+    expect(screen.getByRole("menuitemradio", { name: "Solo" }).className).toContain("rounded-none");
   });
 });
 
@@ -509,7 +553,7 @@ describe("TextInput Helper", () => {
 
 describe("AssetItem / DotStatus", () => {
   it("AssetItem renders text, an icon or an image by `content`", () => {
-    const { container, rerender } = render(<AssetItem size="lg">OM</AssetItem>);
+    const { container, rerender } = render(<AssetItem size="lg" text="OM" />);
     expect(container.textContent).toBe("OM");
     rerender(<AssetItem content="icon" size="md" />);
     const svg = container.querySelector("svg")!;
@@ -539,7 +583,7 @@ describe("PopOver / ButtonSelect", () => {
         footerHint="3 selected"
         primaryAction={<button>Apply</button>}
       >
-        <ItemSelect>One</ItemSelect>
+        <ItemSelect text="One" />
       </PopOver>,
     );
     expect(screen.getByText("Filters")).toBeInTheDocument();
@@ -553,7 +597,7 @@ describe("PopOver / ButtonSelect", () => {
     const onClick = vi.fn();
     render(
       <ButtonSelect label="Save" onClick={onClick}>
-        <ItemSelect>Save as…</ItemSelect>
+        <ItemSelect text="Save as…" />
       </ButtonSelect>,
     );
     await user.click(screen.getByRole("button", { name: "Save" }));
@@ -605,28 +649,22 @@ describe("AvatarStack", () => {
 
 describe("ContentItem", () => {
   it("uses the Figma text colour for Variant × Appearance", () => {
-    const { rerender } = render(<ContentItem appearance="strong">Text</ContentItem>);
+    const { rerender } = render(<ContentItem appearance="strong" text="Text" />);
     expect(screen.getByText("Text").className).toContain("text-surface-on-neutral-very-strong");
-    rerender(
-      <ContentItem variant="danger" appearance="subtle">
-        Text
-      </ContentItem>,
-    );
+    rerender(<ContentItem variant="danger" appearance="subtle" text="Text" />);
     expect(screen.getByText("Text").className).toContain("text-surface-on-danger-subtle");
-    rerender(
-      <ContentItem variant="disabled" appearance="strong">
-        Text
-      </ContentItem>,
-    );
+    rerender(<ContentItem variant="disabled" appearance="strong" text="Text" />);
     expect(screen.getByText("Text").className).toContain("text-surface-on-neutral-subtle");
   });
 
+  it("Disabled uses OnNeutral/Subtle for the labels", () => {
+    render(<ContentItem variant="disabled" topLabel="Top" bottomLabel="Bottom" text="Main" />);
+    expect(screen.getByText("Top").className).toContain("text-surface-on-neutral-subtle");
+    expect(screen.getByText("Bottom").className).toContain("text-surface-on-neutral-subtle");
+  });
+
   it("renders the optional slots", () => {
-    render(
-      <ContentItem topLabel="Top" suffix="Suf" bottomLabel="Bottom" badge="3">
-        Main
-      </ContentItem>,
-    );
+    render(<ContentItem topLabel="Top" suffix="Suf" bottomLabel="Bottom" badge="3" text="Main" />);
     for (const t of ["Top", "Main", "Suf", "Bottom", "3"])
       expect(screen.getByText(t)).toBeInTheDocument();
   });
@@ -674,7 +712,7 @@ describe("Account", () => {
     const user = userEvent.setup();
     render(
       <Account username="Ana" label="Admin">
-        <ItemSelect>Profile</ItemSelect>
+        <ItemSelect text="Profile" />
       </Account>,
     );
     const trigger = screen.getByRole("button", { name: "Ana" });
@@ -700,5 +738,339 @@ describe("Account", () => {
     await user.click(screen.getByRole("button", { name: "More" }));
     expect(onMoreClick).toHaveBeenCalledTimes(1);
     expect(screen.queryByText("Profile")).toBeNull();
+  });
+});
+
+describe("Accordion (v1.1.5)", () => {
+  it("draws the open stroke on the bottom side only, and a free children slot", () => {
+    const { container } = render(
+      <Accordion title="T" defaultOpen>
+        <img alt="pic" src="a.png" />
+        <svg data-testid="svg" />
+        plain text
+      </Accordion>,
+    );
+    const root = container.querySelector("[data-slot=accordion]")!;
+    expect(root.className).toContain("border-b-very-subtle");
+    expect(root.className).not.toMatch(/(^|\s)border-very-subtle/);
+    expect(screen.getByAltText("pic")).toBeInTheDocument();
+    expect(screen.getByTestId("svg")).toBeInTheDocument();
+    expect(screen.getByText(/plain text/)).toBeInTheDocument();
+  });
+});
+
+describe("ContentItem icons (v1.1.5)", () => {
+  it("colours LeadingIcon / TrailingIcon like the text", () => {
+    const { container } = render(
+      <ContentItem
+        variant="primary"
+        appearance="medium"
+        leadingIcon="house"
+        trailingIcon="house"
+        text="T"
+      />,
+    );
+    const icons = container.querySelectorAll("svg");
+    expect(icons).toHaveLength(2);
+    icons.forEach((i) =>
+      expect(i.getAttribute("class")).toContain("text-surface-on-primary-medium"),
+    );
+  });
+
+  it("treats empty label strings as absent", () => {
+    const { container } = render(
+      <ContentItem topLabel="" bottomLabel="" suffix="" badge="" text="T" />,
+    );
+    expect(container.querySelectorAll("span.truncate").length).toBe(1);
+  });
+});
+
+describe("ComboBox", () => {
+  const options = [
+    { value: "a", text: "Alpha" },
+    { value: "b", text: "Beta" },
+  ];
+  it("opens the list, picks an option, clears it and closes on Escape", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <ComboBox
+        label="Pick"
+        placeholder="Choose"
+        options={options}
+        onValueChange={onValueChange}
+      />,
+    );
+    const trigger = screen.getByRole("combobox", { name: /Pick/ });
+    expect(trigger).toHaveTextContent("Choose");
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await user.click(screen.getByRole("menuitemradio", { name: "Beta" }));
+    expect(onValueChange).toHaveBeenLastCalledWith("b");
+    expect(trigger).toHaveTextContent("Beta");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await user.click(screen.getByRole("button", { name: "Clear" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(undefined);
+    await user.click(trigger);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("does not open when disabled; shows the error as an alert", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ComboBox label="Pick" options={options} disabled />);
+    await user.click(screen.getByRole("combobox"));
+    expect(screen.queryByRole("menu")).toBeNull();
+    rerender(<ComboBox label="Pick" options={options} error="Required" />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Required");
+  });
+});
+
+describe("CounterInput", () => {
+  it("steps within min / max and disables the buttons at the bounds", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <CounterInput label="Qty" defaultValue={1} min={0} max={2} onValueChange={onValueChange} />,
+    );
+    await user.click(screen.getByRole("button", { name: "Increase" }));
+    expect(onValueChange).toHaveBeenLastCalledWith(2);
+    expect(screen.getByRole("button", { name: "Increase" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Decrease" }));
+    await user.click(screen.getByRole("button", { name: "Decrease" }));
+    expect(screen.getByRole("button", { name: "Decrease" })).toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent("0");
+  });
+
+  it("sets the value in the Mono text style (font-mono, Body MD SM / Body LG MD)", () => {
+    const { rerender } = render(<CounterInput defaultValue={3} />);
+    expect(screen.getByRole("status").className).toContain("font-mono");
+    expect(screen.getByRole("status").className).toContain("text-body-md");
+    rerender(<CounterInput size="md" defaultValue={3} />);
+    expect(screen.getByRole("status").className).toContain("text-body-lg");
+  });
+
+  it("disables everything when disabled", () => {
+    render(<CounterInput disabled />);
+    expect(screen.getByRole("button", { name: "Increase" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Decrease" })).toBeDisabled();
+  });
+});
+
+describe("AuthInput / AuthInputBase", () => {
+  it("moves between cells, completes and handles paste and backspace", async () => {
+    const user = userEvent.setup();
+    const onComplete = vi.fn();
+    render(<AuthInput amount={4} onComplete={onComplete} />);
+    const cells = screen.getAllByRole("textbox");
+    expect(cells).toHaveLength(4);
+    await user.click(cells[0]!);
+    await user.keyboard("1234");
+    expect(onComplete).toHaveBeenCalledWith("1234");
+    expect(cells.map((c) => (c as HTMLInputElement).value)).toEqual(["1", "2", "3", "4"]);
+    await user.keyboard("{Backspace}");
+    expect((cells[3] as HTMLInputElement).value).toBe("");
+  });
+
+  it("paste fills the cells; 6 cells and the divisor render", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<AuthInput amount={6} divisor />);
+    expect(screen.getAllByRole("textbox")).toHaveLength(6);
+    expect(container.querySelector("[data-slot=divisor]")).not.toBeNull();
+    await user.click(screen.getAllByRole("textbox")[0]!);
+    await user.paste("123456");
+    expect(
+      screen
+        .getAllByRole("textbox")
+        .map((c) => (c as HTMLInputElement).value)
+        .join(""),
+    ).toBe("123456");
+  });
+
+  it("resend is disabled while counting down", () => {
+    const onResend = vi.fn();
+    const { rerender } = render(<AuthInput resendSeconds={59} onResend={onResend} />);
+    expect(screen.getByRole("button", { name: "Resend (59)" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Resend (59)" }));
+    expect(onResend).not.toHaveBeenCalled();
+    rerender(<AuthInput resendSeconds={0} onResend={onResend} />);
+    fireEvent.click(screen.getByRole("button", { name: "Resend" }));
+    expect(onResend).toHaveBeenCalled();
+  });
+
+  it("AuthInputBase derives its state", () => {
+    const { rerender } = render(<AuthInputBase aria-label="c" />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "enabled");
+    rerender(<AuthInputBase aria-label="c" required />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "required");
+    rerender(<AuthInputBase aria-label="c" defaultValue="1" />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "filled");
+    rerender(<AuthInputBase aria-label="c" error />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "error");
+    rerender(<AuthInputBase aria-label="c" disabled />);
+    expect(screen.getByLabelText("c")).toHaveAttribute("data-state", "disabled");
+  });
+});
+
+describe("Callout", () => {
+  it("renders title, description, optional parts and dismisses", async () => {
+    const onDismiss = vi.fn();
+    const onAction = vi.fn();
+    render(
+      <Callout
+        title="Heads up"
+        description="Details"
+        badge="New"
+        actionLabel="Open"
+        onAction={onAction}
+        onDismiss={onDismiss}
+      >
+        <span>slot</span>
+      </Callout>,
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("Heads up");
+    expect(screen.getByText("New")).toBeInTheDocument();
+    expect(screen.getByText("slot")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Open" }));
+    await userEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+    expect(onAction).toHaveBeenCalled();
+    expect(onDismiss).toHaveBeenCalled();
+  });
+
+  it("hides the dismiss button, empty labels and the slot when absent", () => {
+    render(<Callout dismissible={false} title="" description="" assetItem="" badge="" />);
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("status").querySelector("[data-slot=slot]")).toBeNull();
+    expect(screen.getByRole("status").querySelector("p")).toBeNull();
+  });
+
+  it("Sharped has no radius or stroke; Rounded does", () => {
+    const { rerender } = render(<Callout appearance="sharped" title="T" />);
+    expect(screen.getByRole("status").className).not.toMatch(/border-very-subtle|rounded-corner/);
+    rerender(<Callout appearance="rounded" variant="danger" title="T" />);
+    expect(screen.getByRole("status").className).toMatch(/border-very-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/border-alpha-danger-subtle/);
+  });
+});
+
+describe("Toast", () => {
+  it("shows the footer only with an action or bottom label", async () => {
+    const onAction = vi.fn();
+    const { rerender } = render(<Toast title="Saved" />);
+    expect(screen.getByRole("status").querySelector("[data-slot=footer]")).toBeNull();
+    rerender(<Toast title="Saved" actionLabel="Undo" onAction={onAction} />);
+    await userEvent.click(screen.getByRole("button", { name: "Undo" }));
+    expect(onAction).toHaveBeenCalled();
+    rerender(<Toast title="Saved" bottomLabel="2 min ago" />);
+    expect(screen.getByText("2 min ago")).toBeInTheDocument();
+  });
+
+  it("success follows the Figma secondary tokens", () => {
+    render(<Toast variant="success" title="Done" />);
+    expect(screen.getByRole("status").className).toMatch(/border-stroke-secondary-medium/);
+  });
+
+  it("the provider stacks toasts, dismisses by button and auto-dismisses", async () => {
+    vi.useFakeTimers();
+    function Trigger() {
+      const { toast } = useToast();
+      return (
+        <>
+          <button onClick={() => toast({ title: "Sticky", duration: 0 })}>sticky</button>
+          <button onClick={() => toast({ title: "Auto", duration: 1000 })}>auto</button>
+        </>
+      );
+    }
+    render(
+      <ToastProvider>
+        <Trigger />
+      </ToastProvider>,
+    );
+    fireEvent.click(screen.getByText("sticky"));
+    fireEvent.click(screen.getByText("auto"));
+    expect(screen.getByText("Sticky")).toBeInTheDocument();
+    expect(screen.getByText("Auto")).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(1100);
+    });
+    expect(screen.queryByText("Auto")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+    expect(screen.queryByText("Sticky")).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it("useToast throws outside the provider", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    function Bad() {
+      useToast();
+      return null;
+    }
+    expect(() => render(<Bad />)).toThrow(/ToastProvider/);
+    spy.mockRestore();
+  });
+});
+
+describe("Tooltip", () => {
+  it("TooltipBubble squares the corner next to the ribbon", () => {
+    const { container, rerender } = render(<TooltipBubble text="Hi" align="left" />);
+    expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-bl-none/);
+    rerender(<TooltipBubble text="Hi" align="right" />);
+    expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-br-none/);
+    rerender(<TooltipBubble text="Hi" cursor />);
+    expect(container.querySelector("[data-slot=cursor]")).not.toBeNull();
+  });
+
+  it("shows on hover / focus, links aria-describedby and closes on Escape", async () => {
+    render(
+      <Tooltip text="Explains">
+        <button>trigger</button>
+      </Tooltip>,
+    );
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    await userEvent.hover(screen.getByRole("button", { name: "trigger" }));
+    const tip = screen.getByRole("tooltip");
+    expect(tip).toHaveTextContent("Explains");
+    expect(screen.getByRole("button", { name: "trigger" })).toHaveAttribute(
+      "aria-describedby",
+      tip.id,
+    );
+    await userEvent.keyboard("{Escape}");
+    expect(screen.queryByRole("tooltip")).toBeNull();
+    await userEvent.tab();
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
+  });
+
+  it("is controllable with `open`", () => {
+    render(
+      <Tooltip text="Always" open>
+        <button>t</button>
+      </Tooltip>,
+    );
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
+  });
+});
+
+describe("Wizard", () => {
+  it("renders `amount` steps (2–8) and marks steps up to `current` active", () => {
+    const { container, rerender } = render(<Wizard amount={5} current={3} label="Step" />);
+    const steps = [...container.querySelectorAll("[data-slot=step]")];
+    expect(steps).toHaveLength(5);
+    expect(steps.map((s) => s.getAttribute("data-state"))).toEqual([
+      "active",
+      "active",
+      "active",
+      "idle",
+      "idle",
+    ]);
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "3");
+    expect(screen.getByText("Step")).toBeInTheDocument();
+    rerender(<Wizard amount={99} current={0} />);
+    expect(container.querySelectorAll("[data-slot=step]")).toHaveLength(8);
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+    expect(clampWizardAmount(1)).toBe(2);
+    expect(clampWizardAmount(Number.NaN)).toBe(2);
   });
 });

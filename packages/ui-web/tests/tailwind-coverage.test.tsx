@@ -6,9 +6,18 @@ import { describe, expect, it } from "vitest";
 import {
   Accordion,
   Account,
+  Callout,
+  Toast,
+  Tooltip,
+  TooltipBubble,
+  Wizard,
+  AuthInput,
+  AuthInputBase,
   Avatar,
   AvatarStack,
+  ComboBox,
   ContentItem,
+  CounterInput,
   Badge,
   ButtonCTA,
   ButtonIcon,
@@ -194,11 +203,11 @@ function renderEverything() {
       {(["bottom-left", "bottom-right", "top-left", "top-right"] as const).map((align) => (
         <div key={align}>
           <ChipsSelect label="Select" size="sm" align={align} defaultOpen>
-            <ItemSelect selected>One</ItemSelect>
-            <ItemSelect disabled>Two</ItemSelect>
+            <ItemSelect selected text="One" />
+            <ItemSelect disabled text="Two" />
           </ChipsSelect>
           <ButtonList aria-label="More" size="md" align={align} defaultOpen>
-            <ItemSelect>One</ItemSelect>
+            <ItemSelect text="One" />
           </ButtonList>
         </div>
       ))}
@@ -224,16 +233,21 @@ function renderEverything() {
                 badge="3"
                 dotStatus
                 loading
-              >
-                Item
-              </ItemSelect>
+                text="Item"
+              />
             )),
           ),
         ),
       )}
-      <ItemSelect disabled topLabel="Top" bottomLabel="Bottom" badge="1" radiobutton toggle>
-        Disabled
-      </ItemSelect>
+      <ItemSelect
+        disabled
+        topLabel="Top"
+        bottomLabel="Bottom"
+        badge="1"
+        radiobutton
+        toggle
+        text="Disabled"
+      />
       {(["sm", "md", "lg"] as const).map((size) => (
         <div key={size}>
           {(
@@ -245,9 +259,8 @@ function renderEverything() {
                 size={size}
                 variant={variant}
                 appearance={appearance}
-              >
-                OM
-              </AssetItem>,
+                text="OM"
+              />,
               <AssetItem
                 key={`${variant}${appearance}i`}
                 size={size}
@@ -290,7 +303,7 @@ function renderEverything() {
         secondaryAction={<button>Cancel</button>}
         primaryAction={<button>Save</button>}
       >
-        <ItemSelect>One</ItemSelect>
+        <ItemSelect text="One" />
       </PopOver>
       {(["xs", "sm", "md", "lg"] as const).flatMap((size) =>
         (["neutral", "primary", "inverse"] as const).flatMap((variant) =>
@@ -304,7 +317,7 @@ function renderEverything() {
               leadingIcon="plus"
               defaultOpen
             >
-              <ItemSelect>One</ItemSelect>
+              <ItemSelect text="One" />
             </ButtonSelect>
           )),
         ),
@@ -351,9 +364,8 @@ function renderEverything() {
               bottomLabel="Bottom"
               trailingIcon="chevron-down"
               badge="3"
-            >
-              Text
-            </ContentItem>
+              text="Text"
+            />
           )),
         ),
       )}
@@ -372,6 +384,59 @@ function renderEverything() {
           </Accordion>
         )),
       )}
+      {(["sm", "md"] as const).flatMap((size) =>
+        (["rounded", "sharped"] as const).flatMap((appearance) =>
+          (["neutral", "primary", "secondary", "success", "warning", "danger"] as const).map(
+            (variant) => (
+              <Callout
+                key={`co${size}${appearance}${variant}`}
+                size={size}
+                appearance={appearance}
+                variant={variant}
+                title="T"
+                description="D"
+                leadingIcon="info"
+                assetItem="OM"
+                badge="B"
+                actionLabel="Go"
+              >
+                Slot
+              </Callout>
+            ),
+          ),
+        ),
+      )}
+      {(["neutral", "primary", "success", "warning", "danger"] as const).map((variant) => (
+        <Toast
+          key={`to${variant}`}
+          variant={variant}
+          title="T"
+          description="D"
+          leadingIcon="info"
+          assetItem="OM"
+          bottomLabel="L"
+          actionLabel="Go"
+        />
+      ))}
+      {(["neutral", "primary", "inverse"] as const).flatMap((variant) =>
+        (["center", "left", "right"] as const).map((align) => (
+          <TooltipBubble
+            key={`tt${variant}${align}`}
+            variant={variant}
+            align={align}
+            text="Text"
+            cursor
+          />
+        )),
+      )}
+      {(["center", "left", "right"] as const).map((align) => (
+        <Tooltip key={`tp${align}`} text="Text" align={align} open>
+          <button type="button">x</button>
+        </Tooltip>
+      ))}
+      {[2, 3, 8].map((amount) => (
+        <Wizard key={`wz${amount}`} amount={amount} current={2} label="Label" />
+      ))}
       {(["full", "compact"] as const).flatMap((appearance) =>
         [false, true].flatMap((disabled) => (
           <Account
@@ -383,11 +448,92 @@ function renderEverything() {
             disabled={disabled}
             defaultOpen
           >
-            <ItemSelect>One</ItemSelect>
+            <ItemSelect text="One" />
           </Account>
         )),
       )}
       <Account readOnly avatar={{ text: "OM" }} username="User" />
+      {(
+        ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"] as const
+      ).flatMap((variant) =>
+        (["subtle", "medium", "strong"] as const).map((appearance) => (
+          <ContentItem
+            key={`ci-icons-${variant}${appearance}`}
+            variant={variant}
+            appearance={appearance}
+            leadingIcon="house"
+            trailingIcon="house"
+            text="Text"
+          />
+        )),
+      )}
+      {(["sm", "md"] as const).flatMap((size) =>
+        [{}, { required: true }, { disabled: true }].map((state, i) => (
+          <CounterInput
+            key={`counter${size}${i}`}
+            size={size}
+            label="Qty"
+            helper
+            hint="Hint"
+            counter="0/10"
+            min={0}
+            max={5}
+            {...state}
+          />
+        )),
+      )}
+      {(["full", "compact"] as const).flatMap((appearance) =>
+        (["bottom", "top"] as const).flatMap((align) =>
+          [
+            {},
+            { defaultValue: "a" },
+            { required: true },
+            { error: "Error" },
+            { loading: true },
+            { autoCompleted: true },
+            { disabled: true },
+            { defaultOpen: true },
+            { defaultOpen: true, defaultValue: "a", leadingIcon: "house" as const },
+          ].map((state, i) => (
+            <ComboBox
+              key={`combo${appearance}${align}${i}`}
+              appearance={appearance}
+              align={align}
+              label="Label"
+              placeholder="Placeholder"
+              hint="Hint"
+              link={<span>Link</span>}
+              options={[
+                { value: "a", text: "Alpha" },
+                { value: "b", text: "Beta", disabled: true },
+              ]}
+              {...state}
+            />
+          )),
+        ),
+      )}
+      {([4, 6] as const).flatMap((amount) =>
+        [false, true].map((divisor) => (
+          <AuthInput
+            key={`auth${amount}${divisor}`}
+            amount={amount}
+            divisor={divisor}
+            defaultValue="12"
+            resendSeconds={59}
+          />
+        )),
+      )}
+      <AuthInput amount={4} error required autoCompleted disabled />
+      {[
+        {},
+        { required: true },
+        { error: true },
+        { autoCompleted: true },
+        { disabled: true },
+        { defaultValue: "7" },
+      ].map((state, i) => (
+        <AuthInputBase key={`authbase${i}`} aria-label="cell" {...state} />
+      ))}
       <ChipsSelect label="Closed" />
       {(["wrap", "flex"] as const).flatMap((appearance) =>
         (["bottom", "top"] as const).map((align) => (
@@ -405,7 +551,7 @@ function renderEverything() {
                 badge="1"
                 loading
                 buttonIcon="x"
-                buttonList={<ItemSelect>One</ItemSelect>}
+                buttonList={<ItemSelect text="One" />}
               >
                 C
               </TabsBase>
@@ -413,7 +559,7 @@ function renderEverything() {
                 value="d"
                 buttonIcon="x"
                 buttonIconLabel="Close D"
-                buttonList={<ItemSelect>One</ItemSelect>}
+                buttonList={<ItemSelect text="One" />}
               >
                 D
               </TabsBase>
@@ -458,5 +604,5 @@ describe("Tailwind coverage", () => {
       (c) => !MARKERS.has(c) && !isThirdParty(c) && !hasRule(result.css, c),
     );
     expect(missing).toEqual([]);
-  });
+  }, 30_000);
 });

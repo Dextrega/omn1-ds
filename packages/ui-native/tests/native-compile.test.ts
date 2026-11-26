@@ -5,6 +5,57 @@ import postcss from "postcss";
 import tailwind from "tailwindcss";
 import { describe, expect, it } from "vitest";
 import {
+  CALLOUT_ICON_PX,
+  calloutContainer,
+  calloutContent,
+  calloutDescription,
+  calloutSlotText,
+  calloutTitle,
+  calloutTone,
+  type CalloutVariant,
+} from "../src/components/callout/styles";
+import {
+  toastBottomLabel,
+  toastContainer,
+  toastContent,
+  toastDescription,
+  toastFooter,
+  toastRow,
+  toastStack,
+  toastTitle,
+  toastTone,
+  type ToastVariant,
+} from "../src/components/toast/styles";
+import {
+  tooltipBubble,
+  tooltipColumn,
+  tooltipCursor,
+  tooltipFloat,
+  tooltipRibbon,
+  tooltipText,
+} from "../src/components/tooltip/styles";
+import { wizardLabel, wizardRoot, wizardStep, wizardSteps } from "../src/components/wizard/styles";
+import {
+  authInputBaseCell,
+  authInputBaseText,
+  type AuthInputBaseState,
+} from "../src/components/auth-input-base/styles";
+import {
+  counterInputField,
+  counterInputHelperText,
+  counterInputLabel,
+  counterInputRoot,
+  counterInputValue,
+} from "../src/components/counter-input/styles";
+import {
+  comboBoxField,
+  comboBoxHint,
+  comboBoxIconTone,
+  comboBoxLabel,
+  comboBoxText,
+  type ComboBoxFieldState,
+} from "../src/components/combo-box/styles";
+import {
   AVATAR_DOT_POSITION,
   avatarContainer,
   avatarIconTone,
@@ -31,6 +82,7 @@ import {
   accordionIconTone,
   accordionLabel,
   accordionPanel,
+  accordionPanelText,
   accordionRoot,
   accordionTitle,
 } from "../src/components/accordion/styles";
@@ -176,7 +228,7 @@ function allClasses(): string[] {
     add(AVATAR_STACK_OVERLAP[size]);
     add(avatarStackMore(size));
     add(avatarStackMoreText(size));
-    add(contentItemSuffix(size));
+    for (const disabled of [true, false]) add(contentItemSuffix(size, disabled));
     for (const disabled of [true, false]) {
       add(avatarIconTone(disabled));
       for (const interactive of [true, false])
@@ -199,8 +251,45 @@ function allClasses(): string[] {
   }
   add(avatarImageOverlay(true));
   add(avatarImageOverlay(false));
+  add(calloutDescription);
+  add(calloutSlotText);
+  for (const size of ["sm", "md"] as const) {
+    add(calloutContent(size));
+    expect(CALLOUT_ICON_PX[size]).toBeGreaterThan(0);
+    for (const variant of Object.keys(calloutTone) as CalloutVariant[]) {
+      add(calloutTitle(size, variant));
+      for (const appearance of ["rounded", "sharped"] as const)
+        add(calloutContainer({ size, variant, appearance }));
+    }
+  }
+  for (const variant of Object.keys(toastTone) as ToastVariant[]) {
+    add(toastContainer(variant));
+    add(toastTitle(variant));
+  }
+  for (const c of [
+    toastRow,
+    toastContent,
+    toastDescription,
+    toastFooter,
+    toastBottomLabel,
+    toastStack,
+  ])
+    add(c);
+  for (const variant of ["neutral", "primary", "inverse"] as const) {
+    add(tooltipText(variant));
+    add(tooltipRibbon(variant));
+    for (const align of ["center", "left", "right"] as const) {
+      add(tooltipBubble(variant, align));
+      add(tooltipColumn(align));
+      add(tooltipCursor(align));
+      add(tooltipFloat(align));
+    }
+  }
+  for (const c of [wizardRoot, wizardSteps, wizardLabel, wizardStep(true), wizardStep(false)])
+    add(c);
   add(contentItemRow);
-  add(contentItemLabel);
+  add(contentItemLabel(true));
+  add(contentItemLabel(false));
   for (const size of ["sm", "md"] as const) {
     add(accordionColumn(size));
     for (const disabled of [true, false]) {
@@ -216,6 +305,7 @@ function allClasses(): string[] {
     for (const open of [true, false]) add(accordionRoot(open, disabled));
   }
   add(accordionPanel);
+  add(accordionPanelText);
   add("rotate-180");
   for (const appearance of ["full", "compact"] as const)
     for (const active of [true, false])
@@ -308,6 +398,44 @@ function allClasses(): string[] {
   for (const align of ["bottom", "top"] as const)
     for (const disabled of [true, false]) add(tabsIndicator({ align, disabled }));
   add("gap-medium flex-col");
+  // v1.1.5: AuthInputBase, AuthInput, CounterInput, ComboBox
+  for (const state of [
+    "enabled",
+    "active",
+    "filled",
+    "required",
+    "error",
+    "autoCompleted",
+    "disabled",
+  ] as AuthInputBaseState[])
+    for (const fluid of [true, false]) add(authInputBaseCell(state, fluid));
+  for (const disabled of [true, false]) {
+    add(authInputBaseText(disabled));
+    add(counterInputLabel(disabled));
+    add(counterInputHelperText(disabled));
+    add(comboBoxLabel(disabled));
+    add(comboBoxIconTone(disabled));
+    for (const size of ["sm", "md"] as const) add(counterInputValue(size, disabled));
+    for (const required of [true, false]) add(counterInputField(required, disabled));
+    for (const danger of [true, false]) add(comboBoxHint(danger, disabled));
+  }
+  for (const size of ["sm", "md"] as const) add(counterInputRoot(size));
+  for (const state of [
+    "enabled",
+    "active",
+    "filled",
+    "required",
+    "error",
+    "autoCompleted",
+    "loading",
+    "disabled",
+  ] as ComboBoxFieldState[]) {
+    add(comboBoxField(state));
+    for (const empty of [true, false]) add(comboBoxText(state, empty));
+  }
+  add(
+    "w-full items-center gap-subtle flex-row justify-center gap-very-subtle h-0 w-very-subtle shrink-0 border-t border-very-subtle border-stroke-neutral-subtle font-sans text-body-sm font-medium text-surface-on-neutral-medium min-h-x2 items-start justify-end min-w-0 flex-1 gap-extra-subtle",
+  );
   // classes written inline in the components
   add(
     "font-sans text-body-md text-caption text-alpha-inverse-strong text-surface-on-neutral-medium text-surface-on-neutral-subtle text-surface-danger-medium text-surface-on-danger-very-subtle text-surface-on-primary-very-subtle",

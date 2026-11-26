@@ -18,15 +18,9 @@ const meta: Meta<typeof Account> = {
     disabled: false,
     moreIcon: "ellipsis-vertical",
     children: [
-      <ItemSelect key="a" size="sm" appearance="rounded">
-        Profile
-      </ItemSelect>,
-      <ItemSelect key="b" size="sm" appearance="rounded">
-        Settings
-      </ItemSelect>,
-      <ItemSelect key="c" size="sm" appearance="rounded">
-        Sign out
-      </ItemSelect>,
+      <ItemSelect key="a" size="sm" appearance="rounded" text="Profile" />,
+      <ItemSelect key="b" size="sm" appearance="rounded" text="Settings" />,
+      <ItemSelect key="c" size="sm" appearance="rounded" text="Sign out" />,
     ],
   },
   argTypes: {
