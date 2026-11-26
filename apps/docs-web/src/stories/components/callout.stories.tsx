@@ -54,7 +54,9 @@ export const Medium: Story = { args: { size: "md" } };
 export const Sharped: Story = { args: { appearance: "sharped", variant: "primary" } };
 export const Success: Story = { args: { variant: "success", leadingIcon: "circle-check" } };
 export const Warning: Story = { args: { variant: "warning", leadingIcon: "triangle-alert" } };
-export const Informative: Story = { args: { variant: "informative", leadingIcon: "info" } };
+export const Informative: Story = {
+  args: { variant: "informative", leadingIcon: "info", assetItem: true, badge: true },
+};
 export const Danger: Story = { args: { variant: "danger", leadingIcon: "circle-alert" } };
 export const Full: Story = {
   args: {

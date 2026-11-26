@@ -10,7 +10,7 @@ const meta: Meta<typeof AssetItem> = {
     docs: {
       description: {
         component:
-          "Figma: **AssetItem** (6:12105) — a small tile for initials, an icon or an image. Size SM 24 / MD 36 / LG 56 × Variant Neutral / Primary / Secondary / Success / Warning / Danger / Disabled × Appearance Subtle / Strong × Content Text / Icon / Image. Verified against Figma: sizes, radius, every fill and label / icon colour, text styles and icon sizes. Provisional: the Disabled image overlay is fully opaque; the default icon is `maximize`.",
+          "Figma: **AssetItem** (6:12105) — a small tile for initials, an icon or an image. Size SM 24 / MD 36 / LG 56 × Variant Neutral / Primary / Secondary / Success / Warning / Danger / Informative / Disabled × Appearance Subtle / Strong × Content Text / Icon / Image. Verified against Figma: sizes, radius, every fill and label / icon colour, text styles and icon sizes. Provisional: the Disabled image overlay is fully opaque; the default icon is `maximize`.",
       },
     },
   },
@@ -35,6 +35,7 @@ const variants = [
   "success",
   "warning",
   "danger",
+  "informative",
   "disabled",
 ] as const;
 export const Matrix: Story = {

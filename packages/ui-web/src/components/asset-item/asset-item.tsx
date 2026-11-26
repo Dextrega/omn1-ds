@@ -5,7 +5,7 @@ import { cn } from "../../lib/cn";
 
 /**
  * Figma: AssetItem (6:12105) — a small square tile for an initial / icon / image. Size SM 24 / MD 36 / LG 56 ×
- * Variant Neutral / Primary / Secondary / Success / Warning / Danger / Disabled × Appearance Subtle / Strong ×
+ * Variant Neutral / Primary / Secondary / Success / Warning / Danger / Informative / Disabled × Appearance Subtle / Strong ×
  * Content Text / Icon / Image (the Figma `Content` variant is the `content` prop).
  *
  * Verified against Figma: sizes and radius (SM · MD 8, LG 16), fills and label / icon colours of every Variant ×
@@ -30,6 +30,7 @@ export const assetItemVariants = cva(
         success: "",
         warning: "",
         danger: "",
+        informative: "",
         disabled: "bg-surface-neutral-subtle text-surface-on-neutral-medium",
       },
       appearance: { subtle: "", strong: "" },
@@ -95,6 +96,16 @@ export const assetItemVariants = cva(
         appearance: "strong",
         class: "bg-surface-danger-medium text-surface-on-danger-very-subtle",
       },
+      {
+        variant: "informative",
+        appearance: "subtle",
+        class: "bg-alpha-information-very-subtle text-surface-on-information-strong",
+      },
+      {
+        variant: "informative",
+        appearance: "strong",
+        class: "bg-surface-information-medium text-surface-on-information-very-subtle",
+      },
     ],
     defaultVariants: { size: "sm", variant: "neutral", appearance: "subtle" },
   },
@@ -102,7 +113,14 @@ export const assetItemVariants = cva(
 
 export type AssetItemSize = "sm" | "md" | "lg";
 export type AssetItemVariant =
-  "neutral" | "primary" | "secondary" | "success" | "warning" | "danger" | "disabled";
+  | "neutral"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "informative"
+  | "disabled";
 export type AssetItemAppearance = "subtle" | "strong";
 export type AssetItemContent = "text" | "icon" | "image";
 

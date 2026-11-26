@@ -19,7 +19,7 @@ export const calloutTone: Record<
     border: string;
     title: string;
     icon: string;
-    asset: Exclude<CalloutVariant, "informative">;
+    asset: CalloutVariant;
   }
 > = {
   neutral: {
@@ -64,13 +64,12 @@ export const calloutTone: Record<
     icon: "text-surface-on-danger-strong",
     asset: "danger",
   },
-  // Figma binds the Informative AssetItem to `Opacity/Danger/VerySubtle` (anomaly, see docs/FINDINGS.md): kept as drawn.
   informative: {
     surface: "bg-surface-information-very-subtle",
     border: "border-alpha-information-subtle",
     title: "text-surface-on-information-strong",
     icon: "text-surface-on-information-strong",
-    asset: "danger",
+    asset: "informative",
   },
 };
 
@@ -84,7 +83,7 @@ export const CALLOUT_ICON_PX = { sm: 16, md: 20 } as const;
  * Surface/{Variant}/VerySubtle, Rounded = 1px stroke `Opacity/{Variant}/Subtle` (Neutral → `Opacity/Inverse/Subtle`)
  * + Corner Radius/VerySubtle, Sharped = no stroke and no radius, title Caption (SM) / Body MD (MD) in
  * `Surface/On{Variant}/Strong` (Neutral → VeryStrong), description Caption `Opacity/Inverse/Strong`, Content gap 4 on SM,
- * AssetItem 24 / 36, Badge (Primary · Subtle) 16 / 24, ButtonDismiss = ButtonIcon XS · Neutral · Ghost.
+ * AssetItem 24 / 36 (Informative AssetItem: `Opacity/Information/VerySubtle`, fixed in Figma), Badge (Primary · Subtle) 16 / 24, ButtonDismiss = ButtonIcon XS · Neutral · Ghost.
  * Props → Figma: `title` (Title1/Title), `description` (Description1/Description), `leadingIcon`, `assetItem` + `assetItemText` (boolean + initials),
  * `badge` + `badgeText` (boolean + text), `actionLabel` + `onAction` (ButtonCTA), `dismissible` + `onDismiss` (ButtonDismiss), `children` (`<> Slot`).
  * LeadingIcon colour: read from Figma where bound (Neutral MD `OnNeutral/Strong`; Primary, Success and Informative = `On…/Strong`, same as the

@@ -15,7 +15,7 @@ export const calloutTone: Record<
     border: string;
     title: string;
     icon: string;
-    asset: Exclude<CalloutVariant, "informative">;
+    asset: CalloutVariant;
   }
 > = {
   neutral: {
@@ -60,13 +60,12 @@ export const calloutTone: Record<
     icon: "text-surface-on-danger-strong",
     asset: "danger",
   },
-  // Figma binds the Informative AssetItem to `Opacity/Danger/VerySubtle` (anomaly, see docs/FINDINGS.md): kept as drawn.
   informative: {
     surface: "bg-surface-information-very-subtle",
     border: "border-alpha-information-subtle",
     title: "text-surface-on-information-strong",
     icon: "text-surface-on-information-strong",
-    asset: "danger",
+    asset: "informative",
   },
 };
 

@@ -2,7 +2,14 @@ import { cn } from "../../lib/cn";
 
 export type AssetItemSize = "sm" | "md" | "lg";
 export type AssetItemVariant =
-  "neutral" | "primary" | "secondary" | "success" | "warning" | "danger" | "disabled";
+  | "neutral"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "informative"
+  | "disabled";
 export type AssetItemAppearance = "subtle" | "strong";
 
 /** Same tokens as @omn1/ui-web (Figma AssetItem 6:12105). Literal class strings for NativeWind. */
@@ -43,6 +50,10 @@ const TONE: Record<AssetItemVariant, Record<AssetItemAppearance, [string, string
   danger: {
     subtle: ["bg-alpha-danger-very-subtle", "text-surface-on-danger-strong"],
     strong: ["bg-surface-danger-medium", "text-surface-on-danger-very-subtle"],
+  },
+  informative: {
+    subtle: ["bg-alpha-information-very-subtle", "text-surface-on-information-strong"],
+    strong: ["bg-surface-information-medium", "text-surface-on-information-very-subtle"],
   },
   disabled: {
     subtle: ["bg-surface-neutral-subtle", "text-surface-on-neutral-medium"],

@@ -3,6 +3,41 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.2.0 — SegmentedControl, Stepper, Breadcrumbs, AssetItem Informative
+
+### Summary
+
+Three navigation / selection components land from Figma on web and native (SegmentedControl, Stepper, Breadcrumbs), AssetItem gains the Informative variant and the Callout Informative now uses it.
+
+### Breaking Changes
+
+None.
+
+### Added
+
+- In **SegmentedControl**, on **component**, added Amount 2–5 of `_SegmentBase` (Selection Off / On × State) with LeadingIcon, text, Badge (Neutral · Subtle · MD, Disabled when disabled) and TrailingIcon, using the `shadow-level-1` / `nativeShadow("level-1")` effect token on the On segment.
+- **[Provisional]** In **SegmentedControl**, on **behaviour**, added radiogroup semantics with arrow-key navigation (skipping disabled segments), a `Stroke/Primary/Medium` focus ring and `w-full` width (312 has no token); the Figma `Loader` and `Button` slots are not implemented.
+- In **Stepper**, on **component**, added Amount 2–6 of `_StepItem` (State Idle / Active / Success × Step Start / Middle / End) with the number (`showValue`) and `labels`.
+- **[Provisional]** In **Stepper**, on **current**, added `current` (1-based) that derives Success / Active / Idle because Figma draws each step state in isolation, `w-full` width (400 has no token), the Active stroke weight (unbound in Figma, 1px) and the check icon colour (`OnPrimary/VerySubtle`).
+- In **Breadcrumbs**, on **component**, added `Breadcrumbs` and `Breadcrumb` (Size SM / MD × Selection Off / On × State Enabled · Hovered · Pressed · Focused · Disabled) with LeadingIcon and the "/" Divisor.
+- **[Provisional]** In **Breadcrumbs**, on **current**, added `current` (0-based, default the last crumb, `aria-current="page"`) because Figma draws the first crumb as Selection=On; the `ButtonClosable` and `TrailingIcon` slots are not implemented.
+- In **AssetItem**, on **Variant**, added Informative × Subtle (`Opacity/Information/VerySubtle`, `OnInformation/Strong`) · Strong (`Surface/Information/Medium`, `OnInformation/VeryStrong`) for Text, Icon and Image.
+- In **Storybook**, on **stories**, added SegmentedControl, Stepper and Breadcrumbs and the Informative AssetItem.
+
+### Updated
+
+- In **Callout**, on **Informative AssetItem**, updated the tile from the Danger variant to the Informative one (Figma fixed the binding), so the red-tile anomaly is resolved.
+- In **Callout**, on **LeadingIcon**, checked every Variant in Storybook: the icon renders with the same colour as the title (the unbound Figma icons stay **[Provisional]**).
+- In **docs**, on **FIGMA-SYNC / FINDINGS**, added the v1.2.0 section, three component rows and anomaly 17.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: every SegmentedControl / Stepper / Breadcrumbs variant compiles in Tailwind and NativeWind; behaviour tests for selection, arrow keys, derived Stepper states, current crumb and the Informative AssetItem.
+
 ## v1.1.8 — Informative variant, Toast / Tooltip fixes
 
 ### Summary
