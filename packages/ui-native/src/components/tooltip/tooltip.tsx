@@ -10,6 +10,7 @@ import {
   tooltipCursor,
   tooltipFloat,
   tooltipRibbon,
+  tooltipRibbonPath,
   tooltipShadow,
   tooltipText,
   type TooltipAlign,
@@ -48,7 +49,7 @@ export function TooltipBubble({
         <Text className={tooltipText(variant)}>{text}</Text>
       </View>
       <Svg width={8} height={4} viewBox="0 0 8 4" className={tooltipRibbon(variant)}>
-        <Path d="M0 0h8L4 4z" fill="currentColor" />
+        <Path d={tooltipRibbonPath[align]} fill="currentColor" />
       </Svg>
       {cursor && <Icon name="mouse-pointer-2" size={16} className={tooltipCursor(align)} />}
     </View>

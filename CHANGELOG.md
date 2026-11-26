@@ -3,6 +3,43 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.1.8 — Informative variant, Toast / Tooltip fixes
+
+### Summary
+
+Callout and Badge gain the Informative variant, Callout's `assetItem` / `badge` props become booleans, and Toast, Callout and Tooltip are re-synced with the corrected Figma bindings.
+
+### Breaking Changes
+
+- In **Callout**, on **`assetItem` and `badge` props**, updated both from `string` to `boolean` (web and native). Pass `assetItem` / `badge` to show the slot and use the new `assetItemText` (default `"OM"`) / `badgeText` (default `"Badge"`) to customise the label.
+
+### Added
+
+- In **Callout**, on **Variant**, added Informative (`Surface/Information/VerySubtle` fill, `Opacity/Information/Subtle` stroke, `OnInformation/Strong` title and icon).
+- In **Callout**, on **props**, added `assetItemText` and `badgeText`.
+- In **Badge**, on **Variant**, added Informative × Strong · Subtle · Outlined (72 variants in total).
+- **[Provisional]** In **Callout**, on **Informative AssetItem**, kept the Danger tile that Figma binds to this variant (`Opacity/Danger/VerySubtle`); it looks like a Figma mistake (FINDINGS.md item 16).
+
+### Updated
+
+- In **Toast**, on **Success**, updated the tokens to the corrected Figma bindings (`Surface/Success/VerySubtle` fill, `Stroke/Success/Subtle`, `OnSuccess/Strong` text; it no longer renders pink).
+- In **Toast**, on **border**, updated the stroke of every variant to `Stroke/{Variant}/Subtle`.
+- In **Toast**, on **Container**, updated the gap to `VerySubtle` (Figma changed it).
+- In **Callout**, on **Size SM**, updated the gap to `VerySubtle` (MD stays `Subtle`, as in Figma).
+- In **Callout**, on **LeadingIcon**, locked the icon colour per variant in the tone map (Success and Primary use the title colour, Neutral uses `OnNeutral/Strong`).
+- In **Badge**, on **LeadingIcon**, documented that the icon follows the text colour (Warning / Strong is `OnWarning/VeryStrong`, already correct).
+- In **Tooltip**, on **Ribbon**, updated Align Left / Right to the Figma shapes (the tip sits on the corner, not centred); Center is unchanged.
+- In **Tooltip**, on **Primary Ribbon**, updated the colour to `OnPrimary/Medium`.
+- **[Provisional]** In **Callout**, on **LeadingIcon**, Secondary / Warning / Danger (and Neutral SM) are unbound in Figma; code follows the title colour.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests and stories: Informative Callout / Badge, boolean props, Toast tokens and Tooltip ribbon paths are covered in web and native.
+
 ## v1.1.7 — Callout, Toast, Tooltip, Wizard
 
 ### Summary

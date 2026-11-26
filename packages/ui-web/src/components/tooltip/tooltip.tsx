@@ -25,7 +25,7 @@ export const tooltipTone: Record<TooltipVariant, { bubble: string; text: string;
     primary: {
       bubble: "bg-surface-primary-medium",
       text: "text-surface-on-neutral-very-subtle",
-      ribbon: "text-surface-primary-medium",
+      ribbon: "text-surface-on-primary-medium",
     },
     inverse: {
       bubble: "bg-global-white",
@@ -40,6 +40,12 @@ export const tooltipBubbleAlign: Record<TooltipAlign, string> = {
   left: "rounded-extra-subtle rounded-bl-none",
   right: "rounded-extra-subtle rounded-br-none",
 };
+/** Ribbon geometry (8×4, read from Figma): Center is an isosceles triangle, Left / Right are right triangles whose vertical edge continues the bubble's square corner. */
+export const tooltipRibbonPath: Record<TooltipAlign, string> = {
+  center: "M4 4L8 0H0Z",
+  left: "M0 4L8 0H0Z",
+  right: "M8 4L0 0H8Z",
+};
 export const tooltipColumnAlign: Record<TooltipAlign, string> = {
   center: "items-center",
   left: "items-start",
@@ -52,7 +58,7 @@ export const tooltipColumnAlign: Record<TooltipAlign, string> = {
  * Verified against Figma: bubble padding Spacement/VerySubtle, radius Border Radius/ExtraSubtle (the corner beside the
  * ribbon is square for Left / Right), max width 240 (`System/x30`), text Caption (`Surface/OnNeutral/VerySubtle`, Inverse →
  * `OnNeutral/VeryStrong`), fills Neutral `Surface/Neutral/VeryStrong` · Primary `Surface/Primary/Medium` · Inverse
- * `Key/Global/White`, Ribbon 8×4 below the bubble, effect DropShadow/Level 2 (token `shadow-level-2`).
+ * `Key/Global/White`, Ribbon 8×4 below the bubble (Left / Right are right triangles, Center is isosceles), effect DropShadow/Level 2 (token `shadow-level-2`).
  * `TooltipBubble` is the static Figma component; `Tooltip` wraps a trigger and shows the bubble ABOVE it on
  * hover / focus (Escape closes).
  * Provisional: Figma draws only the bubble — placement above the trigger, the show/hide behaviour, `role="tooltip"` and the
@@ -98,7 +104,7 @@ export const TooltipBubble = forwardRef<HTMLDivElement, TooltipBubbleProps>(func
         viewBox="0 0 8 4"
         className={cn("shrink-0 fill-current", tone.ribbon)}
       >
-        <path d="M0 0h8L4 4z" />
+        <path d={tooltipRibbonPath[align]} />
       </svg>
       {cursor && (
         <span

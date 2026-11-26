@@ -15,7 +15,7 @@ export const tooltipTone: Record<TooltipVariant, { bubble: string; text: string;
     primary: {
       bubble: "bg-surface-primary-medium",
       text: "text-surface-on-neutral-very-subtle",
-      ribbon: "text-surface-primary-medium",
+      ribbon: "text-surface-on-primary-medium",
     },
     inverse: {
       bubble: "bg-global-white",
@@ -27,6 +27,12 @@ const bubbleAlign: Record<TooltipAlign, string> = {
   center: "rounded-extra-subtle",
   left: "rounded-extra-subtle rounded-bl-none",
   right: "rounded-extra-subtle rounded-br-none",
+};
+/** Ribbon geometry (8×4, read from Figma): Center is isosceles, Left / Right are right triangles. */
+export const tooltipRibbonPath: Record<TooltipAlign, string> = {
+  center: "M4 4L8 0H0Z",
+  left: "M0 4L8 0H0Z",
+  right: "M8 4L0 0H8Z",
 };
 export const tooltipColumn = (align: TooltipAlign) =>
   align === "center" ? "items-center" : align === "left" ? "items-start" : "items-end";

@@ -12,8 +12,8 @@ const meta: Meta<typeof Callout> = {
     title: "Title",
     description: "Description",
     leadingIcon: undefined,
-    assetItem: "",
-    badge: "",
+    assetItem: false,
+    badge: false,
     actionLabel: "",
     dismissible: true,
   },
@@ -21,13 +21,15 @@ const meta: Meta<typeof Callout> = {
     size: { control: "inline-radio", options: ["sm", "md"] },
     variant: {
       control: "select",
-      options: ["neutral", "primary", "secondary", "success", "warning", "danger"],
+      options: ["neutral", "primary", "secondary", "success", "warning", "danger", "informative"],
     },
     appearance: { control: "inline-radio", options: ["rounded", "sharped"] },
     title: { control: "text" },
     description: { control: "text" },
-    assetItem: { control: "text" },
-    badge: { control: "text" },
+    assetItem: { control: "boolean" },
+    assetItemText: { control: "text" },
+    badge: { control: "boolean" },
+    badgeText: { control: "text" },
     actionLabel: { control: "text" },
     dismissible: { control: "boolean" },
     leadingIcon: {
@@ -52,13 +54,15 @@ export const Medium: Story = { args: { size: "md" } };
 export const Sharped: Story = { args: { appearance: "sharped", variant: "primary" } };
 export const Success: Story = { args: { variant: "success", leadingIcon: "circle-check" } };
 export const Warning: Story = { args: { variant: "warning", leadingIcon: "triangle-alert" } };
+export const Informative: Story = { args: { variant: "informative", leadingIcon: "info" } };
 export const Danger: Story = { args: { variant: "danger", leadingIcon: "circle-alert" } };
 export const Full: Story = {
   args: {
     size: "md",
     variant: "primary",
-    assetItem: "OM",
-    badge: "New",
+    assetItem: true,
+    badge: true,
+    badgeText: "New",
     actionLabel: "Open",
     description: "Everything on at once.",
   },
