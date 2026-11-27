@@ -5,6 +5,11 @@ import {
   Accordion,
   Account,
   Callout,
+  SegmentedControl,
+  Stepper,
+  Breadcrumbs,
+  Breadcrumb,
+  clampStepperAmount,
   Toast,
   ToastProvider,
   Tooltip,
@@ -915,6 +920,29 @@ describe("AuthInput / AuthInputBase", () => {
   });
 });
 
+describe("Badge Informative", () => {
+  it("renders the Information tokens in every appearance", () => {
+    const { rerender } = render(
+      <Badge variant="informative" appearance="subtle">
+        B
+      </Badge>,
+    );
+    expect(screen.getByText("B").className).toMatch(/bg-surface-information-subtle/);
+    rerender(
+      <Badge variant="informative" appearance="strong">
+        B
+      </Badge>,
+    );
+    expect(screen.getByText("B").className).toMatch(/text-surface-on-information-very-subtle/);
+    rerender(
+      <Badge variant="informative" appearance="outlined">
+        B
+      </Badge>,
+    );
+    expect(screen.getByText("B").className).toMatch(/ring-stroke-information-medium/);
+  });
+});
+
 describe("Callout", () => {
   it("renders title, description, optional parts and dismisses", async () => {
     const onDismiss = vi.fn();
@@ -923,7 +951,8 @@ describe("Callout", () => {
       <Callout
         title="Heads up"
         description="Details"
-        badge="New"
+        badge
+        badgeText="New"
         actionLabel="Open"
         onAction={onAction}
         onDismiss={onDismiss}
@@ -941,10 +970,28 @@ describe("Callout", () => {
   });
 
   it("hides the dismiss button, empty labels and the slot when absent", () => {
-    render(<Callout dismissible={false} title="" description="" assetItem="" badge="" />);
+    render(<Callout dismissible={false} title="" description="" assetItem={false} badge={false} />);
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.getByRole("status").querySelector("[data-slot=slot]")).toBeNull();
     expect(screen.getByRole("status").querySelector("p")).toBeNull();
+  });
+
+  it("assetItem and badge are booleans with Figma default texts", () => {
+    const { rerender } = render(<Callout title="T" assetItem badge />);
+    expect(screen.getByText("OM")).toBeInTheDocument();
+    expect(screen.getByText("Badge")).toBeInTheDocument();
+    rerender(<Callout title="T" assetItem assetItemText="AB" badge badgeText="Hot" />);
+    expect(screen.getByText("AB")).toBeInTheDocument();
+    expect(screen.getByText("Hot")).toBeInTheDocument();
+  });
+
+  it("gap is VerySubtle on SM and Subtle on MD; Informative uses the Information tokens", () => {
+    const { rerender } = render(<Callout size="sm" variant="informative" title="T" />);
+    expect(screen.getByRole("status").className).toMatch(/gap-very-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/bg-surface-information-very-subtle/);
+    rerender(<Callout size="md" appearance="rounded" variant="informative" title="T" />);
+    expect(screen.getByRole("status").className).toMatch(/gap-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/border-alpha-information-subtle/);
   });
 
   it("Sharped has no radius or stroke; Rounded does", () => {
@@ -968,9 +1015,12 @@ describe("Toast", () => {
     expect(screen.getByText("2 min ago")).toBeInTheDocument();
   });
 
-  it("success follows the Figma secondary tokens", () => {
-    render(<Toast variant="success" title="Done" />);
-    expect(screen.getByRole("status").className).toMatch(/border-stroke-secondary-medium/);
+  it("uses the Success tokens and the Subtle strokes", () => {
+    const { rerender } = render(<Toast variant="success" title="Done" />);
+    expect(screen.getByRole("status").className).toMatch(/bg-surface-success-very-subtle/);
+    expect(screen.getByRole("status").className).toMatch(/border-stroke-success-subtle/);
+    rerender(<Toast variant="danger" title="Done" />);
+    expect(screen.getByRole("status").className).toMatch(/border-stroke-danger-subtle/);
   });
 
   it("the provider stacks toasts, dismisses by button and auto-dismisses", async () => {
@@ -1019,6 +1069,18 @@ describe("Tooltip", () => {
     expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-bl-none/);
     rerender(<TooltipBubble text="Hi" align="right" />);
     expect(container.querySelector("[data-slot=bubble]")!.className).toMatch(/rounded-br-none/);
+    rerender(<TooltipBubble text="Hi" align="center" />);
+    expect(container.querySelector("[data-slot=ribbon] path")!.getAttribute("d")).toBe(
+      "M4 4L8 0H0Z",
+    );
+    rerender(<TooltipBubble text="Hi" align="left" />);
+    expect(container.querySelector("[data-slot=ribbon] path")!.getAttribute("d")).toBe(
+      "M0 4L8 0H0Z",
+    );
+    rerender(<TooltipBubble text="Hi" align="right" />);
+    expect(container.querySelector("[data-slot=ribbon] path")!.getAttribute("d")).toBe(
+      "M8 4L0 0H8Z",
+    );
     rerender(<TooltipBubble text="Hi" cursor />);
     expect(container.querySelector("[data-slot=cursor]")).not.toBeNull();
   });
@@ -1072,5 +1134,119 @@ describe("Wizard", () => {
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
     expect(clampWizardAmount(1)).toBe(2);
     expect(clampWizardAmount(Number.NaN)).toBe(2);
+  });
+});
+
+describe("AssetItem / Callout Informative", () => {
+  it("AssetItem Informative uses the Information tokens", () => {
+    const { container, rerender } = render(<AssetItem variant="informative" text="OM" />);
+    const el = container.querySelector("[data-slot=asset-item]")!;
+    expect(el).toHaveClass(
+      "bg-alpha-information-very-subtle",
+      "text-surface-on-information-strong",
+    );
+    rerender(<AssetItem variant="informative" appearance="strong" text="OM" />);
+    expect(container.querySelector("[data-slot=asset-item]")).toHaveClass(
+      "bg-surface-information-medium",
+      "text-surface-on-information-very-subtle",
+    );
+  });
+  it("Callout Informative draws an Informative AssetItem", () => {
+    const { container } = render(<Callout variant="informative" title="T" assetItem />);
+    expect(container.querySelector("[data-slot=asset-item]")).toHaveClass(
+      "bg-alpha-information-very-subtle",
+    );
+  });
+});
+
+describe("SegmentedControl", () => {
+  const items = [
+    { value: "a", label: "One" },
+    { value: "b", label: "Two", badge: "3" },
+    { value: "c", label: "Three", disabled: true },
+    { value: "d", label: "Four" },
+  ];
+  it("selects with click, skips disabled segments with the arrow keys and is a radiogroup", async () => {
+    const onValueChange = vi.fn();
+    render(<SegmentedControl items={items} onValueChange={onValueChange} />);
+    expect(screen.getByRole("radiogroup")).toBeInTheDocument();
+    const radios = screen.getAllByRole("radio");
+    expect(radios[0]).toHaveAttribute("aria-checked", "true");
+    expect(radios[0]).toHaveClass("bg-surface-neutral-very-subtle", "shadow-level-1");
+    expect(radios[1]).not.toHaveClass("shadow-level-1");
+    await userEvent.click(radios[1]);
+    expect(onValueChange).toHaveBeenLastCalledWith("b");
+    expect(radios[1]).toHaveAttribute("aria-checked", "true");
+    radios[1].focus();
+    await userEvent.keyboard("{ArrowRight}");
+    expect(onValueChange).toHaveBeenLastCalledWith("d");
+    await userEvent.keyboard("{ArrowRight}");
+    expect(onValueChange).toHaveBeenLastCalledWith("a");
+    expect(radios[2]).toBeDisabled();
+    expect(radios[2]).toHaveClass("disabled:text-surface-on-neutral-medium");
+  });
+  it("is controlled by `value` and disables everything with `disabled`", () => {
+    const { rerender } = render(<SegmentedControl items={items} value="d" />);
+    expect(screen.getAllByRole("radio")[3]).toHaveAttribute("aria-checked", "true");
+    rerender(<SegmentedControl items={items} value="d" disabled />);
+    screen.getAllByRole("radio").forEach((r) => expect(r).toBeDisabled());
+  });
+});
+
+describe("Stepper", () => {
+  it("derives Success / Active / Idle from `current` and clamps the amount (2–6)", () => {
+    const { container, rerender } = render(
+      <Stepper amount={4} current={2} labels={["A", "B", "C", "D"]} />,
+    );
+    const steps = [...container.querySelectorAll("[data-slot=step]")];
+    expect(steps.map((s) => s.getAttribute("data-state"))).toEqual([
+      "success",
+      "active",
+      "idle",
+      "idle",
+    ]);
+    expect(steps[1]).toHaveAttribute("aria-current", "step");
+    expect(screen.getByText("C")).toBeInTheDocument();
+    expect(steps[0].querySelector("svg")).not.toBeNull();
+    expect(steps[1].textContent).toContain("2");
+    rerender(<Stepper amount={99} current={99} />);
+    const all = [...container.querySelectorAll("[data-slot=step]")];
+    expect(all).toHaveLength(6);
+    expect(all.every((s) => s.getAttribute("data-state") === "success")).toBe(true);
+    expect(clampStepperAmount(1)).toBe(2);
+  });
+});
+
+describe("Breadcrumbs", () => {
+  it("marks the last crumb current by default, renders dividers and anchors", () => {
+    render(
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Docs", onClick: () => {} },
+          { label: "Page" },
+        ]}
+      />,
+    );
+    expect(screen.getByRole("navigation", { name: "Breadcrumb" })).toBeInTheDocument();
+    expect(screen.getByText("Home").closest("a")).toHaveAttribute("href", "/");
+    expect(screen.getByText("Page").closest("button")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Page").closest("button")).toHaveClass(
+      "text-surface-on-neutral-very-strong",
+    );
+    expect(screen.getByText("Docs").closest("button")).toHaveClass("text-alpha-inverse-strong");
+    expect(screen.getAllByText("/")).toHaveLength(2);
+  });
+  it("a Crumb handles clicks and Disabled", async () => {
+    const onClick = vi.fn();
+    const { rerender } = render(<Breadcrumb onClick={onClick}>Go</Breadcrumb>);
+    await userEvent.click(screen.getByText("Go"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    rerender(
+      <Breadcrumb disabled href="/x" onClick={onClick}>
+        Go
+      </Breadcrumb>,
+    );
+    expect(screen.getByText("Go").closest("button")).toBeDisabled();
   });
 });

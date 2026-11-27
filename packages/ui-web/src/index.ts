@@ -41,3 +41,6 @@ export * from "./components/callout";
 export * from "./components/toast";
 export * from "./components/tooltip";
 export * from "./components/wizard";
+export * from "./components/segmented-control";
+export * from "./components/stepper";
+export * from "./components/breadcrumbs";

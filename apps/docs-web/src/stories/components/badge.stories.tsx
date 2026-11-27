@@ -10,7 +10,16 @@ const meta = {
     size: { control: "inline-radio", options: ["sm", "md", "lg"] },
     variant: {
       control: "select",
-      options: ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"],
+      options: [
+        "neutral",
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "danger",
+        "informative",
+        "disabled",
+      ],
     },
     appearance: { control: "inline-radio", options: ["subtle", "strong", "outlined"] },
     leadingIcon: { control: "select", options: [undefined, ...iconNames] },

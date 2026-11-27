@@ -32,8 +32,35 @@ import {
   tooltipCursor,
   tooltipFloat,
   tooltipRibbon,
+  tooltipRibbonPath,
   tooltipText,
 } from "../src/components/tooltip/styles";
+import {
+  segmentedControlLabel,
+  segmentedControlLabelColor,
+  segmentedControlRoot,
+  segmentedControlSegment,
+} from "../src/components/segmented-control/styles";
+import {
+  stepCircle,
+  stepCircleBase,
+  stepItem,
+  stepLabel,
+  stepLine,
+  stepNumber,
+  stepNumberBase,
+  stepRow,
+  stepperRoot,
+  stepPosition,
+  stepState,
+} from "../src/components/stepper/styles";
+import {
+  breadcrumbContainer,
+  breadcrumbDivisor,
+  breadcrumbLabel,
+  breadcrumbLabelColor,
+  breadcrumbsRoot,
+} from "../src/components/breadcrumbs/styles";
 import { wizardLabel, wizardRoot, wizardStep, wizardSteps } from "../src/components/wizard/styles";
 import {
   authInputBaseCell,
@@ -203,6 +230,7 @@ function allClasses(): string[] {
       "success",
       "warning",
       "danger",
+      "informative",
       "disabled",
     ] as const)
       for (const appearance of ["subtle", "strong"] as const) {
@@ -258,6 +286,7 @@ function allClasses(): string[] {
     expect(CALLOUT_ICON_PX[size]).toBeGreaterThan(0);
     for (const variant of Object.keys(calloutTone) as CalloutVariant[]) {
       add(calloutTitle(size, variant));
+      add(calloutTone[variant].icon);
       for (const appearance of ["rounded", "sharped"] as const)
         add(calloutContainer({ size, variant, appearance }));
     }
@@ -283,10 +312,39 @@ function allClasses(): string[] {
       add(tooltipColumn(align));
       add(tooltipCursor(align));
       add(tooltipFloat(align));
+      expect(tooltipRibbonPath[align]).toMatch(/^M/);
     }
   }
   for (const c of [wizardRoot, wizardSteps, wizardLabel, wizardStep(true), wizardStep(false)])
     add(c);
+  add(segmentedControlRoot);
+  for (const selected of [true, false])
+    for (const disabled of [true, false]) {
+      add(segmentedControlSegment(selected, disabled));
+      add(segmentedControlLabel(selected, disabled));
+      add(segmentedControlLabelColor(selected, disabled));
+    }
+  for (const c of [stepperRoot, stepItem, stepRow, stepCircleBase, stepNumberBase, stepLabel])
+    add(c);
+  for (const state of ["idle", "active", "success"] as const) {
+    add(stepCircle[state]);
+    add(stepNumber[state]);
+    for (const position of ["start", "middle", "end"] as const)
+      for (const side of [1, 2] as const) add(stepLine(state, position, side));
+  }
+  expect([0, 1, 2].map((i) => stepState(i, 2))).toEqual(["success", "active", "idle"]);
+  expect([0, 1, 2].map((i) => stepPosition(i, 3))).toEqual(["start", "middle", "end"]);
+  add(breadcrumbsRoot);
+  for (const size of ["sm", "md"] as const) {
+    add(breadcrumbDivisor(size));
+    for (const disabled of [true, false]) {
+      add(breadcrumbContainer(size, disabled));
+      for (const selected of [true, false]) {
+        add(breadcrumbLabel(size, selected, disabled));
+        add(breadcrumbLabelColor(selected, disabled));
+      }
+    }
+  }
   add(contentItemRow);
   add(contentItemLabel(true));
   add(contentItemLabel(false));
@@ -339,6 +397,7 @@ function allClasses(): string[] {
     "success",
     "warning",
     "danger",
+    "informative",
     "disabled",
   ] as const)
     for (const appearance of ["subtle", "strong", "outlined"] as const)

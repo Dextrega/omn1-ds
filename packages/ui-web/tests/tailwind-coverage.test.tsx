@@ -11,6 +11,9 @@ import {
   Tooltip,
   TooltipBubble,
   Wizard,
+  SegmentedControl,
+  Stepper,
+  Breadcrumbs,
   AuthInput,
   AuthInputBase,
   Avatar,
@@ -58,6 +61,7 @@ const badgeVariants = [
   "success",
   "warning",
   "danger",
+  "informative",
   "disabled",
 ] as const;
 const badgeAppearances = ["subtle", "strong", "outlined"] as const;
@@ -251,7 +255,16 @@ function renderEverything() {
       {(["sm", "md", "lg"] as const).map((size) => (
         <div key={size}>
           {(
-            ["neutral", "primary", "secondary", "success", "warning", "danger", "disabled"] as const
+            [
+              "neutral",
+              "primary",
+              "secondary",
+              "success",
+              "warning",
+              "danger",
+              "informative",
+              "disabled",
+            ] as const
           ).flatMap((variant) =>
             (["subtle", "strong"] as const).flatMap((appearance) => [
               <AssetItem
@@ -350,24 +363,26 @@ function renderEverything() {
         />
       ))}
       {(["sm", "md", "lg"] as const).flatMap((size) =>
-        badgeVariants.flatMap((variant) =>
-          (["subtle", "medium", "strong"] as const).map((appearance) => (
-            <ContentItem
-              key={`ci${size}${variant}${appearance}`}
-              size={size}
-              variant={variant}
-              appearance={appearance}
-              avatar={{ text: "OM" }}
-              leadingIcon="house"
-              topLabel="Top"
-              suffix="S"
-              bottomLabel="Bottom"
-              trailingIcon="chevron-down"
-              badge="3"
-              text="Text"
-            />
-          )),
-        ),
+        badgeVariants
+          .filter((v) => v !== "informative")
+          .flatMap((variant) =>
+            (["subtle", "medium", "strong"] as const).map((appearance) => (
+              <ContentItem
+                key={`ci${size}${variant}${appearance}`}
+                size={size}
+                variant={variant}
+                appearance={appearance}
+                avatar={{ text: "OM" }}
+                leadingIcon="house"
+                topLabel="Top"
+                suffix="S"
+                bottomLabel="Bottom"
+                trailingIcon="chevron-down"
+                badge="3"
+                text="Text"
+              />
+            )),
+          ),
       )}
       {(["sm", "md"] as const).flatMap((size) =>
         [false, true].flatMap((disabled) => (
@@ -386,24 +401,32 @@ function renderEverything() {
       )}
       {(["sm", "md"] as const).flatMap((size) =>
         (["rounded", "sharped"] as const).flatMap((appearance) =>
-          (["neutral", "primary", "secondary", "success", "warning", "danger"] as const).map(
-            (variant) => (
-              <Callout
-                key={`co${size}${appearance}${variant}`}
-                size={size}
-                appearance={appearance}
-                variant={variant}
-                title="T"
-                description="D"
-                leadingIcon="info"
-                assetItem="OM"
-                badge="B"
-                actionLabel="Go"
-              >
-                Slot
-              </Callout>
-            ),
-          ),
+          (
+            [
+              "neutral",
+              "primary",
+              "secondary",
+              "success",
+              "warning",
+              "danger",
+              "informative",
+            ] as const
+          ).map((variant) => (
+            <Callout
+              key={`co${size}${appearance}${variant}`}
+              size={size}
+              appearance={appearance}
+              variant={variant}
+              title="T"
+              description="D"
+              leadingIcon="info"
+              assetItem
+              badge
+              actionLabel="Go"
+            >
+              Slot
+            </Callout>
+          )),
         ),
       )}
       {(["neutral", "primary", "success", "warning", "danger"] as const).map((variant) => (
@@ -433,6 +456,51 @@ function renderEverything() {
         <Tooltip key={`tp${align}`} text="Text" align={align} open>
           <button type="button">x</button>
         </Tooltip>
+      ))}
+      {[2, 3, 5].map((n) => (
+        <SegmentedControl
+          key={`sc${n}`}
+          defaultValue="1"
+          items={Array.from({ length: n }, (_, i) => ({
+            value: String(i),
+            label: "Item",
+            leadingIcon: "house" as const,
+            trailingIcon: "house" as const,
+            badge: "3",
+            disabled: i === n - 1,
+          }))}
+        />
+      ))}
+      <SegmentedControl
+        disabled
+        items={[
+          { value: "a", label: "A", badge: 1 },
+          { value: "b", label: "B" },
+        ]}
+      />
+      {[2, 4, 6].flatMap((n) =>
+        [1, 2, n + 1].map((current) => (
+          <Stepper
+            key={`st${n}${current}`}
+            amount={n}
+            current={current}
+            labels={Array.from({ length: n }, (_, i) => `Step ${i + 1}`)}
+          />
+        )),
+      )}
+      <Stepper amount={3} showValue={false} />
+      {(["sm", "md"] as const).map((size) => (
+        <Breadcrumbs
+          key={`bc${size}`}
+          size={size}
+          current={1}
+          items={[
+            { label: "Home", href: "#", leadingIcon: "house" },
+            { label: "Docs", onClick: () => {} },
+            { label: "Off", disabled: true },
+            { label: "Page" },
+          ]}
+        />
       ))}
       {[2, 3, 8].map((amount) => (
         <Wizard key={`wz${amount}`} amount={amount} current={2} label="Label" />
