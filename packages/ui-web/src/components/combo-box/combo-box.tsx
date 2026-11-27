@@ -189,55 +189,83 @@ export const ComboBox = forwardRef<HTMLButtonElement, ComboBoxProps>(function Co
           {label}
         </span>
       )}
-      <div data-slot="field" data-state={state} className={cn(field.base, field[state])}>
-        {leadingIcon && <Icon name={leadingIcon} size={16} className={cn("shrink-0", muted)} />}
-        <button
-          ref={ref}
-          id={baseId}
-          type="button"
-          role="combobox"
-          aria-haspopup="menu"
-          aria-expanded={isOpen}
-          aria-controls={isOpen ? `${baseId}-list` : undefined}
-          aria-labelledby={label ? `${baseId}-label ${baseId}` : undefined}
-          aria-label={label ? undefined : ariaLabel}
-          aria-invalid={invalid || undefined}
-          aria-busy={loading || undefined}
-          aria-required={required || undefined}
-          disabled={disabled}
-          onClick={() => setOpen(!isOpen)}
-          className={cn(
-            "min-w-0 flex-1 truncate bg-transparent text-left text-body-sm font-medium outline-none disabled:cursor-not-allowed",
-            empty ? muted : "text-inherit",
-          )}
-        >
-          {selected ? selected.text : (placeholder ?? (showFull ? "" : label))}
-        </button>
-        {trailingIcon && !loading && (
-          <Icon name={trailingIcon} size={16} className={cn("shrink-0", muted)} />
-        )}
-        {loading ? (
-          <Spinner variant="neutral" size={24} className="shrink-0" />
-        ) : showClear ? (
-          <ButtonIcon
-            size="sm"
-            variant="neutral"
-            appearance="ghost"
-            icon="circle-x"
-            aria-label={clearLabel}
-            onClick={() => setValue(undefined)}
-          />
-        ) : (
-          <ButtonIcon
-            size="sm"
-            variant="neutral"
-            appearance="ghost"
-            icon={isOpen ? "chevron-up" : "chevron-down"}
-            aria-label={isOpen ? "Close list" : "Open list"}
-            tabIndex={-1}
+      {/* The PopOver anchors to the field (not to the whole root), so the helper below never pushes it down:
+          it floats over the helper (z-10) with Spacement/VerySubtle between the field and the list. */}
+      <div data-slot="field-anchor" className="relative">
+        <div data-slot="field" data-state={state} className={cn(field.base, field[state])}>
+          {leadingIcon && <Icon name={leadingIcon} size={16} className={cn("shrink-0", muted)} />}
+          <button
+            ref={ref}
+            id={baseId}
+            type="button"
+            role="combobox"
+            aria-haspopup="menu"
+            aria-expanded={isOpen}
+            aria-controls={isOpen ? `${baseId}-list` : undefined}
+            aria-labelledby={label ? `${baseId}-label ${baseId}` : undefined}
+            aria-label={label ? undefined : ariaLabel}
+            aria-invalid={invalid || undefined}
+            aria-busy={loading || undefined}
+            aria-required={required || undefined}
             disabled={disabled}
             onClick={() => setOpen(!isOpen)}
-          />
+            className={cn(
+              "min-w-0 flex-1 truncate bg-transparent text-left text-body-sm font-medium outline-none disabled:cursor-not-allowed",
+              empty ? muted : "text-inherit",
+            )}
+          >
+            {selected ? selected.text : (placeholder ?? (showFull ? "" : label))}
+          </button>
+          {trailingIcon && !loading && (
+            <Icon name={trailingIcon} size={16} className={cn("shrink-0", muted)} />
+          )}
+          {loading ? (
+            <Spinner variant="neutral" size={24} className="shrink-0" />
+          ) : showClear ? (
+            <ButtonIcon
+              size="sm"
+              variant="neutral"
+              appearance="ghost"
+              icon="circle-x"
+              aria-label={clearLabel}
+              onClick={() => setValue(undefined)}
+            />
+          ) : (
+            <ButtonIcon
+              size="sm"
+              variant="neutral"
+              appearance="ghost"
+              icon={isOpen ? "chevron-up" : "chevron-down"}
+              aria-label={isOpen ? "Close list" : "Open list"}
+              tabIndex={-1}
+              disabled={disabled}
+              onClick={() => setOpen(!isOpen)}
+            />
+          )}
+        </div>
+        {isOpen && (
+          <PopOver
+            id={`${baseId}-list`}
+            role="menu"
+            width="default"
+            align={align === "top" ? "top-left" : "bottom-left"}
+            className={align === "top" ? "mb-very-subtle w-full" : "mt-very-subtle w-full"}
+          >
+            <ItemSelectDefaultsContext.Provider value={ROUNDED}>
+              {options.map((o) => (
+                <ItemSelect
+                  key={o.value}
+                  text={o.text}
+                  selected={o.value === value}
+                  disabled={o.disabled}
+                  onClick={() => {
+                    setValue(o.value);
+                    setOpen(false);
+                  }}
+                />
+              ))}
+            </ItemSelectDefaultsContext.Provider>
+          </PopOver>
         )}
       </div>
       {showFull && helper && (
@@ -262,30 +290,6 @@ export const ComboBox = forwardRef<HTMLButtonElement, ComboBoxProps>(function Co
         </div>
       )}
       {name && <input type="hidden" name={name} value={value ?? ""} />}
-      {isOpen && (
-        <PopOver
-          id={`${baseId}-list`}
-          role="menu"
-          width="default"
-          align={align === "top" ? "top-left" : "bottom-left"}
-          className={align === "top" ? "mb-very-subtle w-full" : "mt-very-subtle w-full"}
-        >
-          <ItemSelectDefaultsContext.Provider value={ROUNDED}>
-            {options.map((o) => (
-              <ItemSelect
-                key={o.value}
-                text={o.text}
-                selected={o.value === value}
-                disabled={o.disabled}
-                onClick={() => {
-                  setValue(o.value);
-                  setOpen(false);
-                }}
-              />
-            ))}
-          </ItemSelectDefaultsContext.Provider>
-        </PopOver>
-      )}
     </div>
   );
 });

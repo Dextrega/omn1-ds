@@ -38,7 +38,7 @@ export interface PasswordInputProps extends Omit<
 }
 
 export function PasswordInput({
-  requirements = false,
+  requirements = true,
   requirementsError,
   submitted = false,
   error,

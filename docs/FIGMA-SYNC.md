@@ -151,6 +151,12 @@ See [FINDINGS.md](./FINDINGS.md) — code reproduces Figma until design decides 
 - **ComboBox** list gap = `Spacement/VerySubtle`.
 - **Provisional** — AuthInput Resend uses the ButtonLink Disabled state during the countdown (the request was "hover and pressed like the ButtonLink main component"; confirm in Figma if it meant the code cells).
 
+### v1.4.0 (2026-11-27)
+
+- **ComboBox** list anchors to the field and floats over the helper; gap `Spacement/VerySubtle`.
+- **PasswordInput** `requirements` defaults to `true`.
+- **Graphify review:** (1) native AuthInput paste — real, fixed; (2) native `Text` children — not a debt: ContentItem has no children and string-only text props, Accordion wraps only string / number children in `Text`; (3) native PopOver `onClose` in `hasHeader` — not a bug: on native `onClose` is required (Modal backdrop dismiss), so adding it would force an empty header on every PopOver (Figma hides the Header by default); the close button shows with `title`, `onResize` or `header`. A `closable` prop would be new API; not added.
+
 ### API notes
 
 The prop `variation` is now `variant`, following Figma's _Variant_. `TextInput.helper` is the boolean for the Figma _Helper_

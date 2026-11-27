@@ -13,16 +13,15 @@ export * from "./styles";
  * Figma: AuthInputBase (315:561). Same props and tokens as @omn1/ui-web (see its notes): one 48×48 cell holding a single
  * character. Active → focused; Filled → has a character; no Hovered on touch.
  */
-export interface AuthInputBaseProps extends Omit<
-  RNTextInputProps,
-  "className" | "editable" | "maxLength"
-> {
+export interface AuthInputBaseProps extends Omit<RNTextInputProps, "className" | "editable"> {
   error?: boolean;
   autoCompleted?: boolean;
   required?: boolean;
   disabled?: boolean;
   /** Fills the available width (used by AuthInput) instead of the fixed 48×48. */
   fluid?: boolean;
+  /** Characters the cell accepts. Default 1; AuthInput raises it so a paste / one-time-code autofill reaches its distribution handler. */
+  maxLength?: number;
   /** Receives the underlying TextInput (to move the focus between cells). */
   inputRef?: (el: ElementRef<typeof RNTextInput> | null) => void;
   className?: string;
@@ -37,6 +36,7 @@ export function AuthInputBase({
   defaultValue,
   className,
   fluid = false,
+  maxLength = 1,
   inputRef,
   onChangeText,
   onFocus,
@@ -64,7 +64,7 @@ export function AuthInputBase({
       <RNTextInput
         ref={inputRef}
         editable={!disabled}
-        maxLength={1}
+        maxLength={maxLength}
         keyboardType="number-pad"
         textContentType="oneTimeCode"
         value={value}

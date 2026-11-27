@@ -31,6 +31,7 @@ const meta: Meta<Args> = {
     label: "Password",
     placeholder: "Your password",
     hint: "Use a strong password",
+    requirements: true,
     requirementNumber: DEFAULT_PASSWORD_REQUIREMENTS[0]!.label,
     requirementSpecial: DEFAULT_PASSWORD_REQUIREMENTS[1]!.label,
     requirementLength: DEFAULT_PASSWORD_REQUIREMENTS[2]!.label,
@@ -91,7 +92,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {};
-export const WithRequirements: Story = { args: { requirements: true } };
+export const WithoutRequirements: Story = { args: { requirements: false } };
 export const Required: Story = { args: { required: true, requirements: true } };
 export const Error: Story = { args: { error: "Password is too weak", requirements: true } };
 export const Loading: Story = { args: { loading: true } };

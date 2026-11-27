@@ -35,6 +35,7 @@ import {
   tooltipRibbonPath,
   tooltipText,
 } from "../src/components/tooltip/styles";
+import { applyCellInput } from "../src/components/auth-input/logic";
 import { buttonSelectDivider } from "../src/components/button-select/styles";
 import { dragTargetIndex } from "../src/components/segmented-control/styles";
 import {
@@ -515,6 +516,22 @@ function allClasses(): string[] {
   );
   return [...out];
 }
+
+describe("AuthInput cell input", () => {
+  it("distributes a paste / autofill across the cells from the focused one", () => {
+    expect(applyCellInput("", 0, "123456", 6)).toEqual({ next: "123456", focusIndex: 6 });
+    expect(applyCellInput("12", 2, "3456", 6)).toEqual({ next: "123456", focusIndex: 6 });
+    expect(applyCellInput("", 0, "1234567", 6).next).toBe("123456");
+  });
+  it("keeps only the new character when typing over a filled cell", () => {
+    expect(applyCellInput("123", 1, "29", 6)).toEqual({ next: "193", focusIndex: 2 });
+    expect(applyCellInput("123", 1, "22", 6).next).toBe("123");
+  });
+  it("edits and erases a single cell", () => {
+    expect(applyCellInput("12", 2, "3", 4)).toEqual({ next: "123", focusIndex: 3 });
+    expect(applyCellInput("123", 1, "", 4)).toEqual({ next: "1 3", focusIndex: null });
+  });
+});
 
 describe("native components compile with NativeWind", () => {
   it("every class resolves to a React Native style, and every variable it reads is provided by the ThemeProvider", async () => {
