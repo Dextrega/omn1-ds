@@ -2,7 +2,7 @@ import { AuthInput } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof AuthInput> = {
-  title: "Components/AuthInput",
+  title: "Inputs/AuthInput",
   component: AuthInput,
   tags: ["autodocs"],
   args: { amount: 4, divisor: false, resendSeconds: 59 },

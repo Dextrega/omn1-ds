@@ -4,11 +4,14 @@ import { View } from "react-native";
 import { cn } from "../../lib/cn";
 import { ButtonCTA, type ButtonCTAProps } from "../button-cta/button-cta";
 import { PopOver, type PopOverAlign } from "../popover";
+import { buttonSelectDivider } from "./styles";
+
+export * from "./styles";
 
 /**
  * Figma: ButtonSelect (2331:6698). Same props and tokens as @omn1/ui-web: a ButtonCTA main segment, a 1px divider and a
  * trigger segment (`ellipsis-vertical`) that opens a PopOver of ItemSelect items. Native is touch-only (Pressed → `active:`).
- * Provisional: the 43 variants that differ from ButtonCTA use the ButtonCTA values; the divider colour; `compact`.
+ * Provisional: the 43 variants that differ from ButtonCTA use the ButtonCTA values; `compact`.
  */
 export interface ButtonSelectProps extends Omit<
   ButtonCTAProps,
@@ -26,15 +29,6 @@ export interface ButtonSelectProps extends Omit<
   align?: PopOverAlign;
   children?: ReactNode;
 }
-
-const dividerClass = (variant: string, appearance: string, size: string): string => {
-  if (appearance === "solid") return "bg-alpha-neutral-subtle";
-  if (appearance === "ghost" && variant === "primary")
-    return size === "xs" || size === "sm"
-      ? "bg-alpha-primary-very-subtle"
-      : "bg-alpha-primary-subtle";
-  return "bg-alpha-inverse-subtle";
-};
 
 export function ButtonSelect({
   size = "md",
@@ -80,7 +74,12 @@ export function ButtonSelect({
       >
         {compact ? null : label}
       </ButtonCTA>
-      <View className={cn("w-px", dividerClass(variant, appearance, size))} />
+      <View
+        className={cn(
+          "w-px",
+          buttonSelectDivider(variant, appearance, size, { disabled, loading, open: isOpen }),
+        )}
+      />
       <ButtonCTA
         {...shared}
         leadingIcon="ellipsis-vertical"

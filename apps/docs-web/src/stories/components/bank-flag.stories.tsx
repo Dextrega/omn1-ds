@@ -2,7 +2,7 @@ import { BankFlag, bankFlagLabels } from "@omn1/icons";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof BankFlag> = {
-  title: "Components/BankFlag",
+  title: "Data Display/BankFlag",
   component: BankFlag,
   tags: ["autodocs"],
   args: { brand: "visa" },

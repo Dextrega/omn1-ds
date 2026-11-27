@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 const labels = ["Account", "Profile", "Plan", "Payment", "Review", "Done"];
 
 const meta: Meta<typeof Stepper> = {
-  title: "Components/Stepper",
+  title: "Navigation/Stepper",
   component: Stepper,
   tags: ["autodocs"],
   args: { amount: 4, current: 2, labels: labels.slice(0, 4), showValue: true },

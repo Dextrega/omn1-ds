@@ -41,12 +41,16 @@ export interface PasswordInputProps extends Omit<
   TextInputProps,
   | "type"
   | "button"
+  | "buttonIcon"
+  | "buttonLabel"
+  | "buttonSlot"
+  | "onButtonClick"
+  | "onButtonPress"
   | "trailingIcon"
   | "appearance"
   | "autoCompleted"
   | "prefix"
   | "suffix"
-  | "leadingIcon"
 > {
   /** Figma: Requirements (boolean) — the rule badges under the field. Pass a list to replace the defaults. */
   requirements?: boolean | PasswordRequirement[];
@@ -128,7 +132,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
-          button={
+          buttonSlot={
             <ButtonIcon
               size="sm"
               variant="neutral"

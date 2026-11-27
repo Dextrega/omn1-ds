@@ -2,7 +2,7 @@ import { ButtonIcon, iconNames } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
-  title: "Components/ButtonIcon",
+  title: "Button/ButtonIcon",
   component: ButtonIcon,
   tags: ["autodocs"],
   args: {

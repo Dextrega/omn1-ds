@@ -2,7 +2,7 @@ import { ButtonSelect, ItemSelect } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof ButtonSelect> = {
-  title: "Components/ButtonSelect",
+  title: "Button/ButtonSelect",
   component: ButtonSelect,
   tags: ["autodocs"],
   args: {
@@ -31,7 +31,7 @@ const meta: Meta<typeof ButtonSelect> = {
     docs: {
       description: {
         component:
-          "Figma: **ButtonSelect** (2331:6698) — a split button: ButtonCTA-style main action, a 1px divider and a trigger (`ellipsis-vertical`) that opens a PopOver of ItemSelect items. Size XS / SM / MD / LG × Variant Neutral / Primary / Inverse × Appearance Solid / Outlined / Ghost. Each segment has its own Hovered / Pressed / Focused; the trigger is Actived while the PopOver is open. Provisional: the 43 variants where Figma differs from ButtonCTA use the ButtonCTA values, the divider colour, and `compact`.",
+          "Figma: **ButtonSelect** (2331:6698) — a split button: ButtonCTA-style main action, a 1px divider and a trigger (`ellipsis-vertical`) that opens a PopOver of ItemSelect items. Size XS / SM / MD / LG × Variant Neutral / Primary / Inverse × Appearance Solid / Outlined / Ghost. Each segment has its own Hovered / Pressed / Focused; the trigger is Actived while the PopOver is open. The divider (Div) stroke is read from all 252 variants and follows each state. Provisional: the 43 variants where Figma differs from ButtonCTA use the ButtonCTA values, and `compact`.",
       },
     },
   },

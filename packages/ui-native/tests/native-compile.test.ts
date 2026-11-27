@@ -35,6 +35,8 @@ import {
   tooltipRibbonPath,
   tooltipText,
 } from "../src/components/tooltip/styles";
+import { buttonSelectDivider } from "../src/components/button-select/styles";
+import { dragTargetIndex } from "../src/components/segmented-control/styles";
 import {
   segmentedControlLabel,
   segmentedControlLabelColor,
@@ -318,6 +320,12 @@ function allClasses(): string[] {
   for (const c of [wizardRoot, wizardSteps, wizardLabel, wizardStep(true), wizardStep(false)])
     add(c);
   add(segmentedControlRoot);
+  for (const variant of ["neutral", "primary", "inverse"] as const)
+    for (const appearance of ["solid", "outlined", "ghost"] as const)
+      for (const size of ["xs", "sm", "md", "lg"] as const)
+        for (const state of [{}, { disabled: true }, { loading: true }, { open: true }])
+          add(buttonSelectDivider(variant, appearance, size, state));
+  expect(dragTargetIndex(0, 150, 100, 3, () => false)).toBe(2);
   for (const selected of [true, false])
     for (const disabled of [true, false]) {
       add(segmentedControlSegment(selected, disabled));

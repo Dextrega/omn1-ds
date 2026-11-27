@@ -12,7 +12,7 @@ function Cell({ caption, children }: { caption: string; children: ReactNode }) {
 }
 
 const meta = {
-  title: "Components/Toggle",
+  title: "Selection/Toggle",
   component: Toggle,
   tags: ["autodocs"],
   args: { "aria-label": "Notifications", selection: false },

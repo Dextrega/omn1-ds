@@ -16,7 +16,22 @@ const preview: Preview = {
     layout: "centered",
     controls: { matchers: { color: /(background|color)$/i } },
     a11y: { test: "todo" },
-    options: { storySort: { order: ["Introduction", "Foundations", "Theming", "Components"] } },
+    options: {
+      storySort: {
+        order: [
+          "Introduction",
+          "Foundations",
+          "Theming",
+          "Button",
+          "Containment",
+          "Data Display",
+          "Feedback",
+          "Inputs",
+          "Navigation",
+          "Selection",
+        ],
+      },
+    },
     backgrounds: { disable: true },
   },
   globalTypes: {

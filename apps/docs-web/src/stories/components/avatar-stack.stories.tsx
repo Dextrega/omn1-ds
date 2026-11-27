@@ -7,7 +7,7 @@ const people = (n: number) =>
   Array.from({ length: n }, (_, i) => ({ src: sample(i + 1), alt: `Person ${i + 1}` }));
 
 const meta: Meta<typeof AvatarStack> = {
-  title: "Components/AvatarStack",
+  title: "Data Display/AvatarStack",
   component: AvatarStack,
   tags: ["autodocs"],
   args: { size: "md", avatars: people(7), max: 4 },

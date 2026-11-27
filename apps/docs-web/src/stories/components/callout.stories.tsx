@@ -1,8 +1,8 @@
-import { Callout } from "@omn1/ui-web";
+import { Callout, iconNames } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof Callout> = {
-  title: "Components/Callout",
+  title: "Feedback/Callout",
   component: Callout,
   tags: ["autodocs"],
   args: {
@@ -34,7 +34,7 @@ const meta: Meta<typeof Callout> = {
     dismissible: { control: "boolean" },
     leadingIcon: {
       control: "select",
-      options: [undefined, "info", "circle-check", "triangle-alert", "circle-alert"],
+      options: [undefined, ...iconNames],
     },
   },
   parameters: {

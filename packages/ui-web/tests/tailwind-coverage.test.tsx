@@ -1,4 +1,5 @@
 import preset from "@omn1/tailwind-config";
+import { Fragment } from "react";
 import { render } from "@testing-library/react";
 import postcss from "postcss";
 import tailwind from "tailwindcss";
@@ -127,7 +128,13 @@ function renderEverything() {
       />
       <TextInput label="Compact" appearance="compact" loading />
       <TextInput label="Auto" autoCompleted defaultValue="x" counter maxLength={10} hint="Hint" />
-      <TextInput label="Filled" defaultValue="Text" button={<span>b</span>} link={<span>l</span>} />
+      <TextInput
+        label="Filled"
+        defaultValue="Text"
+        button
+        buttonIcon="search"
+        link={<span>l</span>}
+      />
       <TextInput label="Required" required />
       <TextInput label="Error" error="Something is wrong" />
       <TextInput label="Disabled" disabled />
@@ -321,17 +328,21 @@ function renderEverything() {
       {(["xs", "sm", "md", "lg"] as const).flatMap((size) =>
         (["neutral", "primary", "inverse"] as const).flatMap((variant) =>
           (["solid", "outlined", "ghost"] as const).map((appearance) => (
-            <ButtonSelect
-              key={`${size}${variant}${appearance}`}
-              size={size}
-              variant={variant}
-              appearance={appearance}
-              label="Action"
-              leadingIcon="plus"
-              defaultOpen
-            >
-              <ItemSelect text="One" />
-            </ButtonSelect>
+            <Fragment key={`${size}${variant}${appearance}`}>
+              <ButtonSelect
+                size={size}
+                variant={variant}
+                appearance={appearance}
+                label="Action"
+                leadingIcon="plus"
+                defaultOpen
+              >
+                <ItemSelect text="One" />
+              </ButtonSelect>
+              <ButtonSelect size={size} variant={variant} appearance={appearance} label="Action">
+                <ItemSelect text="One" />
+              </ButtonSelect>
+            </Fragment>
           )),
         ),
       )}
@@ -641,7 +652,7 @@ function renderEverything() {
 }
 
 const escape = (cls: string) => cls.replace(/[^a-zA-Z0-9_-]/g, (c) => `\\${c}`);
-const MARKERS = new Set(["peer", "group"]); // referenced by other selectors, have no rule of their own
+const MARKERS = new Set(["peer", "group", "group/bs"]); // referenced by other selectors, have no rule of their own
 const isThirdParty = (c: string) => c.startsWith("lucide"); // class names lucide-react puts on its <svg>
 const hasRule = (css: string, cls: string) =>
   new RegExp(`\\.${escape(cls).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w\\\\-])`).test(css);

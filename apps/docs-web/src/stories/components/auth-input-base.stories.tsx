@@ -2,7 +2,7 @@ import { AuthInputBase } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof AuthInputBase> = {
-  title: "Components/AuthInputBase",
+  title: "Inputs/AuthInputBase",
   component: AuthInputBase,
   tags: ["autodocs"],
   args: { "aria-label": "Code digit" },

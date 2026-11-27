@@ -9,7 +9,7 @@ const items = [
 ];
 
 const meta: Meta<typeof SegmentedControl> = {
-  title: "Components/SegmentedControl",
+  title: "Selection/SegmentedControl",
   component: SegmentedControl,
   tags: ["autodocs"],
   args: { items: items.slice(0, 3), defaultValue: "week", disabled: false },

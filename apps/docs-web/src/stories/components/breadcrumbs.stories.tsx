@@ -9,7 +9,7 @@ const items = [
 ];
 
 const meta: Meta<typeof Breadcrumbs> = {
-  title: "Components/Breadcrumbs",
+  title: "Navigation/Breadcrumbs",
   component: Breadcrumbs,
   tags: ["autodocs"],
   args: { items, size: "md", separator: "/" },

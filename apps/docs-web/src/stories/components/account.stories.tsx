@@ -6,7 +6,7 @@ const sample =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56'><rect width='56' height='56' fill='%23888'/><circle cx='28' cy='22' r='10' fill='%23ccc'/><rect x='10' y='36' width='36' height='20' rx='10' fill='%23ccc'/></svg>";
 
 const meta: Meta<typeof Account> = {
-  title: "Components/Account",
+  title: "Data Display/Account",
   component: Account,
   tags: ["autodocs"],
   args: {

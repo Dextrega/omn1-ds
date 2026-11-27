@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { iconControl } from "../icon-control";
 
 const meta: Meta<typeof TabsBase> = {
-  title: "Components/TabsBase",
+  title: "Navigation/TabsBase",
   component: TabsBase,
   tags: ["autodocs"],
   args: { value: "tab", children: "Tab" },

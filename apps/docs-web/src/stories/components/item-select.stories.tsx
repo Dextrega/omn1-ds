@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { iconControl } from "../icon-control";
 
 const meta: Meta<typeof ItemSelect> = {
-  title: "Components/ItemSelect",
+  title: "Selection/ItemSelect",
   component: ItemSelect,
   tags: ["autodocs"],
   args: {

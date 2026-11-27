@@ -2,7 +2,7 @@ import { CounterInput } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof CounterInput> = {
-  title: "Components/CounterInput",
+  title: "Inputs/CounterInput",
   component: CounterInput,
   tags: ["autodocs"],
   args: { size: "sm", label: "Quantity", defaultValue: 0, step: 1 },

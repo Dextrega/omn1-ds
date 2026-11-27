@@ -2,7 +2,7 @@ import { DotStatus } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof DotStatus> = {
-  title: "Components/DotStatus",
+  title: "Feedback/DotStatus",
   component: DotStatus,
   tags: ["autodocs"],
   args: { size: "md", variant: "success", appearance: "solid", border: false },

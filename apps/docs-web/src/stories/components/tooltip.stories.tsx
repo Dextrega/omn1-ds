@@ -2,7 +2,7 @@ import { ButtonCTA, Tooltip, TooltipBubble } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof TooltipBubble> = {
-  title: "Components/Tooltip",
+  title: "Feedback/Tooltip",
   component: TooltipBubble,
   tags: ["autodocs"],
   args: { variant: "neutral", align: "center", text: "Text", cursor: false },

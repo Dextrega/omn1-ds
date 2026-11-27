@@ -2,7 +2,7 @@ import { ButtonLink } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
-  title: "Components/ButtonLink",
+  title: "Button/ButtonLink",
   component: ButtonLink,
   tags: ["autodocs"],
   args: { children: "Learn more" },
