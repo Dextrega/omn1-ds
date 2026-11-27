@@ -3,6 +3,36 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.4.0 — ComboBox popover anchor, PasswordInput requirements default, AuthInput native paste
+
+### Summary
+
+The ComboBox list now floats over the helper with the right gap, PasswordInput shows its requirements by default, and the native AuthInput accepts a paste / one-time-code autofill. Two other reported native bugs were checked and are not debts.
+
+### Breaking Changes
+
+None. The new `requirements` default is a behaviour change: PasswordInput now shows the rule badges and blocks form submission while a rule is missing; pass `requirements={false}` to keep the old look.
+
+### Added
+
+- In **AuthInputBase** (native), on **`maxLength`**, added the prop (default 1) so a cell can receive more than one character.
+- In **AuthInput** (native), on **cell input**, added `applyCellInput` (exported, pure) that distributes a paste / autofill across the cells and keeps only the new character when typing over a filled cell.
+
+### Updated
+
+- In **ComboBox**, on **PopOver**, updated the anchor from the whole root (below the helper) to the field (`data-slot="field-anchor"`), so the list sits `Spacement/VerySubtle` under the field and floats over the helper (`z-10`) instead of being pushed below it.
+- In **PasswordInput** (web + native), on **`requirements`**, updated the default from `false` to `true`; the Storybook default story shows the badges and `WithRequirements` became `WithoutRequirements`.
+- In **AuthInput** (native), on **cells**, updated `maxLength` from a fixed 1 to `amount - index`, which fixes the paste / autofill that the single-character limit swallowed.
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: `applyCellInput` (paste, typing over a filled cell, erase), ComboBox anchor, PasswordInput default; the popover gap was measured in the built Storybook (8px, list above the helper).
+- In **docs**, on **FIGMA-SYNC**, recorded that the native PopOver `onClose` stays the backdrop dismiss (not a header trigger) and that native Accordion / Account / ContentItem text props are strings.
+
 ## v1.3.1 — TextInput Button compatibility, ComboBox gap, AuthInput Resend state
 
 ### Summary

@@ -1287,6 +1287,25 @@ describe("ComboBox popover gap", () => {
   });
 });
 
+describe("PasswordInput requirements default", () => {
+  it("shows the requirement badges by default and hides them with requirements={false}", () => {
+    const { rerender } = render(<PasswordInput label="P" />);
+    expect(screen.getByLabelText("Password requirements")).toBeInTheDocument();
+    rerender(<PasswordInput label="P" requirements={false} />);
+    expect(screen.queryByLabelText("Password requirements")).not.toBeInTheDocument();
+  });
+});
+
+describe("ComboBox popover anchor", () => {
+  it("is anchored to the field, not to the root below the helper", async () => {
+    render(<ComboBox label="C" hint="Hint" options={[{ value: "a", text: "A" }]} />);
+    await userEvent.click(screen.getByRole("combobox"));
+    const menu = screen.getByRole("menu");
+    expect(menu.parentElement).toHaveAttribute("data-slot", "field-anchor");
+    expect(menu).toHaveClass("z-10");
+  });
+});
+
 describe("Stepper", () => {
   it("derives Success / Active / Idle from `current` and clamps the amount (2–6)", () => {
     const { container, rerender } = render(

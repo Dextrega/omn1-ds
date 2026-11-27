@@ -65,7 +65,7 @@ export interface PasswordInputProps extends Omit<
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   function PasswordInput(
     {
-      requirements = false,
+      requirements = true,
       requirementsError,
       submitted = false,
       error,

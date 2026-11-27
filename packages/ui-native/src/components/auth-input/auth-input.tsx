@@ -2,6 +2,7 @@ import { Fragment, useRef, useState, type ElementRef } from "react";
 import { Text, TextInput as RNTextInput, View, type ViewProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { AuthInputBase } from "../auth-input-base/auth-input-base";
+import { applyCellInput } from "./logic";
 import { ButtonLink } from "../button-link/button-link";
 
 /**
@@ -56,16 +57,9 @@ export function AuthInput({
     if (next.length === amount) onComplete?.(next);
   };
   const onChange = (i: number, text: string) => {
-    const digits = text.replace(/\s/g, "");
-    if (digits.length > 1) {
-      commit((value.slice(0, i) + digits).slice(0, amount));
-      focus(i + digits.length);
-      return;
-    }
-    const chars = value.padEnd(amount, " ").split("");
-    chars[i] = digits === "" ? " " : digits;
-    commit(chars.join("").replace(/\s+$/, ""));
-    if (digits) focus(i + 1);
+    const { next, focusIndex } = applyCellInput(value, i, text, amount);
+    commit(next);
+    if (focusIndex !== null) focus(focusIndex);
   };
   const waiting = (resendSeconds ?? 0) > 0;
   return (
@@ -87,6 +81,7 @@ export function AuthInput({
               error={error}
               autoCompleted={autoCompleted}
               disabled={disabled}
+              maxLength={amount - i}
               onChangeText={(t) => onChange(i, t)}
               onKeyPress={(e) => {
                 if (e.nativeEvent.key === "Backspace" && !value[i]) focus(i - 1);
