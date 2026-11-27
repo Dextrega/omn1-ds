@@ -4,14 +4,14 @@ import { View } from "react-native";
 import { cn } from "../../lib/cn";
 import { ButtonCTA, type ButtonCTAProps } from "../button-cta/button-cta";
 import { PopOver, type PopOverAlign } from "../popover";
-import { buttonSelectDivider } from "./styles";
+import { buttonSelectCompactMax, buttonSelectDivider } from "./styles";
 
 export * from "./styles";
 
 /**
  * Figma: ButtonSelect (2331:6698). Same props and tokens as @omn1/ui-web: a ButtonCTA main segment, a 1px divider and a
  * trigger segment (`ellipsis-vertical`) that opens a PopOver of ItemSelect items. Native is touch-only (Pressed → `active:`).
- * Provisional: the 43 variants that differ from ButtonCTA use the ButtonCTA values; `compact`.
+ * Provisional: the 43 variants that differ from ButtonCTA use the ButtonCTA values; `compact` removes the ButtonCTA segment and the divider (trigger only, max-width 24 / 32 / 48 / 64).
  */
 export interface ButtonSelectProps extends Omit<
   ButtonCTAProps,
@@ -62,31 +62,39 @@ export function ButtonSelect({
       ref={anchor}
       collapsable={false}
       accessibilityRole="toolbar"
-      className={cn("flex-row items-stretch self-start", className)}
+      className={cn(
+        "flex-row items-stretch self-start",
+        compact && buttonSelectCompactMax[size],
+        className,
+      )}
     >
-      <ButtonCTA
-        {...rest}
-        {...shared}
-        leadingIcon={leadingIcon}
-        trailingIcon={trailingIcon}
-        accessibilityLabel={compact && typeof label === "string" ? label : rest.accessibilityLabel}
-        className="rounded-r-none"
-      >
-        {compact ? null : label}
-      </ButtonCTA>
-      <View
-        className={cn(
-          "w-px",
-          buttonSelectDivider(variant, appearance, size, { disabled, loading, open: isOpen }),
-        )}
-      />
+      {!compact && (
+        <>
+          <ButtonCTA
+            {...rest}
+            {...shared}
+            leadingIcon={leadingIcon}
+            trailingIcon={trailingIcon}
+            accessibilityLabel={rest.accessibilityLabel}
+            className="rounded-r-none"
+          >
+            {label}
+          </ButtonCTA>
+          <View
+            className={cn(
+              "w-px",
+              buttonSelectDivider(variant, appearance, size, { disabled, loading, open: isOpen }),
+            )}
+          />
+        </>
+      )}
       <ButtonCTA
         {...shared}
         leadingIcon="ellipsis-vertical"
         accessibilityLabel={menuLabel}
         accessibilityState={{ expanded: isOpen }}
         onPress={() => setOpen(!isOpen)}
-        className="rounded-l-none"
+        className={compact ? "min-w-0 flex-1" : "rounded-l-none"}
       />
       <PopOver
         width="compact"

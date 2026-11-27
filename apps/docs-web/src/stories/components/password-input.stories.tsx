@@ -1,9 +1,9 @@
 import {
   DEFAULT_PASSWORD_REQUIREMENTS,
   PasswordInput,
-  iconNames,
   type PasswordInputProps,
 } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 /** The four default rules, in order, with the text shown in each requirement Badge. */
@@ -39,7 +39,7 @@ const meta: Meta<Args> = {
   },
   // The Figma `Requirements` frame: one nested Badge per rule. Their texts are plain strings in their own group.
   argTypes: {
-    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
+    leadingIcon: iconControl,
     ...Object.fromEntries(
       REQUIREMENT_ARGS.map((key, i) => [
         key,

@@ -6,6 +6,7 @@ const meta: Meta<typeof ButtonList> = {
   component: ButtonList,
   tags: ["autodocs"],
   args: { "aria-label": "More actions", size: "md", align: "bottom-left" },
+  argTypes: { size: { control: "inline-radio", options: ["xs", "sm", "md", "lg"] } },
   decorators: [
     (Story) => (
       <div className="min-h-x60 p-strong">

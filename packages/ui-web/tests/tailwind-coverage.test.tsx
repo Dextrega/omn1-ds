@@ -32,6 +32,10 @@ import {
   ButtonList,
   AssetItem,
   ButtonSelect,
+  ButtonSocial,
+  SearchInput,
+  Pagination,
+  AppHeader,
   DotStatus,
   ItemSelect,
   PopOver,
@@ -325,6 +329,52 @@ function renderEverything() {
       >
         <ItemSelect text="One" />
       </PopOver>
+      {(["sm", "md", "lg"] as const).flatMap((size) =>
+        (["solid", "outlined", "ghost"] as const).flatMap((appearance) => [
+          <ButtonSocial
+            key={`bs${size}${appearance}`}
+            size={size}
+            appearance={appearance}
+            socialMedia="google"
+            trailingIcon="chevron-right"
+          >
+            Continue
+          </ButtonSocial>,
+          <ButtonSocial
+            key={`bsl${size}${appearance}`}
+            size={size}
+            appearance={appearance}
+            socialMedia="github"
+            loading
+          />,
+          <ButtonSocial
+            key={`bsd${size}${appearance}`}
+            size={size}
+            appearance={appearance}
+            socialMedia="meta"
+            disabled
+          />,
+        ]),
+      )}
+      <SearchInput aria-label="s" />
+      <SearchInput aria-label="s" defaultValue="x" trailingIcon="settings" />
+      <SearchInput aria-label="s" loading defaultValue="x" />
+      <SearchInput aria-label="s" disabled />
+      {(["pages", "lines", "numbers"] as const).map((variant) => (
+        <Pagination key={variant} variant={variant} amount={4} defaultPage={2} />
+      ))}
+      <AppHeader
+        title="T"
+        label="L"
+        systemBar
+        buttonRight02={{ icon: "search", label: "Search", dot: true }}
+        wizard={{ amount: 3 }}
+        tabs={<span>tabs</span>}
+        loaderLine
+      />
+      <ButtonSelect compact size="md" label="x">
+        <ItemSelect text="One" />
+      </ButtonSelect>
       {(["xs", "sm", "md", "lg"] as const).flatMap((size) =>
         (["neutral", "primary", "inverse"] as const).flatMap((variant) =>
           (["solid", "outlined", "ghost"] as const).map((appearance) => (

@@ -47,6 +47,12 @@ import {
   type SVGProps,
 } from "react";
 import {
+  BRAND_SOCIAL_SIZE,
+  brandSocialLabels,
+  brandSocialMarks,
+  type BrandSocialName,
+} from "./brand-social";
+import {
   BANK_FLAG_HEIGHT,
   BANK_FLAG_WIDTH,
   bankFlagLabels,
@@ -187,6 +193,69 @@ export function BankFlag({ brand, label, ...rest }: BankFlagProps) {
     >
       {bankFlagPaths[brand].map((p, i) => (
         <path key={i} d={p.d} fill={p.fill} />
+      ))}
+    </svg>
+  );
+}
+
+export { brandSocialLabels, type BrandSocialName } from "./brand-social";
+
+export interface BrandSocialMediaProps extends Omit<SVGProps<SVGSVGElement>, "ref" | "children"> {
+  /** Figma: Variant. */
+  variant: BrandSocialName;
+  /** Accessible name (default: the brand name). Pass `""` to hide it from assistive tech. */
+  label?: string;
+  size?: number | string;
+}
+
+/** Figma: Brand Social Media (311:2224) — 24×24 brand marks in the brand's own colours. */
+export function BrandSocialMedia({
+  variant,
+  label,
+  size = BRAND_SOCIAL_SIZE,
+  ...rest
+}: BrandSocialMediaProps) {
+  const name = label ?? brandSocialLabels[variant];
+  const mark = brandSocialMarks[variant];
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${BRAND_SOCIAL_SIZE} ${BRAND_SOCIAL_SIZE}`}
+      fill="none"
+      role={name ? "img" : undefined}
+      aria-label={name || undefined}
+      aria-hidden={name ? undefined : true}
+      focusable={false}
+      {...rest}
+    >
+      {mark.gradients && (
+        <defs>
+          {mark.gradients.map((g) => (
+            <linearGradient
+              key={g.id}
+              id={g.id}
+              x1={g.x1}
+              y1={g.y1}
+              x2={g.x2}
+              y2={g.y2}
+              gradientUnits="userSpaceOnUse"
+            >
+              {g.stops.map((s, i) => (
+                <stop key={i} offset={s.offset} stopColor={s.color} />
+              ))}
+            </linearGradient>
+          ))}
+        </defs>
+      )}
+      {mark.paths.map((p, i) => (
+        <path
+          key={i}
+          d={p.d}
+          fill={p.fill}
+          fillRule={p.evenodd ? "evenodd" : undefined}
+          clipRule={p.evenodd ? "evenodd" : undefined}
+        />
       ))}
     </svg>
   );

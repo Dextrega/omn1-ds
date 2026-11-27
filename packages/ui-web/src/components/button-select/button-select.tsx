@@ -17,8 +17,8 @@ import { PopOver, type PopOverAlign } from "../popover";
  * Div: stroke per Size group × Appearance × State read from all 252 variants (see `buttonSelectDivider`).
  * Provisional: the 43 variants where ButtonSelect differs from ButtonCTA (Neutral · Outlined stroke `Inverse/Subtle`,
  * Loading / Pressed label colours, Inverse · Focused / Actived fills) use the ButtonCTA values; the
- * `compact` prop (Figma `Full / Compact`) hides the Text and keeps the leading icon (inferred). When `label` is not a string,
- * pass `aria-label` so the icon-only main segment keeps an accessible name.
+ * `compact` prop (Figma `Full / Compact`) removes the whole ButtonCTA segment and the divider, leaving the trigger alone with
+ * max-width 24 / 32 / 48 / 64 for XS / SM / MD / LG. The trigger's name is `menuLabel`; `label` is not rendered.
  */
 export interface ButtonSelectProps extends Omit<
   ButtonCTAProps,
@@ -192,6 +192,14 @@ export const buttonSelectDivider = (
   );
 };
 
+/** Compact = the trigger alone: Figma max-width 24 / 32 / 48 / 64 (System/x3 · x4 · x6 · x8) for XS / SM / MD / LG. */
+export const buttonSelectCompactMax = {
+  xs: "max-w-x3",
+  sm: "max-w-x4",
+  md: "max-w-x6",
+  lg: "max-w-x8",
+} as const;
+
 export function ButtonSelect({
   size = "md",
   variant = "neutral",
@@ -241,31 +249,39 @@ export function ButtonSelect({
       ref={rootRef}
       role="group"
       data-slot="button-select"
-      className={cn("group/bs relative inline-flex items-stretch", className)}
+      className={cn(
+        "group/bs relative inline-flex items-stretch",
+        compact && buttonSelectCompactMax[size ?? "md"],
+        className,
+      )}
     >
-      <ButtonCTA
-        {...rest}
-        {...shared}
-        leadingIcon={leadingIcon}
-        trailingIcon={trailingIcon}
-        aria-label={compact && typeof label === "string" ? label : rest["aria-label"]}
-        onClick={(e: MouseEvent<HTMLButtonElement>) => onClick?.(e)}
-        className="rounded-r-none"
-      >
-        {compact ? null : label}
-      </ButtonCTA>
-      <span
-        aria-hidden="true"
-        data-slot="divider"
-        className={cn(
-          "w-px shrink-0",
-          buttonSelectDivider(variant, appearance ?? "solid", size ?? "md", {
-            disabled,
-            loading,
-            open: isOpen,
-          }),
-        )}
-      />
+      {!compact && (
+        <>
+          <ButtonCTA
+            {...rest}
+            {...shared}
+            leadingIcon={leadingIcon}
+            trailingIcon={trailingIcon}
+            aria-label={rest["aria-label"]}
+            onClick={(e: MouseEvent<HTMLButtonElement>) => onClick?.(e)}
+            className="rounded-r-none"
+          >
+            {label}
+          </ButtonCTA>
+          <span
+            aria-hidden="true"
+            data-slot="divider"
+            className={cn(
+              "w-px shrink-0",
+              buttonSelectDivider(variant, appearance ?? "solid", size ?? "md", {
+                disabled,
+                loading,
+                open: isOpen,
+              }),
+            )}
+          />
+        </>
+      )}
       <ButtonCTA
         {...shared}
         leadingIcon="ellipsis-vertical"
@@ -275,7 +291,7 @@ export function ButtonSelect({
         aria-controls={isOpen ? panelId : undefined}
         aria-pressed={isOpen}
         onClick={() => setOpen(!isOpen)}
-        className="rounded-l-none"
+        className={compact ? "min-w-0 flex-1" : "rounded-l-none"}
       />
       {isOpen && (
         <PopOver

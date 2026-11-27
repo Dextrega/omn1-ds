@@ -3,6 +3,45 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.5.0 — ButtonSelect compact, Storybook controls, social marks, SearchInput, Pagination, AppHeader
+
+### Summary
+
+Fixes ButtonSelect `compact`, turns several story props into radio / select controls with the full icon library, and adds five components from Figma: BrandSocialMedia, ButtonSocial, SearchInput, Pagination and AppHeader (web + native).
+
+### Breaking Changes
+
+None. Behaviour change: `ButtonSelect compact` now renders only the trigger (the ButtonCTA segment and the divider are gone) and is capped at 24 / 32 / 48 / 64 px for xs / sm / md / lg; the accessible name comes from `menuLabel`. The size / appearance control changes are Storybook controls only, so no component API changed.
+
+### Added
+
+- In **BrandSocialMedia** (`@omn1/icons`, web + native), on **`variant`**, added the 24×24 brand marks (Figma 311:2224) with their own colours and gradients.
+- In **ButtonSocial** (web + native), on **Size × Appearance × State**, added the component (Figma 310:997) with `socialMedia`, `trailingIcon` and `loading`.
+- In **SearchInput** (web + native), on **field**, added the pill input (Figma 6:10088) with leading icon, clear button, trailing icon and Loading state.
+- In **Pagination** (web + native), on **`variant`**, added Pages / Lines / Numbers (Figma 2320:1211) with `amount`, `page`, `defaultPage` and `onPageChange`.
+- In **AppHeader** (web + native), on **Navigation, Wizard, Tabs, LoaderLine and SystemBar rows**, added the header (Figma 2154:5560); each Figma boolean is a prop.
+- **[Provisional]** In **Pagination**, on **page items**, added the active / idle chrome, the 2–12 `amount` range and the controlled / uncontrolled API; Figma only draws five items.
+- **[Provisional]** In **AppHeader**, on **default icons, system bar, content alignment and LoaderLine**, added `arrow-left` / `ellipsis` defaults, an empty system-bar strip (no clock or status glyphs), left-aligned content and a static progress fill.
+- **[Provisional]** In **ButtonSocial**, on **Loading / Disabled**, kept the brand mark in its own colours.
+
+### Updated
+
+- In **ButtonSelect** (web + native), on **`compact`**, updated it to hide the ButtonCTA segment and the divider and to respect `max-w-x3 / x4 / x6 / x8` per size.
+- In **ButtonSelect**, on **Storybook controls**, updated `size` to a radio and `appearance` to a select.
+- In **ButtonList**, on **Storybook control**, updated `size` to a radio.
+- In **ButtonLink**, on **Storybook controls**, added `size` (radio), `variant` (select), `outline` (radio), `leadingIcon` / `trailingIcon` (select) and `text` (text, rendered as `children`).
+- In **ButtonIcon**, on **`icon` control**, updated the list to the full icon library.
+- In **Badge, ButtonCTA, Callout, ChipsSelect, PasswordInput, TextInput and Toast**, on **icon controls**, updated the lists from the 37 core icons to the full library (v1.3.0 used the core set only).
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: ButtonSelect compact, Pagination, AppHeader, ButtonSocial, SearchInput behaviour; the new components are covered by the Tailwind and NativeWind compile tests.
+- In **docs**, on **FIGMA-SYNC**, recorded the five new components, their Storybook groups (BrandSocialMedia → Data Display, ButtonSocial → Button, SearchInput → Inputs, Pagination and AppHeader → Navigation) and the provisional items.
+
 ## v1.4.0 — ComboBox popover anchor, PasswordInput requirements default, AuthInput native paste
 
 ### Summary
