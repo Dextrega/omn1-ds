@@ -19,6 +19,7 @@ import { ButtonLink } from "../button-link/button-link";
  * `onComplete` fires when every cell has a character.
  * Verified against Figma (v1.1.6): the Resend text "Didn’t receive code yet?" (English) and the Divisor line
  * `Stroke/Neutral/Subtle`, 1px, 8px wide.
+ * The Resend ButtonLink uses the ButtonLink Disabled state (no Hovered / Pressed) while the countdown runs.
  * Provisional: (1) the ButtonLink "Resend" and the countdown "(59)" (`resendSeconds`) are not in the Figma component any more —
  * only the Resend text is; (2) the Resend row is always shown.
  */
@@ -155,8 +156,7 @@ export const AuthInput = forwardRef<HTMLDivElement, AuthInputProps>(function Aut
         <ButtonLink
           size="md"
           variant="primary"
-          disabled={disabled}
-          aria-disabled={waiting || undefined}
+          disabled={disabled || waiting}
           onClick={() => !waiting && onResend?.()}
         >
           {waiting ? `${resendLabel} (${resendSeconds})` : resendLabel}

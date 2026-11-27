@@ -106,8 +106,7 @@ export function AuthInput({
         <ButtonLink
           size="md"
           variant="primary"
-          disabled={disabled}
-          accessibilityState={{ disabled: disabled || waiting }}
+          disabled={disabled || waiting}
           onPress={() => !waiting && onResend?.()}
         >
           {waiting ? `${resendLabel} (${resendSeconds})` : resendLabel}

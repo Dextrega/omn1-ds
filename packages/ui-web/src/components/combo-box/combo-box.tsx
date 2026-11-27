@@ -268,7 +268,7 @@ export const ComboBox = forwardRef<HTMLButtonElement, ComboBoxProps>(function Co
           role="menu"
           width="default"
           align={align === "top" ? "top-left" : "bottom-left"}
-          className="w-full"
+          className={align === "top" ? "mb-very-subtle w-full" : "mt-very-subtle w-full"}
         >
           <ItemSelectDefaultsContext.Provider value={ROUNDED}>
             {options.map((o) => (

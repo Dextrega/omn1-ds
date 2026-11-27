@@ -57,16 +57,14 @@ export interface TextInputProps extends Omit<
   leadingIcon?: IconName;
   /** Figma: TrailingIcon. */
   trailingIcon?: IconName;
-  /** Figma: Button (boolean) — a trailing ButtonIcon (SM, Neutral, Ghost), e.g. clear. */
-  button?: boolean;
+  /** Figma: Button — a trailing ButtonIcon (SM, Neutral, Ghost), e.g. clear / toggle password. `true` renders the default one (see `buttonIcon`, `buttonLabel`, `onButtonClick`); a node replaces it. */
+  button?: boolean | ReactNode;
   /** Figma: Button → icon swap. Default "x". Only used when `button` is on. */
   buttonIcon?: IconName;
   /** Accessible name of the Button. Default "Clear". */
   buttonLabel?: string;
   /** Click handler of the Button. */
   onButtonClick?: () => void;
-  /** Replaces the default Button with a custom control (e.g. PasswordInput's show/hide toggle). Wins over `button`. */
-  buttonSlot?: ReactNode;
   /** Figma: ButtonLink — a link inside the Helper (Full only). */
   link?: ReactNode;
   /** Figma: BankFlag (Brand Payment, 40×24) — a card / bank brand mark between the text and the Suffix. */
@@ -113,7 +111,6 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
     buttonIcon = "x",
     buttonLabel = "Clear",
     onButtonClick,
-    buttonSlot,
     link,
     bankFlag,
     loading = false,
@@ -214,18 +211,19 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(function T
         ) : (
           trailingIcon && <Icon name={trailingIcon} size={16} className={cn("shrink-0", muted)} />
         )}
-        {buttonSlot ??
-          (button && (
-            <ButtonIcon
-              size="sm"
-              variant="neutral"
-              appearance="ghost"
-              icon={buttonIcon}
-              aria-label={buttonLabel}
-              disabled={disabled || loading}
-              onClick={onButtonClick}
-            />
-          ))}
+        {typeof button === "boolean"
+          ? button && (
+              <ButtonIcon
+                size="sm"
+                variant="neutral"
+                appearance="ghost"
+                icon={buttonIcon}
+                aria-label={buttonLabel}
+                disabled={disabled || loading}
+                onClick={onButtonClick}
+              />
+            )
+          : button}
       </div>
 
       {showFull && helper && (
