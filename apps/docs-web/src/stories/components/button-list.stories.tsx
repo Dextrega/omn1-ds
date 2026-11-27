@@ -2,7 +2,7 @@ import { ButtonList, ItemSelect } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof ButtonList> = {
-  title: "Components/ButtonList",
+  title: "Button/ButtonList",
   component: ButtonList,
   tags: ["autodocs"],
   args: { "aria-label": "More actions", size: "md", align: "bottom-left" },

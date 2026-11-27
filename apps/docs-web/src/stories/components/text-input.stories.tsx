@@ -2,7 +2,7 @@ import { TextInput, iconNames } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof TextInput> = {
-  title: "Components/TextInput",
+  title: "Inputs/TextInput",
   component: TextInput,
   tags: ["autodocs"],
   args: { label: "Label", placeholder: "Placeholder", hint: "Hint text", appearance: "full" },
@@ -10,6 +10,21 @@ const meta: Meta<typeof TextInput> = {
     appearance: { control: "inline-radio", options: ["full", "compact"] },
     leadingIcon: { control: "select", options: [undefined, ...iconNames] },
     trailingIcon: { control: "select", options: [undefined, ...iconNames] },
+    // Figma `Button` is a boolean; its nested ButtonIcon settings only show while it is on.
+    button: { control: "boolean", description: "Figma: Button — a trailing ButtonIcon." },
+    buttonIcon: {
+      control: "select",
+      options: iconNames,
+      if: { arg: "button" },
+      table: { category: "Button (nested)" },
+    },
+    buttonLabel: {
+      control: "text",
+      if: { arg: "button" },
+      table: { category: "Button (nested)" },
+    },
+    onButtonClick: { table: { category: "Button (nested)" } },
+    buttonSlot: { table: { disable: true } },
   },
   decorators: [
     (Story) => (

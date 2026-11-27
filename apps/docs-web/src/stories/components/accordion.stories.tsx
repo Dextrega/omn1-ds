@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { iconControl } from "../icon-control";
 
 const meta: Meta<typeof Accordion> = {
-  title: "Components/Accordion",
+  title: "Containment/Accordion",
   component: Accordion,
   tags: ["autodocs"],
   args: { size: "md", title: "Title", label: "Label", disabled: false, children: "Panel content" },

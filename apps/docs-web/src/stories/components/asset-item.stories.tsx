@@ -2,7 +2,7 @@ import { AssetItem } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof AssetItem> = {
-  title: "Components/AssetItem",
+  title: "Data Display/AssetItem",
   component: AssetItem,
   tags: ["autodocs"],
   args: { size: "lg", variant: "neutral", appearance: "subtle", content: "text", text: "OM" },

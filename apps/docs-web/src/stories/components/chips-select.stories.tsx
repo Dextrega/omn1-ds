@@ -1,12 +1,15 @@
-import { ChipsSelect, ItemSelect } from "@omn1/ui-web";
+import { ChipsSelect, ItemSelect, iconNames } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof ChipsSelect> = {
-  title: "Components/ChipsSelect",
+  title: "Selection/ChipsSelect",
   component: ChipsSelect,
   tags: ["autodocs"],
   args: { label: "Sort by", size: "md", align: "bottom-left" },
-  argTypes: { size: { control: "radio", options: ["sm", "md"] } },
+  argTypes: {
+    size: { control: "radio", options: ["sm", "md"] },
+    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
+  },
   decorators: [
     (Story) => (
       <div className="min-h-x60 p-strong">

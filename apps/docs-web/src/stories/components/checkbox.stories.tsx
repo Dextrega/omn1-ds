@@ -12,7 +12,7 @@ function Cell({ caption, children }: { caption: string; children: ReactNode }) {
 }
 
 const meta = {
-  title: "Components/Checkbox",
+  title: "Selection/Checkbox",
   component: Checkbox,
   tags: ["autodocs"],
   args: { "aria-label": "Accept the terms", selection: false },

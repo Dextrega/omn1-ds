@@ -2,7 +2,7 @@ import { ButtonCTA, ItemSelect, PopOver } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof PopOver> = {
-  title: "Components/PopOver",
+  title: "Containment/PopOver",
   component: PopOver,
   tags: ["autodocs"],
   args: { width: "default" },

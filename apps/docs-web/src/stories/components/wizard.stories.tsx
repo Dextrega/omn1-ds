@@ -2,7 +2,7 @@ import { Wizard } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof Wizard> = {
-  title: "Components/Wizard",
+  title: "Navigation/Wizard",
   component: Wizard,
   tags: ["autodocs"],
   args: { amount: 4, current: 1, label: "Label" },

@@ -6,6 +6,10 @@ import {
   Account,
   Callout,
   SegmentedControl,
+  SEGMENT_DRAG_THRESHOLD_PX,
+  dragTargetIndex,
+  buttonSelectDivider,
+  dividerTone,
   Stepper,
   Breadcrumbs,
   Breadcrumb,
@@ -1190,6 +1194,81 @@ describe("SegmentedControl", () => {
     expect(screen.getAllByRole("radio")[3]).toHaveAttribute("aria-checked", "true");
     rerender(<SegmentedControl items={items} value="d" disabled />);
     screen.getAllByRole("radio").forEach((r) => expect(r).toBeDisabled());
+  });
+});
+
+describe("SegmentedControl drag", () => {
+  const items = [
+    { value: "a", label: "One" },
+    { value: "b", label: "Two" },
+    { value: "c", label: "Three", disabled: true },
+    { value: "d", label: "Four" },
+  ];
+  it("maps travel to whole steps, clamped and pulled back off disabled segments", () => {
+    const off = (i: number) => i === 2;
+    expect(dragTargetIndex(0, 10, 100, 4, off)).toBe(0);
+    expect(dragTargetIndex(0, 60, 100, 4, off)).toBe(1);
+    expect(dragTargetIndex(0, 210, 100, 4, off)).toBe(1); // lands on disabled "c" -> back to "b"
+    expect(dragTargetIndex(0, 900, 100, 4, off)).toBe(3);
+    expect(dragTargetIndex(3, -900, 100, 4, off)).toBe(0);
+    expect(dragTargetIndex(1, 50, 0, 4, off)).toBe(1);
+  });
+  it("selects the segment under the pointer while dragging and does not click afterwards", () => {
+    const onValueChange = vi.fn();
+    render(<SegmentedControl items={items} onValueChange={onValueChange} />);
+    const radios = screen.getAllByRole("radio");
+    radios.forEach((r, i) => Object.defineProperty(r, "offsetLeft", { value: i * 100 }));
+    const root = screen.getByRole("radiogroup");
+    root.setPointerCapture = vi.fn();
+    root.releasePointerCapture = vi.fn();
+    fireEvent.pointerDown(radios[0], { clientX: 0, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(root, { clientX: SEGMENT_DRAG_THRESHOLD_PX + 100, pointerId: 1 });
+    expect(onValueChange).toHaveBeenLastCalledWith("b");
+    fireEvent.pointerUp(root, { clientX: 104, pointerId: 1 });
+    fireEvent.click(radios[1]);
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+  });
+  it("ignores movement below the threshold (a plain click still selects)", async () => {
+    const onValueChange = vi.fn();
+    render(<SegmentedControl items={items} onValueChange={onValueChange} />);
+    const radios = screen.getAllByRole("radio");
+    const root = screen.getByRole("radiogroup");
+    fireEvent.pointerDown(radios[0], { clientX: 0, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(root, { clientX: 2, pointerId: 1 });
+    fireEvent.pointerUp(root, { clientX: 2, pointerId: 1 });
+    await userEvent.click(radios[1]);
+    expect(onValueChange).toHaveBeenCalledWith("b");
+  });
+});
+
+describe("ButtonSelect divider (Figma Div)", () => {
+  it("follows the Figma table per size, appearance and state", () => {
+    expect(dividerTone("neutral", "solid", "sm", "enabled")).toBe("n");
+    expect(dividerTone("neutral", "solid", "sm", "pressed")).toBe("iv");
+    expect(dividerTone("neutral", "outlined", "sm", "enabled")).toBe("i");
+    expect(dividerTone("neutral", "outlined", "lg", "hovered")).toBe("i");
+    expect(dividerTone("neutral", "ghost", "xs", "actived")).toBe("none");
+    expect(dividerTone("neutral", "ghost", "md", "actived")).toBe("i");
+  });
+  it("renders a state-specific class set and fixed ones for disabled / open", () => {
+    const enabled = buttonSelectDivider("neutral", "outlined", "sm", {});
+    expect(enabled).toContain("group-hover/bs:");
+    expect(enabled).toContain("group-active/bs:");
+    const disabled = buttonSelectDivider("neutral", "outlined", "sm", { disabled: true });
+    expect(disabled).not.toContain("group-hover/bs:");
+  });
+});
+
+describe("TextInput Button (boolean)", () => {
+  it("renders a ButtonIcon only when `button` is on and forwards the click", async () => {
+    const onButtonClick = vi.fn();
+    const { rerender } = render(<TextInput label="Q" />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    rerender(
+      <TextInput label="Q" button buttonLabel="Clear field" onButtonClick={onButtonClick} />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Clear field" }));
+    expect(onButtonClick).toHaveBeenCalledTimes(1);
   });
 });
 

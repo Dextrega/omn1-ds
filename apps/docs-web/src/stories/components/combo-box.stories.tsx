@@ -10,7 +10,7 @@ const options = [
 ];
 
 const meta: Meta<typeof ComboBox> = {
-  title: "Components/ComboBox",
+  title: "Inputs/ComboBox",
   component: ComboBox,
   tags: ["autodocs"],
   args: {

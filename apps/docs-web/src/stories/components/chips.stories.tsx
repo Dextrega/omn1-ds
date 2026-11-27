@@ -2,7 +2,7 @@ import { Chip } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
-  title: "Components/Chips",
+  title: "Selection/Chips",
   component: Chip,
   tags: ["autodocs"],
   args: { children: "Design" },

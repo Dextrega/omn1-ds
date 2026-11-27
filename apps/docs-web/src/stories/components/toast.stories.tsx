@@ -1,8 +1,8 @@
-import { Toast, ToastProvider, ButtonCTA, useToast } from "@omn1/ui-web";
+import { Toast, ToastProvider, ButtonCTA, iconNames, useToast } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof Toast> = {
-  title: "Components/Toast",
+  title: "Feedback/Toast",
   component: Toast,
   tags: ["autodocs"],
   args: {
@@ -24,7 +24,7 @@ const meta: Meta<typeof Toast> = {
     dismissible: { control: "boolean" },
     leadingIcon: {
       control: "select",
-      options: [undefined, "info", "circle-check", "triangle-alert"],
+      options: [undefined, ...iconNames],
     },
   },
   decorators: [

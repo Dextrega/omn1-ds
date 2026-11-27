@@ -2,10 +2,11 @@ import { Spinner } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
-  title: "Components/Spinner",
+  title: "Feedback/Spinner",
   component: Spinner,
   tags: ["autodocs"],
   args: { variant: "neutral", size: 24 },
+  argTypes: { variant: { control: "select", options: ["neutral", "primary", "black", "white"] } },
   parameters: {
     docs: {
       description: {

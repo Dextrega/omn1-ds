@@ -7,6 +7,7 @@ import {
   type TextInputProps as RNTextInputProps,
 } from "react-native";
 import { cn } from "../../lib/cn";
+import { ButtonIcon } from "../button-icon/button-icon";
 import { Spinner } from "../spinner";
 import {
   textInputActiveRing,
@@ -41,8 +42,16 @@ export interface TextInputProps extends Omit<
   suffix?: ReactNode;
   leadingIcon?: IconName;
   trailingIcon?: IconName;
-  /** Figma: Button — a trailing ButtonIcon (SM, Neutral, Ghost). */
-  button?: ReactNode;
+  /** Figma: Button (boolean) — a trailing ButtonIcon (SM, Neutral, Ghost), e.g. clear. */
+  button?: boolean;
+  /** Figma: Button → icon swap. Default "x". */
+  buttonIcon?: IconName;
+  /** Accessible name of the Button. Default "Clear". */
+  buttonLabel?: string;
+  /** Press handler of the Button. */
+  onButtonPress?: () => void;
+  /** Replaces the default Button with a custom control. Wins over `button`. */
+  buttonSlot?: ReactNode;
   /** Figma: ButtonLink — a link inside the Helper (Full only). */
   link?: ReactNode;
   /** Figma: BankFlag (Brand Payment, 40×24). */
@@ -68,6 +77,10 @@ export function TextInput({
   leadingIcon,
   trailingIcon,
   button,
+  buttonIcon = "x",
+  buttonLabel = "Clear",
+  onButtonPress,
+  buttonSlot,
   link,
   bankFlag,
   loading = false,
@@ -156,7 +169,18 @@ export function TextInput({
         ) : trailingIcon ? (
           <Icon name={trailingIcon} size={16} className={iconTone} />
         ) : null}
-        {button}
+        {buttonSlot ??
+          (button && (
+            <ButtonIcon
+              size="sm"
+              variant="neutral"
+              appearance="ghost"
+              icon={buttonIcon}
+              accessibilityLabel={buttonLabel}
+              disabled={disabled || loading}
+              onPress={onButtonPress}
+            />
+          ))}
       </View>
       {full && helper && (
         <View className="min-h-x2 flex-row items-center gap-very-subtle">

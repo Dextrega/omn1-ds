@@ -3,6 +3,40 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.3.0 — SegmentedControl drag, ButtonSelect divider, icon selects, Storybook groups
+
+### Summary
+
+SegmentedControl can be dragged across its segments, the ButtonSelect divider follows the Figma Div tokens per state, several `leadingIcon` / `variant` props became selects, TextInput's `Button` is a boolean, and Storybook is grouped by component family.
+
+### Breaking Changes
+
+- In **TextInput**, on **`button`**, changed the type from `ReactNode` to `boolean` (Figma: Button). Use `button` + `buttonIcon` / `buttonLabel` / `onButtonClick` (`onButtonPress` on native); a custom control goes in `buttonSlot`. Same on **PasswordInput**, which no longer omits `leadingIcon`.
+
+### Added
+
+- **[Provisional]** In **SegmentedControl**, on **`_SegmentBase`**, added drag across segments (web: pointer events, native: PanResponder) with a 4px threshold, whole-step snapping, disabled segments skipped and no click fired after a drag; Figma does not specify the interaction.
+- In **TextInput**, on **Button**, added `buttonIcon` (default `x`), `buttonLabel`, `onButtonClick` / `onButtonPress` and `buttonSlot` (used by PasswordInput's show / hide toggle).
+- In **PasswordInput**, on **LeadingIcon**, added the `leadingIcon` prop (it was omitted).
+- In **Storybook**, on **sidebar**, added the groups Button, Containment, Data Display, Feedback, Inputs, Navigation and Selection (`storySort`), and a standing rule in `CLAUDE.md`.
+
+### Updated
+
+- In **ButtonSelect**, on **Div**, updated the divider stroke to the Figma tokens read from all 252 variants (Size group × Appearance × State; hover / pressed / focus follow the segments on web).
+- In **Spinner**, on **`variant`**, updated the Storybook control to a select.
+- In **Toast** and **Callout**, on **`leadingIcon`**, updated the Storybook control to the full icon library.
+- In **ChipsSelect** and **PasswordInput**, on **`leadingIcon`**, updated the Storybook control to a select of the full icon library.
+- In **TextInput**, on **Button**, updated the Storybook controls: `button` is a boolean and its nested settings show only while it is on.
+- In **Storybook**, on **titles**, moved every `Components/X` story under its group (e.g. `Button/ButtonCTA`).
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: SegmentedControl drag (`dragTargetIndex`, threshold, no click after drag), ButtonSelect divider table, TextInput Button boolean; the Tailwind / NativeWind coverage renders every ButtonSelect state.
+
 ## v1.2.0 — SegmentedControl, Stepper, Breadcrumbs, AssetItem Informative
 
 ### Summary

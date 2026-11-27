@@ -12,7 +12,7 @@ function Cell({ caption, children }: { caption: string; children: ReactNode }) {
 }
 
 const meta = {
-  title: "Components/Radiobutton",
+  title: "Selection/Radiobutton",
   component: Radiobutton,
   tags: ["autodocs"],
   args: { "aria-label": "Option", selection: false },

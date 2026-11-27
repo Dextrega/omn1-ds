@@ -17,12 +17,16 @@ export * from "./requirements";
 export interface PasswordInputProps extends Omit<
   TextInputProps,
   | "button"
+  | "buttonIcon"
+  | "buttonLabel"
+  | "buttonSlot"
+  | "onButtonClick"
+  | "onButtonPress"
   | "trailingIcon"
   | "appearance"
   | "autoCompleted"
   | "prefix"
   | "suffix"
-  | "leadingIcon"
   | "secureTextEntry"
 > {
   requirements?: boolean | PasswordRequirement[];
@@ -73,7 +77,7 @@ export function PasswordInput({
           setInner(t);
           onChangeText?.(t);
         }}
-        button={
+        buttonSlot={
           <ButtonIcon
             size="sm"
             variant="neutral"

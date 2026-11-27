@@ -2,7 +2,7 @@ import { Badge, iconNames } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
-  title: "Components/Badge",
+  title: "Feedback/Badge",
   component: Badge,
   tags: ["autodocs"],
   args: { children: "Badge", size: "md", variant: "neutral", appearance: "strong" },

@@ -1,6 +1,7 @@
 import {
   DEFAULT_PASSWORD_REQUIREMENTS,
   PasswordInput,
+  iconNames,
   type PasswordInputProps,
 } from "@omn1/ui-web";
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -23,7 +24,7 @@ const requirementsFrom = (args: RequirementArgs) =>
   });
 
 const meta: Meta<Args> = {
-  title: "Components/PasswordInput",
+  title: "Inputs/PasswordInput",
   component: PasswordInput,
   tags: ["autodocs"],
   args: {
@@ -36,16 +37,19 @@ const meta: Meta<Args> = {
     requirementCapital: DEFAULT_PASSWORD_REQUIREMENTS[3]!.label,
   },
   // The Figma `Requirements` frame: one nested Badge per rule. Their texts are plain strings in their own group.
-  argTypes: Object.fromEntries(
-    REQUIREMENT_ARGS.map((key, i) => [
-      key,
-      {
-        control: "text",
-        description: `Text of the requirement Badge #${i + 1} (nested in Requirements).`,
-        table: { category: "Requirements (nested Badges)" },
-      },
-    ]),
-  ),
+  argTypes: {
+    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
+    ...Object.fromEntries(
+      REQUIREMENT_ARGS.map((key, i) => [
+        key,
+        {
+          control: "text",
+          description: `Text of the requirement Badge #${i + 1} (nested in Requirements).`,
+          table: { category: "Requirements (nested Badges)" },
+        },
+      ]),
+    ),
+  },
   render: ({
     requirementNumber,
     requirementSpecial,

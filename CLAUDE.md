@@ -29,6 +29,14 @@ All repo content — code, comments, docs, commit messages — is in **English**
 7. Mark anything not verified against Figma as **provisional** in the component's doc comment and in `docs/FIGMA-SYNC.md`.
 8. Web and native components keep the same prop names and the same Figma → token mapping.
 
+## Storybook grouping (standing rule)
+
+Every component story — current and future — lives under exactly one of these groups, in the story `title`:
+**Button · Containment · Data Display · Feedback · Inputs · Navigation · Selection** (e.g. `title: "Inputs/TextInput"`).
+Never use a flat `Components/…` title. A new component takes the group of its Figma page; code-only helpers take the closest
+group and the choice is noted in `docs/FIGMA-SYNC.md`. `Foundations/*`, `Theming/*` and `Introduction` stay outside the groups.
+Group order is set by `storySort` in `apps/docs-web/.storybook/preview.tsx`.
+
 ## Commands
 
 ```bash

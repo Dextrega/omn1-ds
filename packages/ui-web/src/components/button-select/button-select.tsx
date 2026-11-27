@@ -14,9 +14,9 @@ import { PopOver, type PopOverAlign } from "../popover";
  * two segments reuse), Active=On → the trigger's Actived state (`aria-pressed`).
  * States are CSS per segment: Hovered → hover:, Pressed → active:, Focused → focus-visible:, Actived → aria-pressed,
  * Disabled / Loading → props. Closes on Escape and on an outside click.
+ * Div: stroke per Size group × Appearance × State read from all 252 variants (see `buttonSelectDivider`).
  * Provisional: the 43 variants where ButtonSelect differs from ButtonCTA (Neutral · Outlined stroke `Inverse/Subtle`,
- * Loading / Pressed label colours, Inverse · Focused / Actived fills) use the ButtonCTA values; the divider colour
- * (solid `alpha-neutral-subtle`, outlined / ghost `alpha-inverse-subtle`, Primary · Ghost `alpha-primary-*`); the
+ * Loading / Pressed label colours, Inverse · Focused / Actived fills) use the ButtonCTA values; the
  * `compact` prop (Figma `Full / Compact`) hides the Text and keeps the leading icon (inferred). When `label` is not a string,
  * pass `aria-label` so the icon-only main segment keeps an accessible name.
  */
@@ -44,13 +44,152 @@ export interface ButtonSelectProps extends Omit<
   popOverClassName?: string;
 }
 
-const dividerClass = (variant: string, appearance: string, size: string): string => {
-  if (appearance === "solid") return "bg-alpha-neutral-subtle";
-  if (appearance === "ghost" && variant === "primary")
-    return size === "xs" || size === "sm"
-      ? "bg-alpha-primary-very-subtle"
-      : "bg-alpha-primary-subtle";
-  return "bg-alpha-inverse-subtle";
+export type DividerState =
+  "enabled" | "hovered" | "pressed" | "actived" | "focused" | "loading" | "disabled";
+type Tone = "n" | "i" | "iv" | "none";
+
+/**
+ * Figma ButtonSelect `Div` stroke per Size group (XS / SM vs MD / LG) × Appearance × State, read from the 252 variants:
+ * n = `Opacity/Neutral/Subtle`, i = `Opacity/Inverse/Subtle`, iv = `Opacity/Inverse/VerySubtle`. Variant Primary swaps
+ * i → `Opacity/Primary/Subtle` and iv → `Opacity/Primary/VerySubtle` (n stays); Inverse = Neutral. Ghost XS / SM has no
+ * Div in Focused / Actived / Loading / Disabled.
+ */
+const DIVIDER_TONE: Record<
+  "small" | "large",
+  Record<"solid" | "outlined" | "ghost", Record<DividerState, Tone>>
+> = {
+  small: {
+    solid: {
+      enabled: "n",
+      hovered: "n",
+      pressed: "iv",
+      actived: "i",
+      focused: "n",
+      loading: "n",
+      disabled: "iv",
+    },
+    outlined: {
+      enabled: "i",
+      hovered: "n",
+      pressed: "iv",
+      actived: "n",
+      focused: "iv",
+      loading: "n",
+      disabled: "iv",
+    },
+    ghost: {
+      enabled: "iv",
+      hovered: "iv",
+      pressed: "iv",
+      actived: "none",
+      focused: "none",
+      loading: "none",
+      disabled: "none",
+    },
+  },
+  large: {
+    solid: {
+      enabled: "n",
+      hovered: "n",
+      pressed: "iv",
+      actived: "i",
+      focused: "n",
+      loading: "n",
+      disabled: "iv",
+    },
+    outlined: {
+      enabled: "i",
+      hovered: "i",
+      pressed: "iv",
+      actived: "n",
+      focused: "iv",
+      loading: "i",
+      disabled: "iv",
+    },
+    ghost: {
+      enabled: "i",
+      hovered: "i",
+      pressed: "iv",
+      actived: "i",
+      focused: "iv",
+      loading: "i",
+      disabled: "iv",
+    },
+  },
+};
+
+export const dividerTone = (
+  variant: string,
+  appearance: string,
+  size: string,
+  state: DividerState,
+): "n" | "i" | "iv" | "p" | "pv" | "none" => {
+  const t =
+    DIVIDER_TONE[size === "xs" || size === "sm" ? "small" : "large"][
+      (appearance as "solid" | "outlined" | "ghost") ?? "solid"
+    ][state];
+  if (variant === "primary") return t === "i" ? "p" : t === "iv" ? "pv" : t;
+  return t;
+};
+
+type DividerKey = "n" | "i" | "iv" | "p" | "pv" | "none";
+const dividerBase: Record<DividerKey, string> = {
+  n: "bg-alpha-neutral-subtle",
+  i: "bg-alpha-inverse-subtle",
+  iv: "bg-alpha-inverse-very-subtle",
+  p: "bg-alpha-primary-subtle",
+  pv: "bg-alpha-primary-very-subtle",
+  none: "bg-transparent",
+};
+const dividerHover: Record<DividerKey, string> = {
+  n: "group-hover/bs:bg-alpha-neutral-subtle",
+  i: "group-hover/bs:bg-alpha-inverse-subtle",
+  iv: "group-hover/bs:bg-alpha-inverse-very-subtle",
+  p: "group-hover/bs:bg-alpha-primary-subtle",
+  pv: "group-hover/bs:bg-alpha-primary-very-subtle",
+  none: "group-hover/bs:bg-transparent",
+};
+const dividerPressed: Record<DividerKey, string> = {
+  n: "group-active/bs:bg-alpha-neutral-subtle",
+  i: "group-active/bs:bg-alpha-inverse-subtle",
+  iv: "group-active/bs:bg-alpha-inverse-very-subtle",
+  p: "group-active/bs:bg-alpha-primary-subtle",
+  pv: "group-active/bs:bg-alpha-primary-very-subtle",
+  none: "group-active/bs:bg-transparent",
+};
+const dividerFocused: Record<DividerKey, string> = {
+  n: "group-has-[:focus-visible]/bs:bg-alpha-neutral-subtle",
+  i: "group-has-[:focus-visible]/bs:bg-alpha-inverse-subtle",
+  iv: "group-has-[:focus-visible]/bs:bg-alpha-inverse-very-subtle",
+  p: "group-has-[:focus-visible]/bs:bg-alpha-primary-subtle",
+  pv: "group-has-[:focus-visible]/bs:bg-alpha-primary-very-subtle",
+  none: "group-has-[:focus-visible]/bs:bg-transparent",
+};
+
+/**
+ * The Div colour per State: Disabled / Loading / Actived (open) are fixed; Enabled is the base and Hovered / Pressed /
+ * Focused follow the whole button through the named group `bs` (Figma's Hovered / Pressed are states of the button).
+ */
+export const buttonSelectDivider = (
+  variant: string,
+  appearance: string,
+  size: string,
+  state: { disabled?: boolean; loading?: boolean; open?: boolean },
+): string => {
+  const fixed: DividerState | null = state.disabled
+    ? "disabled"
+    : state.loading
+      ? "loading"
+      : state.open
+        ? "actived"
+        : null;
+  if (fixed) return dividerBase[dividerTone(variant, appearance, size, fixed)];
+  return cn(
+    dividerBase[dividerTone(variant, appearance, size, "enabled")],
+    dividerHover[dividerTone(variant, appearance, size, "hovered")],
+    dividerFocused[dividerTone(variant, appearance, size, "focused")],
+    dividerPressed[dividerTone(variant, appearance, size, "pressed")],
+  );
 };
 
 export function ButtonSelect({
@@ -102,7 +241,7 @@ export function ButtonSelect({
       ref={rootRef}
       role="group"
       data-slot="button-select"
-      className={cn("relative inline-flex items-stretch", className)}
+      className={cn("group/bs relative inline-flex items-stretch", className)}
     >
       <ButtonCTA
         {...rest}
@@ -118,7 +257,14 @@ export function ButtonSelect({
       <span
         aria-hidden="true"
         data-slot="divider"
-        className={cn("w-px shrink-0", dividerClass(variant, appearance ?? "solid", size ?? "md"))}
+        className={cn(
+          "w-px shrink-0",
+          buttonSelectDivider(variant, appearance ?? "solid", size ?? "md", {
+            disabled,
+            loading,
+            open: isOpen,
+          }),
+        )}
       />
       <ButtonCTA
         {...shared}
