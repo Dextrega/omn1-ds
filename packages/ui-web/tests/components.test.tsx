@@ -899,10 +899,8 @@ describe("AuthInput / AuthInputBase", () => {
   it("resend is disabled while counting down", () => {
     const onResend = vi.fn();
     const { rerender } = render(<AuthInput resendSeconds={59} onResend={onResend} />);
-    expect(screen.getByRole("button", { name: "Resend (59)" })).toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
+    expect(screen.getByRole("button", { name: "Resend (59)" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Resend (59)" })).toHaveClass("pointer-events-none");
     fireEvent.click(screen.getByRole("button", { name: "Resend (59)" }));
     expect(onResend).not.toHaveBeenCalled();
     rerender(<AuthInput resendSeconds={0} onResend={onResend} />);
@@ -1269,6 +1267,23 @@ describe("TextInput Button (boolean)", () => {
     );
     await userEvent.click(screen.getByRole("button", { name: "Clear field" }));
     expect(onButtonClick).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("TextInput Button (node, backwards compatible)", () => {
+  it("still accepts a custom node", () => {
+    render(<TextInput label="Q" button={<button>custom</button>} />);
+    expect(screen.getByRole("button", { name: "custom" })).toBeInTheDocument();
+  });
+});
+
+describe("ComboBox popover gap", () => {
+  it("uses Spacement/VerySubtle between the input and the list", async () => {
+    render(<ComboBox label="C" options={[{ value: "a", text: "A" }]} />);
+    await userEvent.click(screen.getByRole("combobox"));
+    const menu = screen.getByRole("menu");
+    expect(menu).toHaveClass("mt-very-subtle");
+    expect(menu).not.toHaveClass("mt-extra-subtle");
   });
 });
 

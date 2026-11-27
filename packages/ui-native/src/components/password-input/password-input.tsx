@@ -19,7 +19,6 @@ export interface PasswordInputProps extends Omit<
   | "button"
   | "buttonIcon"
   | "buttonLabel"
-  | "buttonSlot"
   | "onButtonClick"
   | "onButtonPress"
   | "trailingIcon"
@@ -77,7 +76,7 @@ export function PasswordInput({
           setInner(t);
           onChangeText?.(t);
         }}
-        buttonSlot={
+        button={
           <ButtonIcon
             size="sm"
             variant="neutral"

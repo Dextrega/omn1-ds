@@ -145,6 +145,12 @@ See [FINDINGS.md](./FINDINGS.md) — code reproduces Figma until design decides 
 - **Provisional** — SegmentedControl drag (threshold 4px, snapping, click suppression): Figma has no interaction spec.
 - **Storybook groups**: Button, Containment, Data Display, Feedback, Inputs, Navigation, Selection. Code-only components were assigned by us (not in Figma): ButtonList → Button, BankFlag → Data Display, AuthInputBase → Inputs, TabsBase → Navigation.
 
+### v1.3.1 (2026-11-27)
+
+- **TextInput `button`** is `boolean | ReactNode` (non-breaking); `buttonSlot` removed.
+- **ComboBox** list gap = `Spacement/VerySubtle`.
+- **Provisional** — AuthInput Resend uses the ButtonLink Disabled state during the countdown (the request was "hover and pressed like the ButtonLink main component"; confirm in Figma if it meant the code cells).
+
 ### API notes
 
 The prop `variation` is now `variant`, following Figma's _Variant_. `TextInput.helper` is the boolean for the Figma _Helper_

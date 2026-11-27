@@ -3,6 +3,34 @@
 Format (see [Changelog format](#changelog-format)): Title + Version → Summary → Breaking Changes → Added → Updated → Removed → Quality of Life (QoL).
 Newest version first. Items not verified against Figma are prefixed with **[Provisional]**.
 
+## v1.3.1 — TextInput Button compatibility, ComboBox gap, AuthInput Resend state
+
+### Summary
+
+Reverts the v1.3.0 breaking change on TextInput's `button`, aligns the ComboBox list gap with Figma and makes the AuthInput Resend follow the ButtonLink states.
+
+### Breaking Changes
+
+None. This release undoes the v1.3.0 breaking change: `TextInput.button` accepts `boolean | ReactNode` again.
+
+### Added
+
+None.
+
+### Updated
+
+- In **TextInput**, on **`button`**, updated the type to `boolean | ReactNode`: `true` renders the default ButtonIcon (`buttonIcon`, `buttonLabel`, `onButtonClick` / `onButtonPress`), a node replaces it as before. Removed `buttonSlot` (never released without this fix); PasswordInput passes its toggle through `button` again.
+- In **ComboBox**, on **PopOver gap**, updated the gap between the input and the list from `Spacement/ExtraSubtle` to `Spacement/VerySubtle` (`mt-very-subtle`, `mb-very-subtle` when opening upward).
+- **[Provisional]** In **AuthInput**, on **Resend ButtonLink**, updated the countdown state to the real ButtonLink Disabled state (no Hovered / Pressed, not focusable) instead of an `aria-disabled` link that kept reacting to hover and press; interpretation of "follow the ButtonLink main component".
+
+### Removed
+
+None.
+
+### Quality of Life (QoL)
+
+- Tests: TextInput accepts a node, ComboBox gap, Resend disabled while counting down.
+
 ## v1.3.0 — SegmentedControl drag, ButtonSelect divider, icon selects, Storybook groups
 
 ### Summary

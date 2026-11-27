@@ -10,7 +10,7 @@ const meta: Meta<typeof TextInput> = {
     appearance: { control: "inline-radio", options: ["full", "compact"] },
     leadingIcon: { control: "select", options: [undefined, ...iconNames] },
     trailingIcon: { control: "select", options: [undefined, ...iconNames] },
-    // Figma `Button` is a boolean; its nested ButtonIcon settings only show while it is on.
+    // Figma `Button` is a boolean here (a ReactNode is still accepted in code); its nested ButtonIcon settings only show while it is on.
     button: { control: "boolean", description: "Figma: Button — a trailing ButtonIcon." },
     buttonIcon: {
       control: "select",
@@ -24,7 +24,6 @@ const meta: Meta<typeof TextInput> = {
       table: { category: "Button (nested)" },
     },
     onButtonClick: { table: { category: "Button (nested)" } },
-    buttonSlot: { table: { disable: true } },
   },
   decorators: [
     (Story) => (

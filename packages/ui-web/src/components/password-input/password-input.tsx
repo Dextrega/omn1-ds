@@ -43,7 +43,6 @@ export interface PasswordInputProps extends Omit<
   | "button"
   | "buttonIcon"
   | "buttonLabel"
-  | "buttonSlot"
   | "onButtonClick"
   | "onButtonPress"
   | "trailingIcon"
@@ -132,7 +131,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
-          buttonSlot={
+          button={
             <ButtonIcon
               size="sm"
               variant="neutral"

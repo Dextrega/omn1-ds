@@ -50,5 +50,16 @@ pnpm tokens:build # re-generate tokens only
 
 Every release adds an entry to `CHANGELOG.md` using the format at the bottom of that file (the PR template mirrors it).
 
+## Pull requests (standing rule — applies to every request in every chat)
+
+The PR body **is** the release's CHANGELOG entry, copied verbatim — never a free-form summary, bullet list or "Verified" note.
+Required shape, in this order: `## vX.Y.Z — short title` → `### Summary` → `### Breaking Changes` → `### Added` →
+`### Updated` → `### Removed` → `### Quality of Life (QoL)`. Empty sections say `None.`; every item reads
+`In **{component/token}**, on **{element}**, added|updated|removed {context}.`; unverified items start with **[Provisional]**.
+
+1. Write the CHANGELOG.md entry first (newest version first), then generate the body with `scripts/pr-body.sh X.Y.Z`.
+2. Append only the stacking note (if any) and the attribution lines after the entry; nothing before it.
+3. Create the PR from that output (`gh api ... -F body=@file`) and, before finishing, re-read the PR body to confirm the headings match.
+
 Refreshing tokens: drop the new Tokens Studio export into `packages/tokens/figma-export/` and run `pnpm build`.
 The build fails loudly on unresolved references or light/dark mismatches.
