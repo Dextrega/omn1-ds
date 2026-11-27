@@ -1,4 +1,5 @@
-import { Callout, iconNames } from "@omn1/ui-web";
+import { Callout } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof Callout> = {
@@ -32,10 +33,7 @@ const meta: Meta<typeof Callout> = {
     badgeText: { control: "text" },
     actionLabel: { control: "text" },
     dismissible: { control: "boolean" },
-    leadingIcon: {
-      control: "select",
-      options: [undefined, ...iconNames],
-    },
+    leadingIcon: iconControl,
   },
   parameters: {
     docs: {

@@ -1,4 +1,5 @@
-import { ChipsSelect, ItemSelect, iconNames } from "@omn1/ui-web";
+import { ChipsSelect, ItemSelect } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof ChipsSelect> = {
@@ -8,7 +9,7 @@ const meta: Meta<typeof ChipsSelect> = {
   args: { label: "Sort by", size: "md", align: "bottom-left" },
   argTypes: {
     size: { control: "radio", options: ["sm", "md"] },
-    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
+    leadingIcon: iconControl,
   },
   decorators: [
     (Story) => (

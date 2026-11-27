@@ -50,6 +50,10 @@ import {
   TabsPanel,
   TextInput,
   Toggle,
+  Pagination,
+  AppHeader,
+  ButtonSocial,
+  SearchInput,
 } from "../src";
 
 describe("ButtonCTA", () => {
@@ -1257,6 +1261,33 @@ describe("ButtonSelect divider (Figma Div)", () => {
   });
 });
 
+describe("ButtonSelect compact", () => {
+  it("removes the ButtonCTA segment and the divider and caps the width per size", () => {
+    const { container, rerender } = render(
+      <ButtonSelect label="Save" size="md">
+        <ItemSelect text="One" />
+      </ButtonSelect>,
+    );
+    expect(screen.getAllByRole("button")).toHaveLength(2);
+    rerender(
+      <ButtonSelect label="Save" size="md" compact>
+        <ItemSelect text="One" />
+      </ButtonSelect>,
+    );
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+    expect(screen.queryByText("Save")).not.toBeInTheDocument();
+    expect(container.querySelector('[data-slot="divider"]')).toBeNull();
+    const root = container.querySelector('[data-slot="button-select"]')!;
+    expect(root).toHaveClass("max-w-x6");
+    rerender(
+      <ButtonSelect label="Save" size="xs" compact>
+        <ItemSelect text="One" />
+      </ButtonSelect>,
+    );
+    expect(container.querySelector('[data-slot="button-select"]')).toHaveClass("max-w-x3");
+  });
+});
+
 describe("TextInput Button (boolean)", () => {
   it("renders a ButtonIcon only when `button` is on and forwards the click", async () => {
     const onButtonClick = vi.fn();
@@ -1361,5 +1392,98 @@ describe("Breadcrumbs", () => {
       </Breadcrumb>,
     );
     expect(screen.getByText("Go").closest("button")).toBeDisabled();
+  });
+});
+
+describe("Pagination", () => {
+  it("steps through pages, disables the edges and reports changes", async () => {
+    const onPageChange = vi.fn();
+    render(<Pagination amount={3} onPageChange={onPageChange} />);
+    const prev = screen.getByRole("button", { name: "Previous page" });
+    const next = screen.getByRole("button", { name: "Next page" });
+    expect(prev).toBeDisabled();
+    await userEvent.click(next);
+    expect(onPageChange).toHaveBeenLastCalledWith(2);
+    expect(screen.getByRole("button", { name: "Page 2" })).toHaveAttribute("aria-current", "page");
+    await userEvent.click(screen.getByRole("button", { name: "Page 3" }));
+    expect(next).toBeDisabled();
+  });
+  it("renders the numbers variant and clamps the amount", () => {
+    render(<Pagination variant="numbers" amount={99} defaultPage={2} />);
+    expect(screen.getByText("2 / 12")).toBeInTheDocument();
+  });
+  it("is controllable", async () => {
+    const onPageChange = vi.fn();
+    render(<Pagination variant="lines" amount={4} page={1} onPageChange={onPageChange} />);
+    await userEvent.click(screen.getByRole("button", { name: "Next page" }));
+    expect(onPageChange).toHaveBeenCalledWith(2);
+    expect(screen.getByRole("button", { name: "Page 1" })).toHaveAttribute("aria-current", "page");
+  });
+});
+
+describe("AppHeader", () => {
+  it("shows the default buttons and hides parts on false", async () => {
+    const onClick = vi.fn();
+    const { rerender } = render(
+      <AppHeader
+        title="Inbox"
+        label="3 new"
+        buttonLeft={{ icon: "arrow-left", label: "Back", onClick }}
+      />,
+    );
+    expect(screen.getByText("Inbox")).toBeInTheDocument();
+    expect(screen.getByText("3 new")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Back" }));
+    expect(onClick).toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "More" })).toBeInTheDocument();
+    rerender(<AppHeader title="Inbox" buttonLeft={false} buttonRight01={false} />);
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+  });
+  it("renders the optional rows", () => {
+    const { container } = render(
+      <AppHeader
+        title="T"
+        systemBar
+        wizard={{ amount: 3, current: 2 }}
+        tabs={<div>tabs</div>}
+        loaderLine
+      />,
+    );
+    for (const slot of ["system-bar", "navigation", "wizard", "tabs", "loader-line"])
+      expect(container.querySelector(`[data-slot="${slot}"]`)).not.toBeNull();
+  });
+});
+
+describe("ButtonSocial", () => {
+  it("renders the brand mark and label, and blocks clicks while loading", async () => {
+    const onClick = vi.fn();
+    const { rerender } = render(
+      <ButtonSocial socialMedia="google" onClick={onClick}>
+        Continue
+      </ButtonSocial>,
+    );
+    expect(screen.getByRole("button", { name: /continue/i }).querySelector("svg")).not.toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: /continue/i }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    rerender(
+      <ButtonSocial socialMedia="google" loading onClick={onClick}>
+        Continue
+      </ButtonSocial>,
+    );
+    await userEvent.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("SearchInput", () => {
+  it("shows a clear button once filled and empties the field", async () => {
+    const onClear = vi.fn();
+    render(<SearchInput aria-label="Search" onClear={onClear} />);
+    const input = screen.getByRole("searchbox");
+    expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
+    await userEvent.type(input, "abc");
+    await userEvent.click(screen.getByRole("button", { name: "Clear" }));
+    expect(input).toHaveValue("");
+    expect(onClear).toHaveBeenCalled();
   });
 });

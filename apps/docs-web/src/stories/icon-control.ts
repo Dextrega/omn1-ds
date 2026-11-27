@@ -13,3 +13,9 @@ export const iconControl = {
   options: ["none", ...ALL_ICON_NAMES],
   mapping: { none: undefined } as Record<string, undefined>,
 };
+
+/** Same select for a required icon prop (no "none"). */
+export const requiredIconControl = {
+  control: "select" as const,
+  options: ALL_ICON_NAMES,
+};

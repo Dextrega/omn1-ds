@@ -1,4 +1,5 @@
-import { Toast, ToastProvider, ButtonCTA, iconNames, useToast } from "@omn1/ui-web";
+import { Toast, ToastProvider, ButtonCTA, useToast } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof Toast> = {
@@ -22,10 +23,7 @@ const meta: Meta<typeof Toast> = {
     bottomLabel: { control: "text" },
     actionLabel: { control: "text" },
     dismissible: { control: "boolean" },
-    leadingIcon: {
-      control: "select",
-      options: [undefined, ...iconNames],
-    },
+    leadingIcon: iconControl,
   },
   decorators: [
     (Story) => (

@@ -1,11 +1,27 @@
 import { ButtonLink } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { ComponentProps } from "react";
+
+/** Story args: the component props plus Figma's `Text`, which Storybook feeds in as `children`. */
+type Args = ComponentProps<typeof ButtonLink> & { text?: string };
 
 const meta = {
   title: "Button/ButtonLink",
-  component: ButtonLink,
+  component: ButtonLink as (props: Args) => ReturnType<typeof ButtonLink>,
   tags: ["autodocs"],
-  args: { children: "Learn more" },
+  args: { text: "Learn more", size: "md", variant: "primary", outline: false },
+  argTypes: {
+    size: { control: "inline-radio", options: ["sm", "md"] },
+    variant: { control: "select", options: ["neutral", "primary"] },
+    outline: { control: "inline-radio", options: [false, true] },
+    leadingIcon: iconControl,
+    trailingIcon: iconControl,
+    // Figma: Text. The component takes it as `children`; this control feeds them.
+    text: { control: "text", description: "Figma: Text (rendered as `children`)." },
+    children: { table: { disable: true } },
+  },
+  render: ({ text, ...args }) => <ButtonLink {...args}>{text}</ButtonLink>,
   parameters: {
     docs: {
       description: {
@@ -14,7 +30,7 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof ButtonLink>;
+} satisfies Meta<Args>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

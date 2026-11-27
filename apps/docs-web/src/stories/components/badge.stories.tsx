@@ -1,4 +1,5 @@
-import { Badge, iconNames } from "@omn1/ui-web";
+import { Badge } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -22,7 +23,7 @@ const meta = {
       ],
     },
     appearance: { control: "inline-radio", options: ["subtle", "strong", "outlined"] },
-    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
+    leadingIcon: iconControl,
   },
   parameters: {
     docs: {

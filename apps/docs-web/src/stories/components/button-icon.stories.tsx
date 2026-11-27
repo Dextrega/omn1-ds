@@ -1,4 +1,5 @@
-import { ButtonIcon, iconNames } from "@omn1/ui-web";
+import { ButtonIcon } from "@omn1/ui-web";
+import { requiredIconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -13,7 +14,7 @@ const meta = {
     appearance: "solid",
   },
   argTypes: {
-    icon: { control: "select", options: iconNames },
+    icon: requiredIconControl,
     size: { control: "inline-radio", options: ["xs", "sm", "md", "lg"] },
     variant: {
       control: "select",

@@ -64,6 +64,41 @@ import {
   breadcrumbLabelColor,
   breadcrumbsRoot,
 } from "../src/components/breadcrumbs/styles";
+import {
+  buttonSocialContainer,
+  buttonSocialIconColor,
+  buttonSocialLabel,
+  buttonSocialLoading,
+} from "../src/components/button-social/styles";
+import {
+  searchInputActiveRing,
+  searchInputField,
+  searchInputText,
+} from "../src/components/search-input/styles";
+import {
+  clampPaginationAmount,
+  clampPaginationPage,
+  paginationDot,
+  paginationItem,
+  paginationItemLabel,
+  paginationLines,
+  paginationNumbers,
+  paginationPages,
+  paginationRoot,
+} from "../src/components/pagination/styles";
+import {
+  appHeaderContent,
+  appHeaderLabel,
+  appHeaderLoader,
+  appHeaderLoaderFill,
+  appHeaderNavigation,
+  appHeaderRight,
+  appHeaderRoot,
+  appHeaderSystemBar,
+  appHeaderTabs,
+  appHeaderTitle,
+  appHeaderWizard,
+} from "../src/components/app-header/styles";
 import { wizardLabel, wizardRoot, wizardStep, wizardSteps } from "../src/components/wizard/styles";
 import {
   authInputBaseCell,
@@ -321,6 +356,37 @@ function allClasses(): string[] {
   for (const c of [wizardRoot, wizardSteps, wizardLabel, wizardStep(true), wizardStep(false)])
     add(c);
   add(segmentedControlRoot);
+  for (const size of ["sm", "md", "lg"] as const)
+    for (const appearance of ["solid", "outlined", "ghost"] as const) {
+      add(buttonSocialContainer({ size, appearance }));
+      add(buttonSocialLabel({ size, appearance }));
+      for (const disabled of [true, false]) add(buttonSocialIconColor(appearance, disabled));
+    }
+  add(buttonSocialLoading);
+  for (const state of ["enabled", "active", "filled", "loading", "disabled"] as const)
+    add(searchInputField(state));
+  add(searchInputActiveRing);
+  for (const loading of [true, false])
+    for (const disabled of [true, false]) add(searchInputText(loading, disabled));
+  for (const c of [paginationRoot, paginationPages, paginationLines, paginationNumbers]) add(c);
+  for (const a of [true, false])
+    for (const c of [paginationItem(a), paginationItemLabel(a), paginationDot(a)]) add(c);
+  expect(clampPaginationAmount(99)).toBe(12);
+  expect(clampPaginationPage(0, 5)).toBe(1);
+  for (const c of [
+    appHeaderContent,
+    appHeaderLabel,
+    appHeaderLoader,
+    appHeaderLoaderFill,
+    appHeaderNavigation,
+    appHeaderRight,
+    appHeaderRoot,
+    appHeaderSystemBar,
+    appHeaderTabs,
+    appHeaderTitle,
+    appHeaderWizard,
+  ])
+    add(c);
   for (const variant of ["neutral", "primary", "inverse"] as const)
     for (const appearance of ["solid", "outlined", "ghost"] as const)
       for (const size of ["xs", "sm", "md", "lg"] as const)

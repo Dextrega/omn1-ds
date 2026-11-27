@@ -1,3 +1,11 @@
+/** Compact = the trigger alone: Figma max-width 24 / 32 / 48 / 64 (System/x3 · x4 · x6 · x8) for XS / SM / MD / LG. */
+export const buttonSelectCompactMax = {
+  xs: "max-w-x3",
+  sm: "max-w-x4",
+  md: "max-w-x6",
+  lg: "max-w-x8",
+} as const;
+
 export type DividerState =
   "enabled" | "hovered" | "pressed" | "actived" | "focused" | "loading" | "disabled";
 type Tone = "n" | "i" | "iv" | "none";

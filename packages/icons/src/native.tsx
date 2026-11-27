@@ -37,7 +37,7 @@ import {
   User,
   X,
 } from "lucide-react-native";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Defs, LinearGradient, Path, Stop } from "react-native-svg";
 import {
   createContext,
   createElement,
@@ -46,6 +46,12 @@ import {
   type ComponentType,
   type ReactNode,
 } from "react";
+import {
+  BRAND_SOCIAL_SIZE,
+  brandSocialLabels,
+  brandSocialMarks,
+  type BrandSocialName,
+} from "./brand-social";
 import {
   BANK_FLAG_HEIGHT,
   BANK_FLAG_WIDTH,
@@ -183,6 +189,58 @@ export function BankFlag({ brand, label }: BankFlagProps) {
     >
       {bankFlagPaths[brand].map((p, i) => (
         <Path key={i} d={p.d} fill={p.fill} />
+      ))}
+    </Svg>
+  );
+}
+
+export { brandSocialLabels, type BrandSocialName } from "./brand-social";
+
+export interface BrandSocialMediaProps {
+  /** Figma: Variant. */
+  variant: BrandSocialName;
+  /** Accessible name (default: the brand name). */
+  label?: string;
+  size?: number;
+}
+
+/** Figma: Brand Social Media (311:2224) — 24×24 brand marks in the brand's own colours. */
+export function BrandSocialMedia({
+  variant,
+  label,
+  size = BRAND_SOCIAL_SIZE,
+}: BrandSocialMediaProps) {
+  const mark = brandSocialMarks[variant];
+  return (
+    <Svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${BRAND_SOCIAL_SIZE} ${BRAND_SOCIAL_SIZE}`}
+      fill="none"
+      accessibilityRole="image"
+      accessibilityLabel={label ?? brandSocialLabels[variant]}
+    >
+      {mark.gradients && (
+        <Defs>
+          {mark.gradients.map((g) => (
+            <LinearGradient
+              key={g.id}
+              id={g.id}
+              x1={g.x1}
+              y1={g.y1}
+              x2={g.x2}
+              y2={g.y2}
+              gradientUnits="userSpaceOnUse"
+            >
+              {g.stops.map((st, i) => (
+                <Stop key={i} offset={st.offset} stopColor={st.color} />
+              ))}
+            </LinearGradient>
+          ))}
+        </Defs>
+      )}
+      {mark.paths.map((p, i) => (
+        <Path key={i} d={p.d} fill={p.fill} fillRule={p.evenodd ? "evenodd" : undefined} />
       ))}
     </Svg>
   );

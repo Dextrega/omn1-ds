@@ -1,4 +1,5 @@
-import { ButtonCTA, iconNames } from "@omn1/ui-web";
+import { ButtonCTA } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta = {
@@ -13,8 +14,8 @@ const meta = {
       options: ["neutral", "primary", "success", "danger", "inverse"],
     },
     appearance: { control: "inline-radio", options: ["solid", "outlined", "ghost"] },
-    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
-    trailingIcon: { control: "select", options: [undefined, ...iconNames] },
+    leadingIcon: iconControl,
+    trailingIcon: iconControl,
   },
   parameters: {
     docs: {

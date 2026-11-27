@@ -1,4 +1,5 @@
 import { ButtonSelect, ItemSelect } from "@omn1/ui-web";
+import { iconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof ButtonSelect> = {
@@ -12,6 +13,13 @@ const meta: Meta<typeof ButtonSelect> = {
     appearance: "solid",
     align: "bottom-right",
     compact: false,
+  },
+  argTypes: {
+    size: { control: "inline-radio", options: ["xs", "sm", "md", "lg"] },
+    appearance: { control: "select", options: ["solid", "outlined", "ghost"] },
+    variant: { control: "select", options: ["neutral", "primary", "inverse"] },
+    leadingIcon: iconControl,
+    trailingIcon: iconControl,
   },
   decorators: [
     (Story) => (

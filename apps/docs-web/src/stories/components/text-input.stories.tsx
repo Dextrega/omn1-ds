@@ -1,4 +1,5 @@
-import { TextInput, iconNames } from "@omn1/ui-web";
+import { TextInput } from "@omn1/ui-web";
+import { iconControl, requiredIconControl } from "../icon-control";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof TextInput> = {
@@ -8,13 +9,12 @@ const meta: Meta<typeof TextInput> = {
   args: { label: "Label", placeholder: "Placeholder", hint: "Hint text", appearance: "full" },
   argTypes: {
     appearance: { control: "inline-radio", options: ["full", "compact"] },
-    leadingIcon: { control: "select", options: [undefined, ...iconNames] },
-    trailingIcon: { control: "select", options: [undefined, ...iconNames] },
+    leadingIcon: iconControl,
+    trailingIcon: iconControl,
     // Figma `Button` is a boolean here (a ReactNode is still accepted in code); its nested ButtonIcon settings only show while it is on.
     button: { control: "boolean", description: "Figma: Button — a trailing ButtonIcon." },
     buttonIcon: {
-      control: "select",
-      options: iconNames,
+      ...requiredIconControl,
       if: { arg: "button" },
       table: { category: "Button (nested)" },
     },
